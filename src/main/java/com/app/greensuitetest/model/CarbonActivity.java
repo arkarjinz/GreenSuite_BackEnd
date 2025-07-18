@@ -21,7 +21,8 @@ public class CarbonActivity {
 
     @Field("company_id")
     private String companyId;
-
+    @Field("user_id")//added by thu thu win to know who input the data except from the company name
+    private String userId;
     private String activityType;
     private double inputValue;
     private String inputUnit;
