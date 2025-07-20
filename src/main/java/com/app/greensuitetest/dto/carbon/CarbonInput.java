@@ -10,7 +10,7 @@ public record CarbonInput(
 
         @Positive(message = "Value must be positive")
         double value,
-
+        @NotNull String month,       // Add this field
         String region,
 
         FuelType fuelType,       // Required for FUEL
