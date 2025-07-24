@@ -29,4 +29,8 @@ public class UserProfileDto {
         this.globalAdmin = user.isGlobalAdmin();
         this.approvalStatus = user.getApprovalStatus();
     }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
 }
