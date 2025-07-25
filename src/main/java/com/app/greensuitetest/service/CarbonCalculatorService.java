@@ -8,9 +8,12 @@ import com.app.greensuitetest.repository.CarbonActivityRepository;
 import com.app.greensuitetest.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +31,38 @@ public class CarbonCalculatorService {
             case FUEL -> calculateFuel(input);
         };
     }
+//for hanlding more than one activity type
+public double calculateAndStoreAll(List<CarbonInput> inputs) {
+        double totalFootprint = 0.0;
+        for (CarbonInput input : inputs) {
+            System.out.println("Calculating footprint for: " + input);
+            double footprint = calculateFootprint(input);
+            saveToDatabase(input, footprint);
+            totalFootprint += footprint;
+            System.out.println("Footprint calculated: " + footprint);
+        }
+    System.out.println("Total footprint: " + totalFootprint);
+        return totalFootprint;
+    }
+
+    //save to database method
+private void saveToDatabase(CarbonInput input, double footprint) {
+    System.out.println("Saving to DB: " + input.activityType() + ", Footprint: " + footprint);
+    CarbonActivity activity = new CarbonActivity();
+
+    activity.setCompanyId(securityUtil.getCurrentUserCompanyId());
+    activity.setActivityType(input.activityType().name());
+    activity.setInputValue(input.value());
+    activity.setInputUnit(input.unit()!=null?input.unit().name():null);
+    activity.setFootprint(footprint);
+    activity.setRegion(input.region());
+    activity.setFuelType(input.fuelType()!=null?input.fuelType().name():null);
+    activity.setDisposalMethod(input.disposalMethod()!=null?input.disposalMethod().name():null);
+    activity.setTimestamp(LocalDateTime.now());
+
+    activityRepository.save(activity);
+}
+
 
     private double calculateElectricity(CarbonInput input) {
         double factor = emissions.getFactor("electricity", input.region());
