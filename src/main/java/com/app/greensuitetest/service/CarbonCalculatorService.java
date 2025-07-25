@@ -31,6 +31,8 @@ public class CarbonCalculatorService {
 
     private double calculateElectricity(CarbonInput input) {
         double factor = emissions.getFactor("electricity", input.region());
+        System.out.println("Electricity factor for region " + input.region() + " = " + factor);
+
         double footprint = input.value() * factor;
         logActivity(input, footprint, "kWh");
         return footprint;
@@ -44,23 +46,39 @@ public class CarbonCalculatorService {
     }
 
     private double calculateWaste(CarbonInput input) {
-        double factor = switch (input.disposalMethod()) {
+        /*double factor = switch (input.disposalMethod()) {
             case RECYCLED -> emissions.getWaste().getRecycled();
             case LANDFILLED -> emissions.getWaste().getLandfilled();
             case INCINERATED -> emissions.getWaste().getIncinerated();
+        };*/
+        double factor = switch (input.disposalMethod()) {
+            case RECYCLED -> emissions.getFactor("waste.recycled", input.region());
+            case LANDFILLED -> emissions.getFactor("waste.landfilled", input.region());
+            case INCINERATED -> emissions.getFactor("waste.incinerated", input.region());
         };
-
+        System.out.println("Factor used: " + emissions.getFactor("waste.recycled", input.region()));
+        System.out.println("Factor used: " + emissions.getFactor("waste.landfilled", input.region()));
+        System.out.println("Factor used: " + emissions.getFactor("waste.incinerated", input.region()));
         double footprint = input.value() * factor;
         logActivity(input, footprint, "kg");
         return footprint;
     }
 
     private double calculateFuel(CarbonInput input) {
-        double factor = switch (input.fuelType()) {
+        /*double factor = switch (input.fuelType()) {
             case GASOLINE -> emissions.getFuel().getGasoline();
             case DIESEL -> emissions.getFuel().getDiesel();
             case NATURAL_GAS -> emissions.getFuel().getNaturalGas();
+        };*/
+        //added by thu modified since they are giving 0
+        double factor = switch (input.fuelType()) {
+            case GASOLINE -> emissions.getFactor("fuel.gasoline", input.region());
+            case DIESEL -> emissions.getFactor("fuel.diesel", input.region());
+            case NATURAL_GAS -> emissions.getFactor("fuel.natural-gas", input.region());
         };
+        System.out.println("Factor used: " + emissions.getFactor("fuel.gasoline", input.region()));
+        System.out.println("Factor used: " + emissions.getFactor("fuel.diesel", input.region()));
+        System.out.println("Factor used: " + emissions.getFactor("fuel.natural-gas", input.region()));
 
         double standardAmount = input.fuelType() == FuelType.NATURAL_GAS
                 ? unitConverter.toCubicMeters(input.value(), input.unit())
