@@ -1,5 +1,5 @@
 //added by thuthu
-package com.app.greensuitetest.controller;
+/*package com.app.greensuitetest.controller;
 
 import com.app.greensuitetest.dto.carbon.CarbonGoalRequest;
 import com.app.greensuitetest.dto.carbon.CarbonGoalResponse;
@@ -21,4 +21,4 @@ public class CarbonGoalController {
     ) {
         return ResponseEntity.ok(goalService.checkGoals(request));
     }
-}
+}*/

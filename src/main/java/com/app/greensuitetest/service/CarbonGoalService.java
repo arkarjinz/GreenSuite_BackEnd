@@ -1,5 +1,5 @@
 //added by thuthu
-package com.app.greensuitetest.service;
+/*package com.app.greensuitetest.service;
 
 import com.app.greensuitetest.dto.carbon.CarbonGoalRequest;
 import com.app.greensuitetest.dto.carbon.CarbonGoalResponse;
@@ -61,4 +61,4 @@ public class CarbonGoalService {
         // Customize based on your needs
         return "Goal analysis completed.";
     }
-}
+}*/

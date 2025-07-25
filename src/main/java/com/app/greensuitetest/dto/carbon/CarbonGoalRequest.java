@@ -1,5 +1,5 @@
 //added by thuthu
-package com.app.greensuitetest.dto.carbon;
+/*package com.app.greensuitetest.dto.carbon;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -14,4 +14,4 @@ public class CarbonGoalRequest {
     private Map<String, Double> targetPercentByCategory;
     // Key: "electricity", "water", "waste", "fuel"
     // Value: Target % reduction (e.g., 20.0)
-}
+}*/
