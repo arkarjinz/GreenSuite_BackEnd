@@ -309,13 +309,30 @@ public class AuthService {
     }
 
     private Map<String, Object> createLoginSuccessResponse(User user, String accessToken, String refreshToken) {
-        return Map.of(
-                "status", "success",
-                "message", "Login successful",
-                "accessToken", accessToken,
-                "refreshToken", refreshToken,
-                "user", new UserProfileDto(user)
-        );
+        Map<String, Object> response = new HashMap<>();
+        response.put("accessToken", accessToken);
+        response.put("refreshToken", refreshToken);
+
+        Map<String, Object> userProfile = new HashMap<>();
+        userProfile.put("id", user.getId());
+        userProfile.put("firstName", user.getFirstName());
+        userProfile.put("lastName", user.getLastName());
+        userProfile.put("userName", user.getUserName());
+        userProfile.put("email", user.getEmail());
+        userProfile.put("companyId", user.getCompanyId());
+        userProfile.put("companyRole", user.getCompanyRole().name());
+        userProfile.put("globalAdmin", user.isGlobalAdmin());
+        userProfile.put("approvalStatus", user.getApprovalStatus().name());
+
+        // Add company name
+        if (user.getCompanyId() != null) {
+            companyRepository.findById(user.getCompanyId()).ifPresent(company -> {
+                userProfile.put("companyName", company.getName());
+            });
+        }
+
+        response.put("user", userProfile);
+        return response;
     }
 
     private void updateUserEngagement(User user) {
