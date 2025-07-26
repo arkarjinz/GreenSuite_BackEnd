@@ -144,13 +144,13 @@ public double calculateAndStoreAll(List<CarbonInput> inputs) {
         double factor = switch (input.fuelType()) {
             case GASOLINE -> emissions.getFactor("fuel.gasoline", input.region());
             case DIESEL -> emissions.getFactor("fuel.diesel", input.region());
-            case NATURAL_GAS -> emissions.getFactor("fuel.natural-gas", input.region());
+            case NATURALGAS -> emissions.getFactor("fuel.natural-gas", input.region());
         };
         System.out.println("Factor used: " + emissions.getFactor("fuel.gasoline", input.region()));
         System.out.println("Factor used: " + emissions.getFactor("fuel.diesel", input.region()));
         System.out.println("Factor used: " + emissions.getFactor("fuel.natural-gas", input.region()));
 
-        double standardAmount = input.fuelType() == FuelType.NATURAL_GAS
+        double standardAmount = input.fuelType() == FuelType.NATURALGAS
                 ? unitConverter.toCubicMeters(input.value(), input.unit())
                 : unitConverter.toLiters(input.value(), input.unit());
 
