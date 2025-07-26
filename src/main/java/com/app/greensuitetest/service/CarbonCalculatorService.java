@@ -61,7 +61,7 @@ public double calculateAndStoreAll(List<CarbonInput> inputs) {
         String userId = securityUtil.getCurrentUserId();
         String companyId = securityUtil.getCurrentUserCompanyId();
 
-        carbonTotalRepository.findByUserIdAndMonthAndYear(userId, month, year)
+        carbonTotalRepository.findByUserIdAndMonthAndYear(userId,companyId, month, year)
                 .ifPresentOrElse(existing -> {
                     existing.setTotalFootprint(totalFootprint);
                     carbonTotalRepository.save(existing);
