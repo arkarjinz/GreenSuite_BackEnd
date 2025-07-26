@@ -1,6 +1,9 @@
 package com.app.greensuitetest.controller;
 
 import com.app.greensuitetest.dto.carbon.CarbonInput;
+
+import com.app.greensuitetest.model.CarbonTotal;
+
 import com.app.greensuitetest.service.CarbonCalculatorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +31,25 @@ public class CarbonFootPrintController {
     @GetMapping("/history")
     public ResponseEntity<?> getCalculationHistory() {
         return ResponseEntity.ok(calculator.getCompanyHistory());
+    }
+
+    //Htet Htet
+    @GetMapping("/company/{companyId}/years")
+    public ResponseEntity<List<CarbonTotal>> getByYears(
+            @PathVariable String companyId,
+            @RequestParam List<String> years
+    ) {
+        List<CarbonTotal> data = calculator.getDataForYears(companyId, years);
+        return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/company/{companyId}/month")
+    public ResponseEntity<List<CarbonTotal>> getByMonth(
+            @PathVariable String companyId,
+            @RequestParam String year,
+            @RequestParam String month
+    ) {
+        List<CarbonTotal> data = calculator.getDataForMonth(companyId, year, month);
+        return ResponseEntity.ok(data);
     }
 }

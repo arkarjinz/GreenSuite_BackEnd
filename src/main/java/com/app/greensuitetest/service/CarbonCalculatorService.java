@@ -187,4 +187,13 @@ public double calculateAndStoreAll(List<CarbonInput> inputs) {
         String companyId = securityUtil.getCurrentUserCompanyId();
         return activityRepository.findByCompanyId(companyId);
     }
+
+    //Htet Htet
+    public List<CarbonTotal> getDataForYears(String companyId, List<String> years) {
+        return carbonTotalRepository.findByCompanyIdAndYearIn(companyId, years);
+    }
+
+    public List<CarbonTotal> getDataForMonth(String companyId, String year, String month) {
+        return carbonTotalRepository.findByCompanyIdAndYearAndMonth(companyId, year, month);
+    }
 }
