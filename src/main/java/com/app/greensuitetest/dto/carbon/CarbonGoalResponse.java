@@ -1,4 +1,5 @@
-/*package com.app.greensuitetest.dto.carbon;
+//added by thuthu
+package com.app.greensuitetest.dto.carbon;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,4 +21,4 @@ public class CarbonGoalResponse {
         private Double reductionPercent;
         private Double remainingPercent;
     }
-}*/
+}
