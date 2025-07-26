@@ -9,6 +9,8 @@ import com.app.greensuitetest.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import com.app.greensuitetest.repository.CarbonTotalRepository;
+import com.app.greensuitetest.model.CarbonTotal;
 
 
 import java.time.LocalDateTime;
@@ -22,6 +24,7 @@ public class CarbonCalculatorService {
     private final UnitConversionService unitConverter;
     private final CarbonActivityRepository activityRepository;
     private final SecurityUtil securityUtil;
+    private final CarbonTotalRepository carbonTotalRepository;//added by thu to store total footprint in database
 
     public double calculateFootprint(CarbonInput input) {
         return switch (input.activityType()) {
@@ -34,23 +37,55 @@ public class CarbonCalculatorService {
 //for hanlding more than one activity type
 public double calculateAndStoreAll(List<CarbonInput> inputs) {
         double totalFootprint = 0.0;
+        String month = null;
+        String year = null;
         for (CarbonInput input : inputs) {
             System.out.println("Calculating footprint for: " + input);
             double footprint = calculateFootprint(input);
-            saveToDatabase(input, footprint);
+           // saveToDatabase(input, footprint);
+            logActivity(input, footprint, input.unit() != null ? input.unit().name() : null);
             totalFootprint += footprint;
+            // Track month/year for saving summary
+            month = input.month();
+            year = input.year();
             System.out.println("Footprint calculated: " + footprint);
         }
+    // Save total footprint
+    if (month != null && year != null) {
+        saveTotalFootprint(month, year, totalFootprint);
+    }
     System.out.println("Total footprint: " + totalFootprint);
         return totalFootprint;
     }
+    private void saveTotalFootprint(String month, String year, double totalFootprint) {
+        String userId = securityUtil.getCurrentUserId();
+        String companyId = securityUtil.getCurrentUserCompanyId();
+
+        carbonTotalRepository.findByUserIdAndMonthAndYear(userId, month, year)
+                .ifPresentOrElse(existing -> {
+                    existing.setTotalFootprint(totalFootprint);
+                    carbonTotalRepository.save(existing);
+                }, () -> {
+                    CarbonTotal newTotal = new CarbonTotal();
+                    newTotal.setUserId(userId);
+                    newTotal.setCompanyId(companyId);
+                    newTotal.setMonth(month);
+                    newTotal.setYear(year);
+                    newTotal.setTotalFootprint(totalFootprint);
+                    carbonTotalRepository.save(newTotal);
+                });
+
+        System.out.println("Total carbon footprint saved for " + month + "/" + year + ": " + totalFootprint);
+    }
+
 
     //save to database method
-private void saveToDatabase(CarbonInput input, double footprint) {
+/*private void saveToDatabase(CarbonInput input, double footprint) {
     System.out.println("Saving to DB: " + input.activityType() + ", Footprint: " + footprint);
     CarbonActivity activity = new CarbonActivity();
 
     activity.setCompanyId(securityUtil.getCurrentUserCompanyId());
+    activity.setUserId(input.userId());
     activity.setActivityType(input.activityType().name());
     activity.setInputValue(input.value());
     activity.setInputUnit(input.unit()!=null?input.unit().name():null);
@@ -61,7 +96,7 @@ private void saveToDatabase(CarbonInput input, double footprint) {
     activity.setTimestamp(LocalDateTime.now());
 
     activityRepository.save(activity);
-}
+}*/
 
 
     private double calculateElectricity(CarbonInput input) {
@@ -69,14 +104,14 @@ private void saveToDatabase(CarbonInput input, double footprint) {
         System.out.println("Electricity factor for region " + input.region() + " = " + factor);
 
         double footprint = input.value() * factor;
-        logActivity(input, footprint, "kWh");
+      //  logActivity(input, footprint, "kWh");
         return footprint;
     }
 
     private double calculateWater(CarbonInput input) {
         double factor = emissions.getFactor("water", input.region());
         double footprint = input.value() * factor;
-        logActivity(input, footprint, "m³");
+       // logActivity(input, footprint, "m³");
         return footprint;
     }
 
@@ -95,7 +130,7 @@ private void saveToDatabase(CarbonInput input, double footprint) {
         System.out.println("Factor used: " + emissions.getFactor("waste.landfilled", input.region()));
         System.out.println("Factor used: " + emissions.getFactor("waste.incinerated", input.region()));
         double footprint = input.value() * factor;
-        logActivity(input, footprint, "kg");
+        //logActivity(input, footprint, "kg");
         return footprint;
     }
 
@@ -120,13 +155,18 @@ private void saveToDatabase(CarbonInput input, double footprint) {
                 : unitConverter.toLiters(input.value(), input.unit());
 
         double footprint = standardAmount * factor;
-        logActivity(input, footprint, input.unit().name().toLowerCase());
+      //  logActivity(input, footprint, input.unit().name().toLowerCase());
         return footprint;
     }
 
     private void logActivity(CarbonInput input, double footprint, String unit) {
         CarbonActivity activity = new CarbonActivity();
         activity.setCompanyId(securityUtil.getCurrentUserCompanyId());
+        activity.setUserId(securityUtil.getCurrentUserId());
+        activity.setMonth(input.month()); // expects String like "07"
+        activity.setYear(input.year());   // expects String like "2025"
+
+
         activity.setActivityType(input.activityType().name());
         activity.setInputValue(input.value());
         activity.setInputUnit(unit);

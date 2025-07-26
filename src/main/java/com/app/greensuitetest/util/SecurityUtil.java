@@ -30,4 +30,7 @@ public class SecurityUtil {
         }
         return currentUser.getCompanyId();
     }
+    public String getCurrentUserId() {
+        return getCurrentUser().getId(); // ✅ This line gets the user's ID
+    }
 }

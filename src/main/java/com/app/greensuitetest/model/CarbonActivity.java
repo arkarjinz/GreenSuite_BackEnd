@@ -23,6 +23,10 @@ public class CarbonActivity {
     private String companyId;
     @Field("user_id")//added by thu thu win to know who input the data except from the company name
     private String userId;
+    private String month; // e.g., "07"
+    private String year;  // e.g., "2025"
+
+
     private String activityType;
     private double inputValue;
     private String inputUnit;
