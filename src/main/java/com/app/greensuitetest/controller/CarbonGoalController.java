@@ -21,4 +21,12 @@ public class CarbonGoalController {
     ) {
         return ResponseEntity.ok(goalService.checkGoals(request));
     }
+    @PostMapping("/save")
+    public ResponseEntity<Void> saveGoal(
+            @Valid @RequestBody CarbonGoalRequest request,
+            @RequestParam String companyId
+    ) {
+        goalService.saveGoal(request, companyId);
+        return ResponseEntity.ok().build();
+    }
 }

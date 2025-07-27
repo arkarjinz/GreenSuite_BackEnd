@@ -7,4 +7,7 @@ import java.util.List;
 
 public interface CarbonActivityRepository extends MongoRepository<CarbonActivity, String> {
     List<CarbonActivity> findByCompanyId(String companyId);
+    List<CarbonActivity> findByYearAndMonth(String year, String month);
+
+
 }
