@@ -193,7 +193,8 @@ public double calculateAndStoreAll(List<CarbonInput> inputs) {
         return carbonTotalRepository.findByCompanyIdAndYearIn(companyId, years);
     }
 
-    public List<CarbonTotal> getDataForMonth(String companyId, String year, String month) {
-        return carbonTotalRepository.findByCompanyIdAndYearAndMonth(companyId, year, month);
+
+    public List<CarbonActivity> getDataForMonth(String companyId, String year, String month) {
+        return activityRepository.findByCompanyIdAndYearAndMonth(companyId, year, month);
     }
 }

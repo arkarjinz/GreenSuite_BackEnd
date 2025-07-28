@@ -12,5 +12,4 @@ public interface CarbonTotalRepository extends MongoRepository<CarbonTotal, Stri
 
     //Htet Htet
     List<CarbonTotal> findByCompanyIdAndYearIn(String companyId, List<String> years);
-    List<CarbonTotal> findByCompanyIdAndYearAndMonth(String companyId, String year, String month);
 }

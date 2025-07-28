@@ -2,9 +2,13 @@ package com.app.greensuitetest.controller;
 
 import com.app.greensuitetest.dto.carbon.CarbonInput;
 
+import com.app.greensuitetest.model.CarbonActivity;
 import com.app.greensuitetest.model.CarbonTotal;
 
+
 import com.app.greensuitetest.service.CarbonCalculatorService;
+import com.app.greensuitetest.validation.MonthValidator;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +19,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CarbonFootPrintController {
     private final CarbonCalculatorService calculator;
+    private final MonthValidator monthValidator = new MonthValidator();
 
-   /* @PostMapping("/calculate")
+
+    /* @PostMapping("/calculate")
     public ResponseEntity<Double> calculateFootprint(@Valid @RequestBody CarbonInput input) {
         return ResponseEntity.ok(calculator.calculateFootprint(input));
     }*/
@@ -43,13 +49,14 @@ public class CarbonFootPrintController {
         return ResponseEntity.ok(data);
     }
 
-    @GetMapping("/company/{companyId}/month")
-    public ResponseEntity<List<CarbonTotal>> getByMonth(
+    @GetMapping("/company/{companyId}/breakdown")
+    public ResponseEntity<List<CarbonActivity>> getByMonth(
             @PathVariable String companyId,
             @RequestParam String year,
             @RequestParam String month
     ) {
-        List<CarbonTotal> data = calculator.getDataForMonth(companyId, year, month);
+        String formattedMonth = monthValidator.normalizeMonth(month); // This is the normalized version like "JULY"
+        List<CarbonActivity> data = calculator.getDataForMonth(companyId, year, formattedMonth);
         return ResponseEntity.ok(data);
     }
 }
