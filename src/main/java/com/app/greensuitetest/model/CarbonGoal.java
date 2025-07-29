@@ -31,6 +31,7 @@ public class CarbonGoal {
 
     private Boolean isMet; // can be null initially
 
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
