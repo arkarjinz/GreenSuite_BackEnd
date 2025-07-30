@@ -28,6 +28,20 @@ public class CarbonGoal {
     private Double targetFuel;
     private Double targetWater;
     private Double targetWaste;
+    private Boolean electricityGoalMet;
+    private Boolean fuelGoalMet;
+    private Boolean waterGoalMet;
+    private Boolean wasteGoalMet;
+    private Double electricityRemaining;  // how much % reduction is still needed to meet the goal
+    private Double fuelRemaining;
+    private Double waterRemaining;
+    private Double wasteRemaining;
+
+
+    private Double electricityReduction;
+    private Double waterReduction;
+    private Double fuelReduction;
+    private Double wasteReduction;
 
     private Boolean isMet; // can be null initially
 
