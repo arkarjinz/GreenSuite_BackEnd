@@ -57,7 +57,7 @@ public class VectorStoreConfig {
     }
 
     @Bean(name = "embeddingModel")
-    public EmbeddingModel embeddingModel() {
+    public OllamaEmbeddingModel embeddingModel() {
         try {
             return OllamaEmbeddingModel.builder()
                     .ollamaApi(OllamaApi.builder()
