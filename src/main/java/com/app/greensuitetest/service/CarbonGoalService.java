@@ -63,6 +63,10 @@ public class CarbonGoalService {
         double wasteReduction = calculateReductionPercent(
                 currentEmissions.getOrDefault("waste", 0.0),
                 previousEmissions.getOrDefault("waste", 0.0));
+        goal.setElectricityRemaining(Math.max(0, goal.getTargetElectricity() - electricityReduction));
+        goal.setFuelRemaining(Math.max(0, goal.getTargetFuel() - fuelReduction));
+        goal.setWaterRemaining(Math.max(0, goal.getTargetWater() - waterReduction));
+        goal.setWasteRemaining(Math.max(0, goal.getTargetWaste() - wasteReduction));
 
         goal.setElectricityReduction(electricityReduction);
         goal.setFuelReduction(fuelReduction);
