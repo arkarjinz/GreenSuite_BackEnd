@@ -63,10 +63,15 @@ public class CarbonGoalService {
         double wasteReduction = calculateReductionPercent(
                 currentEmissions.getOrDefault("waste", 0.0),
                 previousEmissions.getOrDefault("waste", 0.0));
-        goal.setElectricityRemaining(Math.max(0, goal.getTargetElectricity() - electricityReduction));
+       /* goal.setElectricityRemaining(Math.max(0, goal.getTargetElectricity() - electricityReduction));
         goal.setFuelRemaining(Math.max(0, goal.getTargetFuel() - fuelReduction));
         goal.setWaterRemaining(Math.max(0, goal.getTargetWater() - waterReduction));
-        goal.setWasteRemaining(Math.max(0, goal.getTargetWaste() - wasteReduction));
+        goal.setWasteRemaining(Math.max(0, goal.getTargetWaste() - wasteReduction));*/
+        goal.setElectricityRemaining(roundTo2Decimals(Math.max(0, goal.getTargetElectricity() - electricityReduction)));
+        goal.setFuelRemaining(roundTo2Decimals(Math.max(0, goal.getTargetFuel() - fuelReduction)));
+        goal.setWaterRemaining(roundTo2Decimals(Math.max(0, goal.getTargetWater() - waterReduction)));
+        goal.setWasteRemaining(roundTo2Decimals(Math.max(0, goal.getTargetWaste() - wasteReduction)));
+
 
         goal.setElectricityReduction(electricityReduction);
         goal.setFuelReduction(fuelReduction);
@@ -169,9 +174,11 @@ public class CarbonGoalService {
             double current = currentEmissions.get(category);
             double previous = previousEmissions.get(category);
             double reductionPercent = calculateReductionPercent(current, previous);
+
             System.out.println("Previous emission: " + previous);
             System.out.println("Current emission: " + current);
             System.out.println("Calculated reduction %: " + reductionPercent);
+           // System.out.println("Calculated remaining%: " +  remainingPercent);
             if (reductionPercent < target) {
                 return false; // Goal not met in this valid category
             } else {
@@ -251,7 +258,12 @@ public class CarbonGoalService {
 
     private double calculateReductionPercent(double current, double previous) {
         if (previous == 0) return 0.0; // Avoid division by zero
-        return (1 - (current / previous)) * 100;
+        double reduction=(1-(current/previous))*100;
+        //return (1 - (current / previous)) * 100;
+        return Math.round(reduction*100.0)/100.0;
+    }
+    private double roundTo2Decimals(double value) {
+        return Math.round(value * 100.0) / 100.0;
     }
 
     /*private String generateMessage(Map<String, CarbonGoalResponse.CategoryResult> results) {
