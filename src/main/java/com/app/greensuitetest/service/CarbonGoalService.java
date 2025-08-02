@@ -199,7 +199,11 @@ public class CarbonGoalService {
         Map<String, Double> previousEmissions = getEmissionsByCategory(previousMonth);*/
         Map<String, Double> currentEmissions = getEmissionsByCategory(currentMonth.getYear(), currentMonth.getMonthValue());
         Map<String, Double> previousEmissions = getEmissionsByCategory(previousMonth.getYear(), previousMonth.getMonthValue());
-
+// If no previous month data, return a message asking user to add it
+        if (previousEmissions.isEmpty()) {
+            String message = "No data found for the previous month (" + previousMonth + "). Please add emissions data for the previous month to evaluate your goals.";
+            return new CarbonGoalResponse(message, new HashMap<>());
+        }
 
         // Calculate results per category
         Map<String, CarbonGoalResponse.CategoryResult> results = new HashMap<>();
@@ -215,10 +219,13 @@ public class CarbonGoalService {
                     remainingPercent
             ));
         });
+        //String message = generateMessage(results);
+        String message="";
+        return new CarbonGoalResponse(message, results);
 
         // Generate response message
-        String message = generateMessage(results);
-        return new CarbonGoalResponse(message, results);
+       // String message = generateMessage(results);
+      //  return new CarbonGoalResponse(message, results);
     }
 
     /* private Map<String, Double> getEmissionsByCategory(YearMonth month) {

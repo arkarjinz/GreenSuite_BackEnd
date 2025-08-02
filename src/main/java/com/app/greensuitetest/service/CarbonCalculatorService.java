@@ -33,6 +33,11 @@ public class CarbonCalculatorService {
             case WASTE -> calculateWaste(input);
             case FUEL -> calculateFuel(input);
         };
+
+
+    }
+    private double roundToTwoDecimals(double value) {
+        return Math.round(value * 100.0) / 100.0;
     }
 //for hanlding more than one activity type
 public double calculateAndStoreAll(List<CarbonInput> inputs) {
@@ -105,14 +110,16 @@ public double calculateAndStoreAll(List<CarbonInput> inputs) {
 
         double footprint = input.value() * factor;
       //  logActivity(input, footprint, "kWh");
-        return footprint;
+        //return footprint;
+        return roundToTwoDecimals(footprint);
     }
 
     private double calculateWater(CarbonInput input) {
         double factor = emissions.getFactor("water", input.region());
         double footprint = input.value() * factor;
        // logActivity(input, footprint, "m³");
-        return footprint;
+       // return footprint;
+        return roundToTwoDecimals(footprint);
     }
 
     private double calculateWaste(CarbonInput input) {
@@ -131,7 +138,8 @@ public double calculateAndStoreAll(List<CarbonInput> inputs) {
         System.out.println("Factor used: " + emissions.getFactor("waste.incinerated", input.region()));
         double footprint = input.value() * factor;
         //logActivity(input, footprint, "kg");
-        return footprint;
+        //return footprint;
+        return roundToTwoDecimals(footprint);
     }
 
     private double calculateFuel(CarbonInput input) {
@@ -156,7 +164,8 @@ public double calculateAndStoreAll(List<CarbonInput> inputs) {
 
         double footprint = standardAmount * factor;
       //  logActivity(input, footprint, input.unit().name().toLowerCase());
-        return footprint;
+        //return footprint;
+        return roundToTwoDecimals(footprint);
     }
 
     private void logActivity(CarbonInput input, double footprint, String unit) {
