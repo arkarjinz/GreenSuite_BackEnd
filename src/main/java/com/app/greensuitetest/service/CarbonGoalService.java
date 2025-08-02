@@ -27,8 +27,10 @@ public class CarbonGoalService {
     //for storing data to database
     public void saveGoal(CarbonGoalRequest request) {
         String companyId = securityUtil.getCurrentUserCompanyId(); // moved here
-        String month = request.getSelectedMonth();
-        YearMonth ym = YearMonth.parse(month);
+        //String month = request.getSelectedMonth();
+        YearMonth ym = YearMonth.parse(request.getSelectedMonth());
+
+        //YearMonth ym = YearMonth.parse(month);
         String year = String.valueOf(ym.getYear());
         String monthValue = String.format("%02d", ym.getMonthValue());//to save month as number instead of "june"
         Optional<CarbonGoal> existing = carbonGoalRepository.findByCompanyIdAndYearAndMonth(companyId, year, monthValue);
@@ -36,7 +38,7 @@ public class CarbonGoalService {
 
         CarbonGoal goal = existing.orElseGet(CarbonGoal::new);
         goal.setCompanyId(companyId);
-        goal.setMonth(month);
+        goal.setMonth(monthValue);
         goal.setYear(year);         // NEW
         // If you store target values individually
         goal.setTargetElectricity(request.getTargetPercentByCategory().get("electricity"));
@@ -91,6 +93,27 @@ public class CarbonGoalService {
         boolean isGoalMet = checkIfGoalIsMet(request); // You'll define this method below
         goal.setIsMet(isGoalMet); // ✅ Save the result
         carbonGoalRepository.save(goal);
+    }
+    public List<String> getSubmittedGoalMonths(int year) {
+        String companyId = securityUtil.getCurrentUserCompanyId();
+        String yearStr = String.valueOf(year);
+        List<CarbonGoal> goals = carbonGoalRepository.findByCompanyIdAndYear(companyId,yearStr);
+        List<String> submittedMonths = goals.stream()
+                .map(CarbonGoal::getMonth) // e.g., "06"
+                .distinct()
+                .toList();
+
+        System.out.println("[DEBUG] Fetched goal months for companyId=" + companyId + ", year=" + year + " → " + submittedMonths);
+
+        return submittedMonths;
+        //return goals.stream()
+               // .filter(goal -> String.valueOf(year).equals(goal.getYear()))
+                //.map(goal -> String.format("%s-%s", goal.getYear(), goal.getMonth()))
+               // .toList();
+               // .map(goal -> goal.getYear() + "-" + String.format("%02d", Integer.parseInt(goal.getMonth())))
+               // .distinct()
+               // .toList();
+
     }
 
     private Map<String, Boolean> checkCategoryGoalStatus(CarbonGoalRequest request) {

@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/carbon/goals")
 @RequiredArgsConstructor
@@ -23,10 +25,18 @@ public class CarbonGoalController {
     }
 
 
-
     @PostMapping("/save")
     public ResponseEntity<Void> saveGoal(@Valid @RequestBody CarbonGoalRequest request) {
         goalService.saveGoal(request); // no companyId passed manually
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/submittedMonths")
+    public ResponseEntity<List<String>> getSubmittedMonths(@RequestParam int year) {
+        System.out.println("[DEBUG] Received request for submitted months, year = " + year);
+        List<String> submittedMonths = goalService.getSubmittedGoalMonths(year);
+        System.out.println("[DEBUG] Returning months: " + submittedMonths);
+        return ResponseEntity.ok(submittedMonths);
+    }
+
 }
