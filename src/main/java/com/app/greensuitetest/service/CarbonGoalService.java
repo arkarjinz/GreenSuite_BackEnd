@@ -51,7 +51,11 @@ public class CarbonGoalService {
 
         Map<String, Double> currentEmissions = getEmissionsByCategory(currentMonth.getYear(), currentMonth.getMonthValue());
         Map<String, Double> previousEmissions = getEmissionsByCategory(previousMonth.getYear(), previousMonth.getMonthValue());
-
+        Map<String, Boolean> result = new HashMap<>();
+        if (previousEmissions.isEmpty()) {
+            System.out.println("No previous emissions data found. Skipping save.");
+            return;
+        }
         // Calculate actual reductions and remaining reductions
         double electricityReduction = calculateReductionPercent(
                 currentEmissions.getOrDefault("electricity", 0.0),
@@ -124,6 +128,7 @@ public class CarbonGoalService {
         Map<String, Double> previousEmissions = getEmissionsByCategory(previousMonth.getYear(), previousMonth.getMonthValue());
 
         Map<String, Boolean> result = new HashMap<>();
+
 
         for (String category : request.getTargetPercentByCategory().keySet()) {
             double target = request.getTargetPercentByCategory().getOrDefault(category, 0.0);
