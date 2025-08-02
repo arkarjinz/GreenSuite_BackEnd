@@ -21,14 +21,15 @@ public class DocumentContextService {
     private final Pattern numberPattern = Pattern.compile("\\d+(?:\\.\\d+)?\\s*(?:%|kg|tons?|kwh|mwh|gwh|m[²³]?|ft[²³]?|gal|l|°[cf])?");
     private final Pattern procedurePattern = Pattern.compile("(?i)(?:step|procedure|process|method|approach)\\s*\\d*:?\\s*(.+)");
 
-    // Domain-specific keywords for content classification
+    // FIXED: Balanced domain keywords with equal representation
     private final Map<String, List<String>> domainKeywords = Map.of(
-            "carbon_calculation", Arrays.asList("carbon", "co2", "emission", "ghg", "scope 1", "scope 2", "scope 3"),
-            "energy_management", Arrays.asList("energy", "renewable", "efficiency", "consumption", "solar", "wind"),
-            "waste_management", Arrays.asList("waste", "recycling", "disposal", "circular", "landfill"),
-            "water_management", Arrays.asList("water", "consumption", "treatment", "wastewater", "conservation"),
-            "supply_chain", Arrays.asList("supply", "chain", "procurement", "vendor", "supplier", "logistics"),
-            "reporting", Arrays.asList("report", "disclosure", "compliance", "audit", "certification", "standard")
+            "carbon_calculation", Arrays.asList("carbon", "co2", "emission", "ghg", "scope 1", "scope 2", "scope 3", "footprint"),
+            "energy_management", Arrays.asList("energy", "renewable", "efficiency", "consumption", "solar", "wind", "power", "electricity"),
+            "waste_management", Arrays.asList("waste", "recycling", "disposal", "circular", "landfill", "reduction", "reuse"),
+            "water_management", Arrays.asList("water", "consumption", "treatment", "wastewater", "conservation", "quality"),
+            "supply_chain", Arrays.asList("supply", "chain", "procurement", "vendor", "supplier", "logistics", "sourcing"),
+            "reporting", Arrays.asList("report", "disclosure", "compliance", "audit", "certification", "standard", "framework"),
+            "general_sustainability", Arrays.asList("sustainability", "esg", "environmental", "green", "climate", "biodiversity")
     );
 
     public String buildIntelligentContext(List<Document> documents, String userQuery) {
@@ -46,6 +47,9 @@ public class DocumentContextService {
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
 
+            // Apply improved semantic filtering
+            enhancedDocs = applyImprovedSemanticFiltering(enhancedDocs, queryAnalysis);
+
             // Rank documents by relevance to query
             enhancedDocs = rankDocumentsByRelevance(enhancedDocs, queryAnalysis);
 
@@ -58,8 +62,129 @@ public class DocumentContextService {
         }
     }
 
+    /**
+     * IMPROVED: Better semantic filtering that reduces bias and improves relevance
+     */
+    private List<EnhancedDocument> applyImprovedSemanticFiltering(List<EnhancedDocument> documents, QueryAnalysis queryAnalysis) {
+        return documents.stream()
+                .filter(doc -> isDocumentSemanticallyrRelevant(doc, queryAnalysis))
+                .collect(Collectors.toList());
+    }
+
+    private boolean isDocumentSemanticallyrRelevant(EnhancedDocument doc, QueryAnalysis queryAnalysis) {
+        String docContent = doc.content.toLowerCase();
+
+        // Skip if document is too short or empty
+        if (docContent.length() < 30) {
+            return false;
+        }
+
+        // Calculate semantic relevance score
+        double relevanceScore = 0.0;
+
+        // 1. Query concept overlap (primary relevance factor)
+        Set<String> queryTerms = extractQueryTerms(queryAnalysis.query.toLowerCase());
+        Set<String> docTerms = extractDocumentTerms(docContent);
+
+        long termOverlap = queryTerms.stream()
+                .mapToLong(term -> docTerms.contains(term) ? 1 : 0)
+                .sum();
+
+        relevanceScore += termOverlap * 2.0;
+
+        // 2. Intent matching (secondary factor)
+        if (matchesQueryIntent(doc, queryAnalysis.type)) {
+            relevanceScore += 1.5;
+        }
+
+        // 3. Content quality indicators
+        if (doc.hasFormulas && queryAnalysis.type == QueryType.CALCULATION) {
+            relevanceScore += 2.0;
+        }
+        if (doc.hasProcedures && queryAnalysis.type == QueryType.PROCEDURE) {
+            relevanceScore += 1.5;
+        }
+        if (doc.hasNumbers && queryTerms.contains("calculate")) {
+            relevanceScore += 1.0;
+        }
+
+        // 4. REMOVED: Domain-based filtering to prevent bias
+        // Previous domain filtering logic removed to fix agriculture obsession
+
+        // 5. Content depth and quality
+        if (doc.wordCount > 100 && doc.wordCount < 2000) {
+            relevanceScore += 0.5; // Sweet spot for content length
+        }
+
+        // Minimum threshold for relevance
+        return relevanceScore >= 1.5 || termOverlap >= 2;
+    }
+
+    private Set<String> extractQueryTerms(String query) {
+        Set<String> terms = new HashSet<>();
+
+        // Add all sustainability-related terms from query
+        for (List<String> domainTerms : domainKeywords.values()) {
+            for (String term : domainTerms) {
+                if (query.contains(term.toLowerCase())) {
+                    terms.add(term.toLowerCase());
+                }
+            }
+        }
+
+        // Add significant words (longer than 3 characters)
+        String[] words = query.split("\\s+");
+        for (String word : words) {
+            String cleanWord = word.replaceAll("[^a-zA-Z]", "").toLowerCase();
+            if (cleanWord.length() > 3 && !isStopWord(cleanWord)) {
+                terms.add(cleanWord);
+            }
+        }
+
+        return terms;
+    }
+
+    private Set<String> extractDocumentTerms(String content) {
+        Set<String> terms = new HashSet<>();
+
+        // Add all sustainability-related terms from content
+        for (List<String> domainTerms : domainKeywords.values()) {
+            for (String term : domainTerms) {
+                if (content.contains(term.toLowerCase())) {
+                    terms.add(term.toLowerCase());
+                }
+            }
+        }
+
+        return terms;
+    }
+
+    private boolean isStopWord(String word) {
+        Set<String> stopWords = Set.of("with", "from", "they", "this", "that", "will", "have", "been",
+                "their", "said", "each", "which", "them", "would", "make", "like");
+        return stopWords.contains(word);
+    }
+
+    private boolean matchesQueryIntent(EnhancedDocument doc, QueryType queryType) {
+        switch (queryType) {
+            case CALCULATION:
+                return doc.contentType == ContentType.CALCULATION || doc.hasFormulas || doc.hasNumbers;
+            case EXPLANATION:
+                return doc.contentType == ContentType.DEFINITION || doc.contentType == ContentType.GENERAL;
+            case PROCEDURE:
+                return doc.contentType == ContentType.PROCEDURE || doc.hasProcedures;
+            case COMPARISON:
+                return doc.contentType == ContentType.EXAMPLE || doc.contentType == ContentType.GENERAL;
+            case RECOMMENDATION:
+                return doc.contentType == ContentType.EXAMPLE || doc.contentType == ContentType.STANDARD;
+            default:
+                return true; // General queries can use any content type
+        }
+    }
+
     private QueryAnalysis analyzeQuery(String query) {
         QueryAnalysis analysis = new QueryAnalysis();
+        analysis.query = query;
         String lowerQuery = query.toLowerCase();
 
         // Determine query type
@@ -80,14 +205,14 @@ public class DocumentContextService {
         // Extract key concepts
         analysis.concepts = extractKeyConcepts(query);
 
-        // Determine domain focus
-        analysis.domain = determineDomainFocus(query);
+        // REMOVED: Domain focus determination to prevent bias
+        analysis.domain = "general"; // Always use general to prevent domain bias
 
         // Analyze complexity
         analysis.complexity = analyzeQueryComplexity(query);
 
-        log.debug("Query analysis: type={}, domain={}, complexity={}, concepts={}",
-                analysis.type, analysis.domain, analysis.complexity, analysis.concepts);
+        log.debug("Query analysis: type={}, complexity={}, concepts={}",
+                analysis.type, analysis.complexity, analysis.concepts);
 
         return analysis;
     }
@@ -96,7 +221,7 @@ public class DocumentContextService {
         List<String> concepts = new ArrayList<>();
         String lowerQuery = query.toLowerCase();
 
-        // Extract sustainability concepts
+        // Extract sustainability concepts without domain bias
         for (Map.Entry<String, List<String>> domainEntry : domainKeywords.entrySet()) {
             for (String keyword : domainEntry.getValue()) {
                 if (lowerQuery.contains(keyword.toLowerCase())) {
@@ -113,28 +238,6 @@ public class DocumentContextService {
         }
 
         return concepts.stream().distinct().collect(Collectors.toList());
-    }
-
-    private String determineDomainFocus(String query) {
-        String lowerQuery = query.toLowerCase();
-        Map<String, Integer> domainScores = new HashMap<>();
-
-        for (Map.Entry<String, List<String>> domainEntry : domainKeywords.entrySet()) {
-            int score = 0;
-            for (String keyword : domainEntry.getValue()) {
-                if (lowerQuery.contains(keyword.toLowerCase())) {
-                    score++;
-                }
-            }
-            if (score > 0) {
-                domainScores.put(domainEntry.getKey(), score);
-            }
-        }
-
-        return domainScores.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .orElse("general");
     }
 
     private QueryComplexity analyzeQueryComplexity(String query) {
@@ -205,33 +308,51 @@ public class DocumentContextService {
         }
     }
 
+    /**
+     * IMPROVED: More balanced content domain classification
+     */
     private String classifyContentDomain(String content) {
         String lowerContent = content.toLowerCase();
         Map<String, Integer> domainScores = new HashMap<>();
 
+        // Score each domain based on keyword presence
         for (Map.Entry<String, List<String>> domainEntry : domainKeywords.entrySet()) {
             int score = 0;
             for (String keyword : domainEntry.getValue()) {
-                // Count occurrences of each keyword
+                // Count occurrences with diminishing returns
                 int count = lowerContent.split(keyword.toLowerCase(), -1).length - 1;
-                score += count;
+                score += Math.min(count, 3); // Cap at 3 to prevent single keyword dominance
             }
             if (score > 0) {
                 domainScores.put(domainEntry.getKey(), score);
             }
         }
 
-        return domainScores.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .orElse("general");
+        // Return domain only if it has a clear lead and minimum threshold
+        Optional<Map.Entry<String, Integer>> topDomain = domainScores.entrySet().stream()
+                .filter(entry -> entry.getValue() >= 2) // Minimum threshold
+                .max(Map.Entry.comparingByValue());
+
+        if (topDomain.isPresent()) {
+            // Ensure the top domain has a significant lead
+            int topScore = topDomain.get().getValue();
+            long competingDomains = domainScores.values().stream()
+                    .filter(score -> score >= topScore - 1)
+                    .count();
+
+            if (competingDomains <= 2) {
+                return topDomain.get().getKey();
+            }
+        }
+
+        return "general";
     }
 
     private Set<String> extractKeyTerms(String content) {
         Set<String> keyTerms = new HashSet<>();
         String lowerContent = content.toLowerCase();
 
-        // Extract all domain keywords present
+        // Extract all domain keywords present (balanced approach)
         for (List<String> keywords : domainKeywords.values()) {
             for (String keyword : keywords) {
                 if (lowerContent.contains(keyword.toLowerCase())) {
@@ -242,9 +363,8 @@ public class DocumentContextService {
 
         // Extract numerical values and units
         Matcher numberMatcher = numberPattern.matcher(content);
-        while (numberMatcher.find() && keyTerms.size() < 20) { // Limit to prevent overload
+        if (numberMatcher.find()) {
             keyTerms.add("numerical_value");
-            break; // Just indicate presence, don't extract all numbers
         }
 
         return keyTerms;
@@ -253,42 +373,46 @@ public class DocumentContextService {
     private List<EnhancedDocument> rankDocumentsByRelevance(List<EnhancedDocument> documents, QueryAnalysis query) {
         return documents.stream()
                 .map(doc -> {
-                    doc.relevanceScore = calculateRelevanceScore(doc, query);
+                    doc.relevanceScore = calculateImprovedRelevanceScore(doc, query);
                     return doc;
                 })
                 .sorted((d1, d2) -> Double.compare(d2.relevanceScore, d1.relevanceScore))
                 .collect(Collectors.toList());
     }
 
-    private double calculateRelevanceScore(EnhancedDocument document, QueryAnalysis query) {
+    /**
+     * IMPROVED: Relevance scoring without domain bias
+     */
+    private double calculateImprovedRelevanceScore(EnhancedDocument document, QueryAnalysis query) {
         double score = 0.0;
 
-        // Content type matching
-        if (matchesQueryType(document.contentType, query.type)) {
-            score += 5.0;
-        }
-
-        // Domain matching
-        if (document.domain.equals(query.domain)) {
-            score += 3.0;
-        }
-
-        // Concept overlap
-        long conceptOverlap = document.keyTerms.stream()
-                .mapToLong(term -> query.concepts.contains(term) ? 1 : 0)
-                .sum();
-        score += conceptOverlap * 2.0;
-
-        // Content type bonuses
-        if (query.type == QueryType.CALCULATION && document.hasFormulas) {
+        // Content type matching (primary factor)
+        if (matchesQueryIntent(document, query.type)) {
             score += 4.0;
+        }
+
+        // Concept overlap (most important factor)
+        Set<String> queryTerms = extractQueryTerms(query.query.toLowerCase());
+        Set<String> docTerms = extractDocumentTerms(document.content.toLowerCase());
+
+        long conceptOverlap = queryTerms.stream()
+                .mapToLong(term -> docTerms.contains(term) ? 1 : 0)
+                .sum();
+        score += conceptOverlap * 3.0;
+
+        // Content quality bonuses
+        if (query.type == QueryType.CALCULATION && document.hasFormulas) {
+            score += 5.0;
         }
         if (query.type == QueryType.PROCEDURE && document.hasProcedures) {
             score += 4.0;
         }
-        if (document.hasNumbers && query.concepts.contains("numerical_data")) {
+        if (document.hasNumbers && queryTerms.contains("calculate")) {
             score += 2.0;
         }
+
+        // REMOVED: Domain matching to prevent bias
+        // Previous domain-based scoring removed
 
         // Recency bonus (if metadata available)
         Long timestamp = (Long) document.metadata.get("ingestion_timestamp");
@@ -304,24 +428,14 @@ public class DocumentContextService {
             score += 1.0; // Sweet spot for content length
         }
 
-        return score;
-    }
-
-    private boolean matchesQueryType(ContentType contentType, QueryType queryType) {
-        switch (queryType) {
-            case CALCULATION:
-                return contentType == ContentType.CALCULATION;
-            case EXPLANATION:
-                return contentType == ContentType.DEFINITION || contentType == ContentType.GENERAL;
-            case PROCEDURE:
-                return contentType == ContentType.PROCEDURE;
-            case COMPARISON:
-                return contentType == ContentType.EXAMPLE || contentType == ContentType.GENERAL;
-            case RECOMMENDATION:
-                return contentType == ContentType.EXAMPLE || contentType == ContentType.STANDARD;
-            default:
-                return true; // General queries can use any content type
+        // Penalty for very short or very long content
+        if (document.wordCount < 50) {
+            score -= 2.0;
+        } else if (document.wordCount > 3000) {
+            score -= 1.0;
         }
+
+        return Math.max(0, score); // Ensure non-negative score
     }
 
     private String buildContextForQueryType(List<EnhancedDocument> documents, QueryAnalysis query) {
@@ -443,11 +557,13 @@ public class DocumentContextService {
     }
 
     private void buildComparisonContext(StringBuilder context, List<EnhancedDocument> documents) {
+        // Group by domain for comparison, but treat all domains equally
         Map<String, List<EnhancedDocument>> domainGroups = documents.stream()
                 .collect(Collectors.groupingBy(doc -> doc.domain));
 
         for (Map.Entry<String, List<EnhancedDocument>> group : domainGroups.entrySet()) {
-            context.append("\n").append(group.getKey().toUpperCase().replace("_", " ")).append(":\n");
+            String domainLabel = group.getKey().replace("_", " ").toUpperCase();
+            context.append("\n").append(domainLabel).append(":\n");
 
             for (EnhancedDocument doc : group.getValue()) {
                 String source = (String) doc.metadata.getOrDefault("file_name", "Knowledge Base");
@@ -616,6 +732,7 @@ public class DocumentContextService {
 
     // Inner classes for analysis
     private static class QueryAnalysis {
+        String query;
         QueryType type;
         List<String> concepts = new ArrayList<>();
         String domain;
@@ -647,4 +764,5 @@ public class DocumentContextService {
     private enum ContentType {
         CALCULATION, PROCEDURE, DEFINITION, EXAMPLE, STANDARD, GENERAL
     }
+
 }

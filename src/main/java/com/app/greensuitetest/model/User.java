@@ -79,6 +79,7 @@ public class User {
     @Field("recovery_lock_until")
     private LocalDateTime recoveryLockUntil;
 
+
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         if (this.isGlobalAdmin()) {

@@ -26,13 +26,25 @@ public class ConversationContextService {
     // Cache for extracted context to improve performance
     private final Map<String, Map<String, Object>> contextCache = new ConcurrentHashMap<>();
 
-    // Pattern matching for context extraction
+    // Rin Kazuki personality context tracking
+    private final Map<String, List<String>> rinPersonalityMoments = new ConcurrentHashMap<>();
+    private final Map<String, Integer> environmentalEngagementScore = new ConcurrentHashMap<>();
+
+    // FIXED: Improved pattern matching for user name extraction
     private final List<Pattern> namePatterns = Arrays.asList(
-            Pattern.compile("(?i)my name is ([A-Za-z]+)", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("(?i)i'm ([A-Za-z]+)", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("(?i)i am ([A-Za-z]+)", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("(?i)call me ([A-Za-z]+)", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("(?i)i'm called ([A-Za-z]+)", Pattern.CASE_INSENSITIVE)
+            Pattern.compile("(?i)my name is ([A-Za-z][A-Za-z\\s]{1,30})", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)i'm ([A-Za-z][A-Za-z]{2,20})(?:\\s|$|\\.|,)", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)i am ([A-Za-z][A-Za-z]{2,20})(?:\\s|$|\\.|,)", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)call me ([A-Za-z][A-Za-z\\s]{1,20})", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)i'm called ([A-Za-z][A-Za-z\\s]{1,20})", Pattern.CASE_INSENSITIVE)
+    );
+
+    // Enhanced patterns for Rin's personality detection
+    private final List<Pattern> rinInteractionPatterns = Arrays.asList(
+            Pattern.compile("(?i)(thank you|thanks|appreciate)", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)(rin|cute|smart|helpful)", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)(environment|sustainability|green|carbon|emission)", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)(please|could you|would you)", Pattern.CASE_INSENSITIVE)
     );
 
     private final List<Pattern> companyPatterns = Arrays.asList(
@@ -56,13 +68,30 @@ public class ConversationContextService {
             "scope 1", "scope 2", "scope 3", "ghg", "greenhouse gas", "net zero"
     );
 
+    // Rin-specific emotional keywords
+    private final Set<String> rinTsundereKeywords = Set.of(
+            "hmph", "baka", "tch", "not that i care", "it's not like",
+            "don't misunderstand", "don't get the wrong idea", "whatever"
+    );
+
+    private final Set<String> rinDereKeywords = Set.of(
+            "i'm glad", "happy", "proud", "good job", "well done",
+            "keep it up", "you're learning", "not bad"
+    );
+
+    // FIXED: Blacklisted names that should never be considered user names
+    private final Set<String> blacklistedNames = Set.of(
+            "rin", "kazuki", "rin kazuki", "assistant", "ai", "chatbot",
+            "system", "bot", "claude", "gpt", "model", "computer"
+    );
+
     public Map<String, Object> buildComprehensiveContext(String conversationId, String userId, String sessionId, String currentMessage) {
         Map<String, Object> context = new HashMap<>();
 
         try {
             // Get conversation history
             List<Message> history = chatMemory.get(conversationId);
-            if (history == null || history.isEmpty()) {
+            if (history.isEmpty()) {
                 log.debug("No chat history found for conversation: {}", conversationId);
                 return context;
             }
@@ -73,6 +102,12 @@ public class ConversationContextService {
             context.putAll(extractTopicalContext(history));
             context.putAll(extractConversationMetrics(history));
             context.putAll(extractUserBehaviorPatterns(history));
+
+            // NEW: Extract Rin Kazuki personality context
+            context.putAll(extractRinPersonalityContext(history, conversationId));
+
+            // FIXED: Add conversation summary for "what did we talk about" queries
+            context.putAll(extractConversationSummary(history, currentMessage));
 
             // Add session and user context if available
             if (userId != null) {
@@ -97,11 +132,230 @@ public class ConversationContextService {
         return context;
     }
 
+    /**
+     * FIXED: Extract conversation summary to properly handle "what did we talk about" queries
+     */
+    private Map<String, Object> extractConversationSummary(List<Message> history, String currentMessage) {
+        Map<String, Object> summaryContext = new HashMap<>();
+
+        // Check if user is asking about conversation history
+        if (currentMessage != null) {
+            String lowerMessage = currentMessage.toLowerCase();
+            if (lowerMessage.contains("what did we talk about") ||
+                    lowerMessage.contains("what have we discussed") ||
+                    lowerMessage.contains("conversation history") ||
+                    lowerMessage.contains("our previous conversation") ||
+                    lowerMessage.contains("what was our conversation about") ||
+                    lowerMessage.contains("recap our conversation")) {
+
+                summaryContext.put("user_asking_about_conversation_history", true);
+
+                // FIXED: Check if this is actually a new conversation
+                if (history.size() <= 2) { // 0-2 messages means very new conversation
+                    summaryContext.put("is_new_conversation", true);
+                    summaryContext.put("conversation_status", "just_started");
+                } else {
+                    summaryContext.put("is_new_conversation", false);
+                    summaryContext.put("conversation_topics", extractActualConversationTopics(history));
+                    summaryContext.put("conversation_highlights", extractConversationHighlights(history));
+                    summaryContext.put("user_questions_asked", extractUserQuestions(history));
+                    summaryContext.put("conversation_flow", getConversationFlow(history));
+                }
+            }
+        }
+
+        return summaryContext;
+    }
+
+    /**
+     * FIXED: Extract actual topics discussed in the conversation (not from documents)
+     */
+    private List<String> extractActualConversationTopics(List<Message> history) {
+        Set<String> topics = new LinkedHashSet<>();
+
+        for (Message message : history) {
+            String content = getMessageContent(message).toLowerCase();
+
+            // Extract sustainability topics that were actually discussed
+            for (String keyword : sustainabilityKeywords) {
+                if (content.contains(keyword.toLowerCase())) {
+                    topics.add(keyword);
+                }
+            }
+        }
+
+        return new ArrayList<>(topics);
+    }
+
+    /**
+     * FIXED: Extract conversation highlights (main questions and answers)
+     */
+    private List<String> extractConversationHighlights(List<Message> history) {
+        List<String> highlights = new ArrayList<>();
+
+        for (int i = 0; i < history.size() - 1; i += 2) {
+            if (i + 1 < history.size()) {
+                Message userMsg = history.get(i);
+                Message assistantMsg = history.get(i + 1);
+
+                if (userMsg instanceof UserMessage && assistantMsg instanceof AssistantMessage) {
+                    String userContent = getMessageContent(userMsg);
+                    String assistantContent = getMessageContent(assistantMsg);
+
+                    // Skip very short exchanges or system-like messages
+                    if (userContent.length() > 10 && assistantContent.length() > 20 &&
+                            !userContent.toLowerCase().contains("what is my name") &&
+                            !userContent.toLowerCase().contains("what did we talk about")) {
+
+                        String summary = "User asked about: " + truncateText(userContent, 100) +
+                                " | Rin responded about: " + truncateText(assistantContent, 100);
+                        highlights.add(summary);
+                    }
+                }
+            }
+        }
+
+        // Return last 5 highlights to avoid overwhelming
+        return highlights.stream().skip(Math.max(0, highlights.size() - 5)).collect(Collectors.toList());
+    }
+
+    /**
+     * FIXED: Extract actual user questions from conversation
+     */
+    private List<String> extractUserQuestions(List<Message> history) {
+        List<String> questions = new ArrayList<>();
+
+        for (Message message : history) {
+            if (message instanceof UserMessage) {
+                String content = getMessageContent(message);
+
+                // Skip meta questions about name and conversation history
+                String lowerContent = content.toLowerCase();
+                if (lowerContent.contains("what is my name") ||
+                        lowerContent.contains("what did we talk about") ||
+                        lowerContent.contains("conversation history")) {
+                    continue;
+                }
+
+                if (content.contains("?") || content.toLowerCase().startsWith("how") ||
+                        content.toLowerCase().startsWith("what") || content.toLowerCase().startsWith("why")) {
+                    questions.add(truncateText(content, 150));
+                }
+            }
+        }
+
+        // Return last 3 questions
+        return questions.stream().skip(Math.max(0, questions.size() - 3)).collect(Collectors.toList());
+    }
+
+    /**
+     * FIXED: Get conversation flow summary
+     */
+    private String getConversationFlow(List<Message> history) {
+        if (history.size() <= 2) {
+            return "Just started conversation";
+        }
+
+        int exchanges = history.size() / 2;
+
+        // Count meaningful exchanges (exclude meta questions)
+        int meaningfulExchanges = 0;
+        for (int i = 0; i < history.size(); i++) {
+            if (history.get(i) instanceof UserMessage) {
+                String content = getMessageContent(history.get(i)).toLowerCase();
+                if (!content.contains("what is my name") &&
+                        !content.contains("what did we talk about") &&
+                        content.length() > 10) {
+                    meaningfulExchanges++;
+                }
+            }
+        }
+
+        if (meaningfulExchanges <= 1) {
+            return "Just getting started with introductions";
+        } else {
+            return String.format("Had %d exchanges covering various sustainability topics", meaningfulExchanges);
+        }
+    }
+
+    private String truncateText(String text, int maxLength) {
+        if (text.length() <= maxLength) {
+            return text;
+        }
+        return text.substring(0, maxLength - 3) + "...";
+    }
+
+    /**
+     * NEW: Extract Rin Kazuki's personality context from conversation history
+     */
+    private Map<String, Object> extractRinPersonalityContext(List<Message> history, String conversationId) {
+        Map<String, Object> rinContext = new HashMap<>();
+
+        int tsundereScore = 0;
+        int dereScore = 0;
+        int environmentalPassionScore = 0;
+        List<String> personalityMoments = new ArrayList<>();
+        List<String> environmentalTopics = new ArrayList<>();
+
+        for (Message message : history) {
+            if (message instanceof AssistantMessage) {
+                String content = getMessageContent(message).toLowerCase();
+
+                // Analyze Rin's tsundere expressions
+                for (String keyword : rinTsundereKeywords) {
+                    if (content.contains(keyword)) {
+                        tsundereScore++;
+                        personalityMoments.add("tsundere_moment: " + keyword);
+                    }
+                }
+
+                // Analyze Rin's dere expressions
+                for (String keyword : rinDereKeywords) {
+                    if (content.contains(keyword)) {
+                        dereScore++;
+                        personalityMoments.add("dere_moment: " + keyword);
+                    }
+                }
+
+                // Analyze environmental passion
+                for (String keyword : sustainabilityKeywords) {
+                    if (content.contains(keyword)) {
+                        environmentalPassionScore++;
+                        environmentalTopics.add(keyword);
+                    }
+                }
+
+                // Special Rin expressions
+                if (content.contains("no sappy lines")) {
+                    personalityMoments.add("akira_reference: no sappy lines");
+                }
+            }
+        }
+
+        // Calculate personality balance
+        double tsundereRatio = tsundereScore > 0 ? (double) tsundereScore / (tsundereScore + dereScore) : 0.7;
+        String personalityBalance = tsundereRatio > 0.6 ? "mostly_tsun" :
+                tsundereRatio > 0.4 ? "balanced_tsundere" : "leaning_dere";
+
+        rinContext.put("rin_tsundere_score", tsundereScore);
+        rinContext.put("rin_dere_score", dereScore);
+        rinContext.put("rin_environmental_passion", environmentalPassionScore);
+        rinContext.put("rin_personality_balance", personalityBalance);
+        rinContext.put("rin_personality_moments", personalityMoments.stream().limit(10).collect(Collectors.toList()));
+        rinContext.put("rin_environmental_topics", environmentalTopics.stream().distinct().limit(10).collect(Collectors.toList()));
+
+        // Store for future reference
+        rinPersonalityMoments.put(conversationId, personalityMoments);
+        environmentalEngagementScore.put(conversationId, environmentalPassionScore);
+
+        return rinContext;
+    }
+
     private Map<String, Object> extractPersonalInformation(List<Message> history) {
         Map<String, Object> personalInfo = new HashMap<>();
 
-        // Extract user name
-        String userName = extractWithPatterns(history, namePatterns, "name");
+        // FIXED: Extract user name with better validation
+        String userName = extractUserNameSafely(history);
         if (userName != null) {
             personalInfo.put("user_name", userName);
         }
@@ -112,14 +366,129 @@ public class ConversationContextService {
             personalInfo.put("user_preferences", preferences);
         }
 
-        // Extract communication style
-        String communicationStyle = analyzeCommunicationStyle(history);
-        if (communicationStyle != null) {
-            personalInfo.put("communication_style", communicationStyle);
-        }
+        // Extract communication style (enhanced for Rin interactions)
+        String communicationStyle = analyzeCommunicationStyleWithRin(history);
+        personalInfo.put("communication_style", communicationStyle);
 
         return personalInfo;
     }
+
+    /**
+     * FIXED: Safely extract user name with proper validation
+     */
+    private String extractUserNameSafely(List<Message> history) {
+        for (Message message : history) {
+            if (message instanceof UserMessage) {
+                String content = getMessageContent(message);
+                for (Pattern pattern : namePatterns) {
+                    Matcher matcher = pattern.matcher(content);
+                    if (matcher.find()) {
+                        String candidateName = matcher.group(1).trim().toLowerCase();
+
+                        // FIXED: Validate the extracted name
+                        if (isValidUserName(candidateName)) {
+                            return capitalizeFirstLetter(candidateName);
+                        }
+                    }
+                }
+            }
+        }
+        return null; // Return null if no valid user name found
+    }
+
+    /**
+     * FIXED: Validate if the extracted string is actually a user name
+     */
+    private boolean isValidUserName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return false;
+        }
+
+        String lowerName = name.toLowerCase().trim();
+
+        // Check against blacklisted names
+        if (blacklistedNames.contains(lowerName)) {
+            return false;
+        }
+
+        // Check if it's too short or too long
+        if (lowerName.length() < 2 || lowerName.length() > 30) {
+            return false;
+        }
+
+        // Check if it contains only letters and spaces
+        if (!lowerName.matches("^[a-z\\s]+$")) {
+            return false;
+        }
+
+        // Check if it's a common word (not a name)
+        Set<String> commonWords = Set.of("good", "fine", "okay", "yes", "no", "well", "sure", "maybe",
+                "think", "know", "see", "want", "need", "like", "time", "work", "here", "there",
+                "with", "from", "they", "this", "that", "will", "have", "been", "their", "said",
+                "each", "which", "them", "would", "make", "very", "more", "most", "some", "all");
+
+        if (commonWords.contains(lowerName)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private String capitalizeFirstLetter(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+        return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
+    }
+
+    /**
+     * Enhanced communication style analysis that considers interactions with Rin
+     */
+    private String analyzeCommunicationStyleWithRin(List<Message> history) {
+        int formalCount = 0;
+        int casualCount = 0;
+        int technicalCount = 0;
+        int friendlyCount = 0; // NEW: Track friendly interactions with Rin
+
+        String[] formalWords = {"please", "thank you", "would you", "could you", "appreciate"};
+        String[] casualWords = {"hey", "yeah", "ok", "cool", "awesome", "great"};
+        String[] technicalWords = {"methodology", "calculation", "algorithm", "parameters", "metrics"};
+        String[] friendlyWords = {"rin", "cute", "helpful", "smart", "thanks rin", "good job"}; // NEW
+
+        for (Message message : history) {
+            if (message instanceof UserMessage) {
+                String content = getMessageContent(message).toLowerCase();
+
+                for (String word : formalWords) {
+                    if (content.contains(word)) formalCount++;
+                }
+                for (String word : casualWords) {
+                    if (content.contains(word)) casualCount++;
+                }
+                for (String word : technicalWords) {
+                    if (content.contains(word)) technicalCount++;
+                }
+                for (String word : friendlyWords) { // NEW
+                    if (content.contains(word)) friendlyCount++;
+                }
+            }
+        }
+
+        // Enhanced style detection
+        if (friendlyCount > 2) {
+            return "friendly_with_rin";
+        } else if (technicalCount > formalCount && technicalCount > casualCount) {
+            return "technical";
+        } else if (formalCount > casualCount) {
+            return "formal";
+        } else if (casualCount > 0) {
+            return "casual";
+        }
+
+        return "neutral";
+    }
+
+    // ... [Keep all the existing helper methods from the original code] ...
 
     private Map<String, Object> extractBusinessContext(List<Message> history) {
         Map<String, Object> businessContext = new HashMap<>();
@@ -136,9 +505,9 @@ public class ConversationContextService {
             businessContext.put("user_role", role);
         }
 
-        // Extract industry/domain
-        String domain = extractDomain(history);
-        if (domain != null) {
+        // Extract industry/domain with improved logic (FIXED from original)
+        String domain = extractDomainImproved(history);
+        if (domain != null && !domain.equals("unknown")) {
             businessContext.put("user_domain", domain);
         }
 
@@ -182,6 +551,7 @@ public class ConversationContextService {
         int assistantMessages = 0;
         int totalWords = 0;
         int questions = 0;
+        int rinPersonalityExpressions = 0; // NEW
 
         for (Message message : history) {
             String content = getMessageContent(message);
@@ -191,6 +561,18 @@ public class ConversationContextService {
                 questions += content.split("\\?").length - 1;
             } else if (message instanceof AssistantMessage) {
                 assistantMessages++;
+                // Count Rin's personality expressions
+                String lowerContent = content.toLowerCase();
+                for (String keyword : rinTsundereKeywords) {
+                    if (lowerContent.contains(keyword)) {
+                        rinPersonalityExpressions++;
+                    }
+                }
+                for (String keyword : rinDereKeywords) {
+                    if (lowerContent.contains(keyword)) {
+                        rinPersonalityExpressions++;
+                    }
+                }
             }
 
             totalWords += content.split("\\s+").length;
@@ -201,6 +583,7 @@ public class ConversationContextService {
         metrics.put("total_words", totalWords);
         metrics.put("questions_asked", questions);
         metrics.put("avg_words_per_message", history.isEmpty() ? 0 : totalWords / history.size());
+        metrics.put("rin_personality_expressions", rinPersonalityExpressions); // NEW
 
         return metrics;
     }
@@ -222,13 +605,71 @@ public class ConversationContextService {
 
         // Analyze expertise level indicators
         String expertiseLevel = analyzeExpertiseLevel(history);
-        if (expertiseLevel != null) {
-            patterns.put("expertise_level", expertiseLevel);
+        patterns.put("expertise_level", expertiseLevel);
+
+        // NEW: Analyze Rin interaction patterns
+        Map<String, Integer> rinInteractionPatterns = analyzeRinInteractionPatterns(history);
+        if (!rinInteractionPatterns.isEmpty()) {
+            patterns.put("rin_interaction_patterns", rinInteractionPatterns);
         }
 
         return patterns;
     }
 
+    /**
+     * NEW: Analyze how users interact with Rin's personality
+     */
+    private Map<String, Integer> analyzeRinInteractionPatterns(List<Message> history) {
+        Map<String, Integer> patterns = new HashMap<>();
+
+        int complimentsToRin = 0;
+        int environmentalQuestions = 0;
+        int personalityAcknowledgments = 0;
+        int politeInteractions = 0;
+
+        for (Message message : history) {
+            if (message instanceof UserMessage) {
+                String content = getMessageContent(message).toLowerCase();
+
+                // Count compliments or acknowledgments to Rin
+                if (content.contains("rin") && (content.contains("good") || content.contains("smart") ||
+                        content.contains("helpful") || content.contains("cute") || content.contains("thank"))) {
+                    complimentsToRin++;
+                }
+
+                // Count environmental engagement
+                for (String keyword : sustainabilityKeywords) {
+                    if (content.contains(keyword)) {
+                        environmentalQuestions++;
+                        break; // Count once per message
+                    }
+                }
+
+                // Count personality acknowledgments
+                if (content.contains("tsundere") || content.contains("personality") ||
+                        content.contains("mood") || content.contains("character")) {
+                    personalityAcknowledgments++;
+                }
+
+                // Count polite interactions
+                for (Pattern pattern : rinInteractionPatterns) {
+                    if (pattern.matcher(content).find()) {
+                        politeInteractions++;
+                        break; // Count once per message
+                    }
+                }
+            }
+        }
+
+        patterns.put("compliments_to_rin", complimentsToRin);
+        patterns.put("environmental_questions", environmentalQuestions);
+        patterns.put("personality_acknowledgments", personalityAcknowledgments);
+        patterns.put("polite_interactions", politeInteractions);
+
+        return patterns;
+    }
+
+    // Keep all existing helper methods...
     private String extractWithPatterns(List<Message> history, List<Pattern> patterns, String type) {
         for (Message message : history) {
             if (message instanceof UserMessage) {
@@ -267,91 +708,80 @@ public class ConversationContextService {
         return preferences.stream().distinct().collect(Collectors.toList());
     }
 
-    private String analyzeCommunicationStyle(List<Message> history) {
-        int formalCount = 0;
-        int casualCount = 0;
-        int technicalCount = 0;
+    /**
+     * FIXED: Improved domain extraction with balanced scoring and higher thresholds
+     * This addresses the agriculture domain bias issue from the original
+     */
+    private String extractDomainImproved(List<Message> history) {
+        Map<String, Integer> domainScores = new HashMap<>();
 
-        String[] formalWords = {"please", "thank you", "would you", "could you", "appreciate"};
-        String[] casualWords = {"hey", "yeah", "ok", "cool", "awesome", "great"};
-        String[] technicalWords = {"methodology", "calculation", "algorithm", "parameters", "metrics"};
+        // Initialize all domains
+        domainScores.put("manufacturing", 0);
+        domainScores.put("technology", 0);
+        domainScores.put("finance", 0);
+        domainScores.put("healthcare", 0);
+        domainScores.put("retail", 0);
+        domainScores.put("energy", 0);
+        domainScores.put("construction", 0);
+        domainScores.put("transportation", 0);
+        domainScores.put("agriculture", 0);
 
-        for (Message message : history) {
-            if (message instanceof UserMessage) {
-                String content = getMessageContent(message).toLowerCase();
+        // Enhanced keyword sets with more specific terms
+        Map<String, String[]> domainKeywords = Map.of(
+                "manufacturing", new String[]{"factory", "production", "assembly", "manufacturing", "industrial", "plant", "machinery", "fabrication"},
+                "technology", new String[]{"software", "technology", "digital", "IT", "tech", "platform", "app", "system", "programming", "data"},
+                "finance", new String[]{"bank", "financial", "investment", "capital", "fund", "trading", "portfolio", "loan", "credit"},
+                "healthcare", new String[]{"hospital", "medical", "healthcare", "pharmaceutical", "clinical", "patient", "medicine", "treatment"},
+                "retail", new String[]{"retail", "store", "customer", "sales", "commerce", "shopping", "consumer", "merchandise"},
+                "energy", new String[]{"energy", "power", "utility", "grid", "renewable", "electricity", "oil", "gas", "solar", "wind"},
+                "construction", new String[]{"construction", "building", "infrastructure", "contractor", "architect", "cement", "concrete"},
+                "transportation", new String[]{"logistics", "transportation", "shipping", "freight", "delivery", "trucking", "fleet", "cargo"},
+                "agriculture", new String[]{"agriculture", "farming", "crop", "livestock", "agricultural", "harvest", "farm", "rural", "soil"}
+        );
 
-                for (String word : formalWords) {
-                    if (content.contains(word)) formalCount++;
-                }
-                for (String word : casualWords) {
-                    if (content.contains(word)) casualCount++;
-                }
-                for (String word : technicalWords) {
-                    if (content.contains(word)) technicalCount++;
-                }
-            }
-        }
-
-        if (technicalCount > formalCount && technicalCount > casualCount) {
-            return "technical";
-        } else if (formalCount > casualCount) {
-            return "formal";
-        } else if (casualCount > 0) {
-            return "casual";
-        }
-
-        return "neutral";
-    }
-
-    private String extractDomain(List<Message> history) {
-        Map<String, Integer> domainKeywords = new HashMap<>();
-        domainKeywords.put("manufacturing", 0);
-        domainKeywords.put("technology", 0);
-        domainKeywords.put("finance", 0);
-        domainKeywords.put("healthcare", 0);
-        domainKeywords.put("retail", 0);
-        domainKeywords.put("energy", 0);
-        domainKeywords.put("construction", 0);
-        domainKeywords.put("transportation", 0);
-        domainKeywords.put("agriculture", 0);
-
-        String[] manufacturingWords = {"factory", "production", "assembly", "manufacturing", "industrial"};
-        String[] techWords = {"software", "technology", "digital", "IT", "tech", "platform"};
-        String[] financeWords = {"bank", "financial", "investment", "capital", "fund"};
-        String[] healthcareWords = {"hospital", "medical", "healthcare", "pharmaceutical", "clinical"};
-        String[] retailWords = {"retail", "store", "customer", "sales", "commerce"};
-        String[] energyWords = {"energy", "power", "utility", "grid", "renewable"};
-        String[] constructionWords = {"construction", "building", "infrastructure", "contractor"};
-        String[] transportWords = {"logistics", "transportation", "shipping", "freight", "delivery"};
-        String[] agriWords = {"agriculture", "farming", "crop", "livestock", "agricultural"};
-
+        // Count keywords with weighted scoring
         for (Message message : history) {
             String content = getMessageContent(message).toLowerCase();
 
-            countKeywords(content, manufacturingWords, domainKeywords, "manufacturing");
-            countKeywords(content, techWords, domainKeywords, "technology");
-            countKeywords(content, financeWords, domainKeywords, "finance");
-            countKeywords(content, healthcareWords, domainKeywords, "healthcare");
-            countKeywords(content, retailWords, domainKeywords, "retail");
-            countKeywords(content, energyWords, domainKeywords, "energy");
-            countKeywords(content, constructionWords, domainKeywords, "construction");
-            countKeywords(content, transportWords, domainKeywords, "transportation");
-            countKeywords(content, agriWords, domainKeywords, "agriculture");
-        }
+            for (Map.Entry<String, String[]> entry : domainKeywords.entrySet()) {
+                String domain = entry.getKey();
+                String[] keywords = entry.getValue();
 
-        return domainKeywords.entrySet().stream()
-                .filter(entry -> entry.getValue() > 0)
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .orElse(null);
-    }
-
-    private void countKeywords(String content, String[] keywords, Map<String, Integer> domainKeywords, String domain) {
-        for (String keyword : keywords) {
-            if (content.contains(keyword)) {
-                domainKeywords.merge(domain, 1, Integer::sum);
+                for (String keyword : keywords) {
+                    if (content.contains(keyword)) {
+                        // More specific terms get higher weights
+                        int weight = keyword.length() > 6 ? 2 : 1;
+                        domainScores.merge(domain, weight, Integer::sum);
+                    }
+                }
             }
         }
+
+        // Find the highest scoring domain with minimum threshold
+        Optional<Map.Entry<String, Integer>> topDomain = domainScores.entrySet().stream()
+                .filter(entry -> entry.getValue() >= 3) // Increased threshold to require stronger evidence
+                .max(Map.Entry.comparingByValue());
+
+        if (topDomain.isPresent()) {
+            // Additional validation: ensure the domain has significantly more mentions than others
+            int topScore = topDomain.get().getValue();
+            long competingDomains = domainScores.values().stream()
+                    .filter(score -> score >= Math.max(2, topScore - 1))
+                    .count();
+
+            // Only return domain if it's clearly dominant
+            if (competingDomains <= 2) {
+                String domain = topDomain.get().getKey();
+                log.debug("Detected user domain: {} with score: {}", domain, topScore);
+                return domain;
+            } else {
+                log.debug("Multiple competing domains detected, returning general");
+                return "general";
+            }
+        }
+
+        log.debug("No clear domain detected from conversation history");
+        return "general"; // Default to general instead of null
     }
 
     private List<String> extractBusinessGoals(List<Message> history) {
@@ -592,12 +1022,56 @@ public class ConversationContextService {
 
                 // Analyze and update recent topics
                 updateRecentTopics(cachedContext, userMessage + " " + assistantResponse);
+
+                // NEW: Update Rin personality tracking
+                updateRinPersonalityTracking(conversationId, userMessage, assistantResponse);
             }
 
             log.debug("Updated context cache for conversation: {}", conversationId);
         } catch (Exception e) {
             log.warn("Failed to update context after interaction: {}", e.getMessage());
         }
+    }
+
+    /**
+     * NEW: Update Rin's personality tracking based on interaction
+     */
+    private void updateRinPersonalityTracking(String conversationId, String userMessage, String assistantResponse) {
+        List<String> moments = rinPersonalityMoments.getOrDefault(conversationId, new ArrayList<>());
+
+        String lowerResponse = assistantResponse.toLowerCase();
+        String lowerUser = userMessage.toLowerCase();
+
+        // Track Rin's tsundere moments
+        for (String keyword : rinTsundereKeywords) {
+            if (lowerResponse.contains(keyword)) {
+                moments.add("tsundere: " + keyword + " at " + LocalDateTime.now().format(DateTimeFormatter.ISO_TIME));
+            }
+        }
+
+        // Track Rin's dere moments
+        for (String keyword : rinDereKeywords) {
+            if (lowerResponse.contains(keyword)) {
+                moments.add("dere: " + keyword + " at " + LocalDateTime.now().format(DateTimeFormatter.ISO_TIME));
+            }
+        }
+
+        // Track user's environmental engagement
+        int currentScore = environmentalEngagementScore.getOrDefault(conversationId, 0);
+        for (String keyword : sustainabilityKeywords) {
+            if (lowerUser.contains(keyword)) {
+                currentScore++;
+                break; // Count once per message
+            }
+        }
+
+        // Keep only recent moments (last 20)
+        if (moments.size() > 20) {
+            moments = moments.subList(moments.size() - 20, moments.size());
+        }
+
+        rinPersonalityMoments.put(conversationId, moments);
+        environmentalEngagementScore.put(conversationId, currentScore);
     }
 
     private void updateRecentTopics(Map<String, Object> context, String content) {
@@ -610,7 +1084,7 @@ public class ConversationContextService {
                 recentTopics.add(keyword);
                 // Keep only the most recent 10 topics
                 if (recentTopics.size() > 10) {
-                    recentTopics.remove(0);
+                    recentTopics.removeFirst();
                 }
             }
         }
@@ -632,6 +1106,11 @@ public class ConversationContextService {
             summary.put("recent_focus_areas", context.get("recent_focus_areas"));
             summary.put("interaction_count", context.get("user_messages"));
 
+            // NEW: Add Rin personality summary
+            summary.put("rin_personality_balance", context.get("rin_personality_balance"));
+            summary.put("rin_environmental_passion", context.get("rin_environmental_passion"));
+            summary.put("environmental_engagement_score", environmentalEngagementScore.get(conversationId));
+
             return summary;
         } catch (Exception e) {
             log.error("Failed to get context summary: {}", e.getMessage());
@@ -639,13 +1118,33 @@ public class ConversationContextService {
         }
     }
 
+    /**
+     * NEW: Get Rin's personality moments for a conversation
+     */
+    public List<String> getRinPersonalityMoments(String conversationId) {
+        return rinPersonalityMoments.getOrDefault(conversationId, new ArrayList<>());
+    }
+
+    /**
+     * NEW: Get environmental engagement score
+     */
+    public int getEnvironmentalEngagementScore(String conversationId) {
+        return environmentalEngagementScore.getOrDefault(conversationId, 0);
+    }
+
     public void clearContextCache(String conversationId) {
         contextCache.remove(conversationId);
-        log.debug("Cleared context cache for conversation: {}", conversationId);
+        // NEW: Clear Rin personality data
+        rinPersonalityMoments.remove(conversationId);
+        environmentalEngagementScore.remove(conversationId);
+        log.debug("Cleared context cache and Rin personality data for conversation: {}", conversationId);
     }
 
     public void clearAllContextCache() {
         contextCache.clear();
-        log.info("Cleared all context cache");
+        // NEW: Clear all Rin personality data
+        rinPersonalityMoments.clear();
+        environmentalEngagementScore.clear();
+        log.info("Cleared all context cache and Rin personality data");
     }
 }
