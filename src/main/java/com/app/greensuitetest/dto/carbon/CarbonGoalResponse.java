@@ -20,5 +20,6 @@ public class CarbonGoalResponse {
         private boolean isGoalMet;
         private Double reductionPercent;
         private Double remainingPercent;
+        private boolean dataAvailable;
     }
 }

@@ -36,6 +36,7 @@ public class CarbonGoal {
     private Double fuelRemaining;
     private Double waterRemaining;
     private Double wasteRemaining;
+    
 
 
     private Double electricityReduction;

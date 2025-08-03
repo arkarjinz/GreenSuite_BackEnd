@@ -222,9 +222,10 @@ public class CarbonGoalService {
         YearMonth currentMonth = YearMonth.parse(request.getSelectedMonth());
         YearMonth previousMonth = currentMonth.minusMonths(1);
 
-        // Fetch emissions data for both months
+
        /* Map<String, Double> currentEmissions = getEmissionsByCategory(currentMonth);
         Map<String, Double> previousEmissions = getEmissionsByCategory(previousMonth);*/
+        // Fetch emissions data for both months
         Map<String, Double> currentEmissions = getEmissionsByCategory(currentMonth.getYear(), currentMonth.getMonthValue());
         Map<String, Double> previousEmissions = getEmissionsByCategory(previousMonth.getYear(), previousMonth.getMonthValue());
 // If no previous month data, return a message asking user to add it
@@ -235,7 +236,7 @@ public class CarbonGoalService {
 
         // Calculate results per category
         Map<String, CarbonGoalResponse.CategoryResult> results = new HashMap<>();
-        request.getTargetPercentByCategory().forEach((category, targetPercent) -> {
+       /* request.getTargetPercentByCategory().forEach((category, targetPercent) -> {
             double current = currentEmissions.getOrDefault(category, 0.0);
             double previous = previousEmissions.getOrDefault(category, 0.0);
             double reductionPercent = calculateReductionPercent(current, previous);
@@ -246,8 +247,34 @@ public class CarbonGoalService {
                     reductionPercent,
                     remainingPercent
             ));
+        });*/
+
+        request.getTargetPercentByCategory().forEach((category, targetPercent) -> {
+            boolean dataAvailable = previousEmissions.containsKey(category) && currentEmissions.containsKey(category);
+
+            if (!dataAvailable) {
+                // No emissions data → cannot evaluate
+                results.put(category, new CarbonGoalResponse.CategoryResult(
+                        false,
+                        0.0,
+                        0.0,
+                        false // ⬅️ dataAvailable
+                ));
+            } else {
+                double current = currentEmissions.get(category);
+                double previous = previousEmissions.get(category);
+                double reductionPercent = calculateReductionPercent(current, previous);
+                double remainingPercent = Math.max(0, targetPercent - reductionPercent);
+
+                results.put(category, new CarbonGoalResponse.CategoryResult(
+                        reductionPercent >= targetPercent,
+                        reductionPercent,
+                        remainingPercent,
+                        true // ⬅️ dataAvailable
+                ));
+            }
         });
-        //String message = generateMessage(results);
+
         String message="";
         return new CarbonGoalResponse(message, results);
 
