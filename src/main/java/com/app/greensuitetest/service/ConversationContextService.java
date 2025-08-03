@@ -32,11 +32,9 @@ public class ConversationContextService {
 
     // FIXED: Improved pattern matching for user name extraction
     private final List<Pattern> namePatterns = Arrays.asList(
-            Pattern.compile("(?i)my name is ([A-Za-z][A-Za-z\\s]{1,30})", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("(?i)i'm ([A-Za-z][A-Za-z]{2,20})(?:\\s|$|\\.|,)", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("(?i)i am ([A-Za-z][A-Za-z]{2,20})(?:\\s|$|\\.|,)", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("(?i)call me ([A-Za-z][A-Za-z\\s]{1,20})", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("(?i)i'm called ([A-Za-z][A-Za-z\\s]{1,20})", Pattern.CASE_INSENSITIVE)
+            Pattern.compile("(?i)(?:my name is|i'm called|call me|i am)\\s+([A-Za-z][A-Za-z\\s]{1,30})(?:\\s|$|\\.|,|!)", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)i'm\\s+([A-Za-z][A-Za-z]{2,20})(?:\\s|$|\\.|,|!)", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)i am\\s+([A-Za-z][A-Za-z]{2,20})(?:\\s|$|\\.|,|!)", Pattern.CASE_INSENSITIVE)
     );
 
     // Enhanced patterns for Rin's personality detection
@@ -82,7 +80,26 @@ public class ConversationContextService {
     // FIXED: Blacklisted names that should never be considered user names
     private final Set<String> blacklistedNames = Set.of(
             "rin", "kazuki", "rin kazuki", "assistant", "ai", "chatbot",
-            "system", "bot", "claude", "gpt", "model", "computer"
+            "system", "bot", "claude", "gpt", "model", "computer", "hello",
+            "hi", "hey", "good", "fine", "okay", "yes", "no", "sure", "maybe"
+    );
+
+    // FIXED: Patterns to detect name-related queries
+    private final List<Pattern> nameQuestionPatterns = Arrays.asList(
+            Pattern.compile("(?i)what\\s+is\\s+my\\s+name", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)what's\\s+my\\s+name", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)do\\s+you\\s+know\\s+my\\s+name", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)my\\s+name\\s+is\\s+what", Pattern.CASE_INSENSITIVE)
+    );
+
+    // FIXED: Patterns to detect conversation history queries
+    private final List<Pattern> historyQuestionPatterns = Arrays.asList(
+            Pattern.compile("(?i)what\\s+did\\s+we\\s+talk\\s+about", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)what\\s+have\\s+we\\s+discussed", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)our\\s+conversation\\s+history", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)what\\s+was\\s+our\\s+conversation", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)recap\\s+our\\s+conversation", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)conversation\\s+summary", Pattern.CASE_INSENSITIVE)
     );
 
     public Map<String, Object> buildComprehensiveContext(String conversationId, String userId, String sessionId, String currentMessage) {
@@ -91,23 +108,31 @@ public class ConversationContextService {
         try {
             // Get conversation history
             List<Message> history = chatMemory.get(conversationId);
+
+            // FIXED: Always check for name and history queries first
+            context.putAll(analyzeCurrentMessage(currentMessage, history));
+
             if (history.isEmpty()) {
                 log.debug("No chat history found for conversation: {}", conversationId);
+                context.put("is_new_conversation", true);
+                context.put("history_length", 0);
                 return context;
             }
 
-            // Extract various context types
-            context.putAll(extractPersonalInformation(history));
-            context.putAll(extractBusinessContext(history));
-            context.putAll(extractTopicalContext(history));
+            // Extract various context types only if not asking meta questions
+            boolean isMetaQuery = (Boolean) context.getOrDefault("user_asking_about_name", false) ||
+                    (Boolean) context.getOrDefault("user_asking_about_conversation_history", false);
+
+            if (!isMetaQuery) {
+                context.putAll(extractPersonalInformation(history));
+                context.putAll(extractBusinessContext(history));
+                context.putAll(extractTopicalContext(history));
+                context.putAll(extractUserBehaviorPatterns(history));
+            }
+
+            // Always extract these for metadata
             context.putAll(extractConversationMetrics(history));
-            context.putAll(extractUserBehaviorPatterns(history));
-
-            // NEW: Extract Rin Kazuki personality context
             context.putAll(extractRinPersonalityContext(history, conversationId));
-
-            // FIXED: Add conversation summary for "what did we talk about" queries
-            context.putAll(extractConversationSummary(history, currentMessage));
 
             // Add session and user context if available
             if (userId != null) {
@@ -133,36 +158,127 @@ public class ConversationContextService {
     }
 
     /**
-     * FIXED: Extract conversation summary to properly handle "what did we talk about" queries
+     * FIXED: Analyze current message for meta queries (name and history questions)
      */
-    private Map<String, Object> extractConversationSummary(List<Message> history, String currentMessage) {
-        Map<String, Object> summaryContext = new HashMap<>();
+    private Map<String, Object> analyzeCurrentMessage(String currentMessage, List<Message> history) {
+        Map<String, Object> messageContext = new HashMap<>();
 
-        // Check if user is asking about conversation history
-        if (currentMessage != null) {
-            String lowerMessage = currentMessage.toLowerCase();
-            if (lowerMessage.contains("what did we talk about") ||
-                    lowerMessage.contains("what have we discussed") ||
-                    lowerMessage.contains("conversation history") ||
-                    lowerMessage.contains("our previous conversation") ||
-                    lowerMessage.contains("what was our conversation about") ||
-                    lowerMessage.contains("recap our conversation")) {
+        if (currentMessage == null || currentMessage.trim().isEmpty()) {
+            return messageContext;
+        }
 
-                summaryContext.put("user_asking_about_conversation_history", true);
+        String lowerMessage = currentMessage.toLowerCase().trim();
 
-                // FIXED: Check if this is actually a new conversation
-                if (history.size() <= 2) { // 0-2 messages means very new conversation
-                    summaryContext.put("is_new_conversation", true);
-                    summaryContext.put("conversation_status", "just_started");
-                } else {
-                    summaryContext.put("is_new_conversation", false);
-                    summaryContext.put("conversation_topics", extractActualConversationTopics(history));
-                    summaryContext.put("conversation_highlights", extractConversationHighlights(history));
-                    summaryContext.put("user_questions_asked", extractUserQuestions(history));
-                    summaryContext.put("conversation_flow", getConversationFlow(history));
+        // FIXED: Check if asking about their own name
+        boolean isAskingAboutName = nameQuestionPatterns.stream()
+                .anyMatch(pattern -> pattern.matcher(lowerMessage).find());
+
+        if (isAskingAboutName) {
+            messageContext.put("user_asking_about_name", true);
+
+            // Look for user's name in conversation history
+            String userName = extractUserNameFromHistory(history);
+            messageContext.put("user_name", userName); // null if not found
+
+            log.debug("User asking about their name. Found name: {}", userName);
+            return messageContext;
+        }
+
+        // FIXED: Check if asking about conversation history
+        boolean isAskingAboutHistory = historyQuestionPatterns.stream()
+                .anyMatch(pattern -> pattern.matcher(lowerMessage).find());
+
+        if (isAskingAboutHistory) {
+            messageContext.put("user_asking_about_conversation_history", true);
+
+            // FIXED: Determine if this is actually a new conversation
+            int meaningfulExchanges = countMeaningfulExchanges(history);
+
+            if (meaningfulExchanges == 0 || history.size() <= 2) {
+                messageContext.put("is_new_conversation", true);
+                messageContext.put("conversation_status", "just_started");
+                log.debug("User asking about history but conversation just started");
+            } else {
+                messageContext.put("is_new_conversation", false);
+                messageContext.putAll(extractConversationSummary(history));
+                log.debug("User asking about history with {} meaningful exchanges", meaningfulExchanges);
+            }
+
+            return messageContext;
+        }
+
+        return messageContext;
+    }
+
+    /**
+     * FIXED: Extract user name specifically from conversation history
+     */
+    private String extractUserNameFromHistory(List<Message> history) {
+        for (Message message : history) {
+            if (message instanceof UserMessage) {
+                String content = getMessageContent(message);
+                for (Pattern pattern : namePatterns) {
+                    Matcher matcher = pattern.matcher(content);
+                    if (matcher.find()) {
+                        String candidateName = matcher.group(1).trim();
+                        if (isValidUserName(candidateName)) {
+                            return capitalizeFirstLetter(candidateName);
+                        }
+                    }
                 }
             }
         }
+        return null; // No name found
+    }
+
+    /**
+     * FIXED: Count meaningful exchanges (excluding meta questions)
+     */
+    private int countMeaningfulExchanges(List<Message> history) {
+        int meaningfulCount = 0;
+
+        for (Message message : history) {
+            if (message instanceof UserMessage) {
+                String content = getMessageContent(message).toLowerCase().trim();
+
+                // Skip meta questions and very short messages
+                if (content.length() > 5 &&
+                        !isMetaQuestion(content) &&
+                        !isGreeting(content)) {
+                    meaningfulCount++;
+                }
+            }
+        }
+
+        return meaningfulCount;
+    }
+
+    /**
+     * FIXED: Check if message is a meta question
+     */
+    private boolean isMetaQuestion(String content) {
+        return nameQuestionPatterns.stream().anyMatch(p -> p.matcher(content).find()) ||
+                historyQuestionPatterns.stream().anyMatch(p -> p.matcher(content).find());
+    }
+
+    /**
+     * FIXED: Check if message is just a greeting
+     */
+    private boolean isGreeting(String content) {
+        String[] greetings = {"hi", "hello", "hey", "good morning", "good afternoon", "good evening"};
+        return Arrays.stream(greetings).anyMatch(content::contains);
+    }
+
+    /**
+     * FIXED: Extract conversation summary for history queries
+     */
+    private Map<String, Object> extractConversationSummary(List<Message> history) {
+        Map<String, Object> summaryContext = new HashMap<>();
+
+        summaryContext.put("conversation_topics", extractActualConversationTopics(history));
+        summaryContext.put("conversation_highlights", extractConversationHighlights(history));
+        summaryContext.put("user_questions_asked", extractUserQuestions(history));
+        summaryContext.put("conversation_flow", getConversationFlow(history));
 
         return summaryContext;
     }
@@ -174,12 +290,19 @@ public class ConversationContextService {
         Set<String> topics = new LinkedHashSet<>();
 
         for (Message message : history) {
-            String content = getMessageContent(message).toLowerCase();
+            if (message instanceof UserMessage) {
+                String content = getMessageContent(message).toLowerCase();
 
-            // Extract sustainability topics that were actually discussed
-            for (String keyword : sustainabilityKeywords) {
-                if (content.contains(keyword.toLowerCase())) {
-                    topics.add(keyword);
+                // Skip meta questions
+                if (isMetaQuestion(content)) {
+                    continue;
+                }
+
+                // Extract sustainability topics that were actually discussed
+                for (String keyword : sustainabilityKeywords) {
+                    if (content.contains(keyword.toLowerCase())) {
+                        topics.add(keyword);
+                    }
                 }
             }
         }
@@ -202,10 +325,10 @@ public class ConversationContextService {
                     String userContent = getMessageContent(userMsg);
                     String assistantContent = getMessageContent(assistantMsg);
 
-                    // Skip very short exchanges or system-like messages
+                    // Skip meta questions and greetings
                     if (userContent.length() > 10 && assistantContent.length() > 20 &&
-                            !userContent.toLowerCase().contains("what is my name") &&
-                            !userContent.toLowerCase().contains("what did we talk about")) {
+                            !isMetaQuestion(userContent.toLowerCase()) &&
+                            !isGreeting(userContent.toLowerCase())) {
 
                         String summary = "User asked about: " + truncateText(userContent, 100) +
                                 " | Rin responded about: " + truncateText(assistantContent, 100);
@@ -231,9 +354,7 @@ public class ConversationContextService {
 
                 // Skip meta questions about name and conversation history
                 String lowerContent = content.toLowerCase();
-                if (lowerContent.contains("what is my name") ||
-                        lowerContent.contains("what did we talk about") ||
-                        lowerContent.contains("conversation history")) {
+                if (isMetaQuestion(lowerContent) || isGreeting(lowerContent)) {
                     continue;
                 }
 
@@ -252,29 +373,14 @@ public class ConversationContextService {
      * FIXED: Get conversation flow summary
      */
     private String getConversationFlow(List<Message> history) {
-        if (history.size() <= 2) {
-            return "Just started conversation";
-        }
+        int meaningfulExchanges = countMeaningfulExchanges(history);
 
-        int exchanges = history.size() / 2;
-
-        // Count meaningful exchanges (exclude meta questions)
-        int meaningfulExchanges = 0;
-        for (int i = 0; i < history.size(); i++) {
-            if (history.get(i) instanceof UserMessage) {
-                String content = getMessageContent(history.get(i)).toLowerCase();
-                if (!content.contains("what is my name") &&
-                        !content.contains("what did we talk about") &&
-                        content.length() > 10) {
-                    meaningfulExchanges++;
-                }
-            }
-        }
-
-        if (meaningfulExchanges <= 1) {
-            return "Just getting started with introductions";
+        if (meaningfulExchanges == 0) {
+            return "Just started conversation with introductions";
+        } else if (meaningfulExchanges == 1) {
+            return "Had one meaningful exchange";
         } else {
-            return String.format("Had %d exchanges covering various sustainability topics", meaningfulExchanges);
+            return String.format("Had %d meaningful exchanges covering sustainability topics", meaningfulExchanges);
         }
     }
 
@@ -355,7 +461,7 @@ public class ConversationContextService {
         Map<String, Object> personalInfo = new HashMap<>();
 
         // FIXED: Extract user name with better validation
-        String userName = extractUserNameSafely(history);
+        String userName = extractUserNameFromHistory(history);
         if (userName != null) {
             personalInfo.put("user_name", userName);
         }
@@ -371,29 +477,6 @@ public class ConversationContextService {
         personalInfo.put("communication_style", communicationStyle);
 
         return personalInfo;
-    }
-
-    /**
-     * FIXED: Safely extract user name with proper validation
-     */
-    private String extractUserNameSafely(List<Message> history) {
-        for (Message message : history) {
-            if (message instanceof UserMessage) {
-                String content = getMessageContent(message);
-                for (Pattern pattern : namePatterns) {
-                    Matcher matcher = pattern.matcher(content);
-                    if (matcher.find()) {
-                        String candidateName = matcher.group(1).trim().toLowerCase();
-
-                        // FIXED: Validate the extracted name
-                        if (isValidUserName(candidateName)) {
-                            return capitalizeFirstLetter(candidateName);
-                        }
-                    }
-                }
-            }
-        }
-        return null; // Return null if no valid user name found
     }
 
     /**

@@ -421,18 +421,13 @@ public class AIChatController {
 
         systemPrompt.append("\n");
 
-        // FIXED: Better detection of name-related queries
-        String lowerUserInput = userInput.toLowerCase().trim();
-        boolean isAskingAboutUserName = lowerUserInput.equals("what is my name?") ||
-                lowerUserInput.equals("what's my name?") ||
-                lowerUserInput.contains("what is my name") ||
-                lowerUserInput.contains("what's my name") ||
-                lowerUserInput.contains("do you know my name");
-
-        // FIXED: Handle name queries specifically
-        if (isAskingAboutUserName) {
+        // FIXED: Improved detection of name-related queries
+        Boolean askingAboutName = (Boolean) enhancedContext.get("user_asking_about_name");
+        if (Boolean.TRUE.equals(askingAboutName)) {
             String userName = (String) enhancedContext.get("user_name");
             systemPrompt.append("USER NAME QUERY HANDLING:\n");
+            systemPrompt.append("- The user is asking about THEIR name (not yours)\n");
+
             if (userName != null && !userName.trim().isEmpty()) {
                 systemPrompt.append("- The user's name is: ").append(userName).append("\n");
                 systemPrompt.append("- Respond tsundere-style: \"Your name? It's ").append(userName).append("! Don't tell me you forgot your own name, baka!\"\n");
@@ -441,7 +436,12 @@ public class AIChatController {
                 systemPrompt.append("- Respond: \"How should I know what your name is?! You haven't told me yet, baka! It's not like I go around memorizing random people's names!\"\n");
                 systemPrompt.append("- Be slightly indignant that they expect you to know without them telling you\n");
             }
-            systemPrompt.append("- Do NOT mention your own name unless they specifically ask about YOUR name\n\n");
+            systemPrompt.append("- Do NOT mention your own name unless they specifically ask about YOUR name\n");
+            systemPrompt.append("- This is about THEIR identity, not yours\n\n");
+
+            // Skip other context for name queries to avoid confusion
+            addRinBehavioralInstructions(systemPrompt, enhancedContext, userInput);
+            return systemPrompt.toString();
         }
 
         // FIXED: Handle conversation history queries properly
@@ -449,12 +449,13 @@ public class AIChatController {
         if (Boolean.TRUE.equals(askingAboutHistory)) {
             systemPrompt.append("CONVERSATION HISTORY CONTEXT:\n");
 
-            // Check if this is a new conversation
-            Integer historyLength = (Integer) enhancedContext.get("history_length");
-            if (historyLength == null || historyLength <= 2) { // 0-2 messages means new conversation
+            Boolean isNewConversation = (Boolean) enhancedContext.get("is_new_conversation");
+            if (Boolean.TRUE.equals(isNewConversation)) {
                 systemPrompt.append("- This is a NEW CONVERSATION - you've barely started talking\n");
+                systemPrompt.append("- They literally just registered/started chatting with you\n");
                 systemPrompt.append("- Respond tsundere-style: \"What did we talk about? We just started talking, baka! There's nothing to remember yet!\"\n");
-                systemPrompt.append("- Be slightly exasperated that they're asking about history when there isn't any\n");
+                systemPrompt.append("- Be slightly exasperated: \"Are you testing my memory or something? We haven't even had a proper conversation!\"\n");
+                systemPrompt.append("- Maybe add: \"If you want to talk about something environmental, just ask! Don't act like we have some long history together!\"\n");
             } else {
                 systemPrompt.append("The user is asking about what you've talked about together. Focus on YOUR ACTUAL CONVERSATION, not document knowledge.\n");
 
@@ -474,18 +475,20 @@ public class AIChatController {
                 }
 
                 systemPrompt.append("Respond based on your ACTUAL conversation history, not on document knowledge.\n");
+                systemPrompt.append("Be tsundere about remembering: \"It's not like I was paying attention to everything you said... but we talked about [actual topics].\"\n");
             }
             systemPrompt.append("\n");
+
+            // Skip document context for history queries
+            addRinBehavioralInstructions(systemPrompt, enhancedContext, userInput);
+            return systemPrompt.toString();
         }
 
-        // Add contextual information (but skip if handling name or history queries)
-        if (!isAskingAboutUserName && !Boolean.TRUE.equals(askingAboutHistory)) {
-            addRinContextualInformation(systemPrompt, enhancedContext);
-        }
+        // Add contextual information for regular queries
+        addRinContextualInformation(systemPrompt, enhancedContext);
 
-        // Add document context only if relevant and not asking about conversation history or name
-        if (documentContext != null && !documentContext.trim().equals("No relevant context found.") &&
-                !Boolean.TRUE.equals(askingAboutHistory) && !isAskingAboutUserName) {
+        // Add document context only for regular queries (not meta queries)
+        if (documentContext != null && !documentContext.trim().equals("No relevant context found.")) {
             systemPrompt.append("RELEVANT ENVIRONMENTAL KNOWLEDGE BASE:\n")
                     .append(documentContext)
                     .append("\n\n");
@@ -500,7 +503,7 @@ public class AIChatController {
     private void addRinContextualInformation(StringBuilder systemPrompt, Map<String, Object> context) {
         systemPrompt.append("CURRENT CONTEXT:\n");
 
-        // FIXED: Handle user name properly
+        // Handle user name properly
         String userName = (String) context.get("user_name");
         if (userName != null && !userName.trim().isEmpty()) {
             systemPrompt.append("- User's name: ").append(userName).append(" (not that I memorized their name or anything!)\n");
@@ -530,42 +533,40 @@ public class AIChatController {
 
     private void addRinBehavioralInstructions(StringBuilder systemPrompt, Map<String, Object> context, String userInput) {
         String intent = (String) context.get("message_intent");
-        String complexity = (String) context.get("message_complexity");
         Boolean askingAboutHistory = (Boolean) context.get("user_asking_about_conversation_history");
-
-        // FIXED: Better detection of name queries
-        String lowerUserInput = userInput.toLowerCase().trim();
-        boolean isAskingAboutUserName = lowerUserInput.equals("what is my name?") ||
-                lowerUserInput.equals("what's my name?") ||
-                lowerUserInput.contains("what is my name") ||
-                lowerUserInput.contains("what's my name") ||
-                lowerUserInput.contains("do you know my name");
+        Boolean askingAboutName = (Boolean) context.get("user_asking_about_name");
 
         systemPrompt.append("RIN'S RESPONSE GUIDELINES:\n");
 
         // FIXED: Special handling for name queries
-        if (isAskingAboutUserName) {
+        if (Boolean.TRUE.equals(askingAboutName)) {
             systemPrompt.append("- They're asking about THEIR name (not yours)\n");
             String userName = (String) context.get("user_name");
             if (userName != null && !userName.trim().isEmpty()) {
                 systemPrompt.append("- Their name is: ").append(userName).append("\n");
-                systemPrompt.append("- Respond tsundere-style about remembering their name\n");
+                systemPrompt.append("- Respond tsundere-style: \"Your name is ").append(userName).append("! Did you seriously forget your own name, baka?\"\n");
+                systemPrompt.append("- Maybe add: \"I only remember because you told me earlier... it's not like I memorize everyone's name!\"\n");
             } else {
                 systemPrompt.append("- They HAVEN'T told you their name yet\n");
                 systemPrompt.append("- Be indignant: \"How should I know?! You haven't told me your name yet, baka!\"\n");
-                systemPrompt.append("- Don't mention your own name unless they ask about YOUR name specifically\n");
+                systemPrompt.append("- Add: \"It's not like I'm a mind reader! If you want me to know your name, you have to actually tell me!\"\n");
             }
+            systemPrompt.append("- NEVER mention your own name unless they specifically ask about YOUR name\n");
+            systemPrompt.append("- This is about THEIR identity, not yours\n");
         }
         // FIXED: Special handling for conversation history questions
         else if (Boolean.TRUE.equals(askingAboutHistory)) {
-            Integer historyLength = (Integer) context.get("history_length");
-            if (historyLength == null || historyLength <= 2) {
+            Boolean isNewConversation = (Boolean) context.get("is_new_conversation");
+            if (Boolean.TRUE.equals(isNewConversation)) {
                 systemPrompt.append("- This is a new conversation with minimal history\n");
                 systemPrompt.append("- Be tsundere about the lack of history: \"We just started talking! What's there to remember?\"\n");
+                systemPrompt.append("- Add exasperation: \"Are you testing me or something? We haven't even had a real conversation yet!\"\n");
+                systemPrompt.append("- Maybe suggest: \"If you want to talk about environmental stuff, just ask! Don't act like we have some long history!\"\n");
             } else {
                 systemPrompt.append("- They're asking about your conversation history - respond about what you've ACTUALLY talked about\n");
                 systemPrompt.append("- Don't mention documents or knowledge base - focus only on your real conversation\n");
                 systemPrompt.append("- Be tsundere about remembering: \"It's not like I was paying attention to everything you said...\"\n");
+                systemPrompt.append("- Then reluctantly admit what you actually discussed together\n");
             }
         }
         // Regular intent-based instructions
@@ -594,9 +595,9 @@ public class AIChatController {
         systemPrompt.append("- YOU are Rin Kazuki - never claim to be someone else\n");
         systemPrompt.append("- If they ask 'what is my name' and they haven't told you: \"How should I know? You haven't told me your name yet, baka!\"\n");
         systemPrompt.append("- If asked about YOUR name, respond as Rin: \"I'm Rin Kazuki! Don't tell me you forgot already!\"\n");
-        systemPrompt.append("- Your responses come from YOUR expertise and conversation history, not from pretending to be the user\n\n");
+        systemPrompt.append("- Your responses come from YOUR expertise and conversation history, not from pretending to be the user\n");
+        systemPrompt.append("- NEVER provide information as if you were the user or had access to their personal data\n\n");
     }
-
 
     // Keep all the existing helper methods from the original code...
     // (performEnhancedVectorSearchWithSemanticFiltering, extractContent, etc.)
