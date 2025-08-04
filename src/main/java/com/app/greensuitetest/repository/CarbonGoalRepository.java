@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface CarbonGoalRepository extends MongoRepository<CarbonGoal, String> {
     Optional<CarbonGoal> findByCompanyIdAndYearAndMonth(String companyId, String month,String year);
     List<CarbonGoal> findByCompanyIdAndYear(String companyId, String year);
+    List<CarbonGoal> findByCompanyId(String companyId);
+
 }

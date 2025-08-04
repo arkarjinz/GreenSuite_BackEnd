@@ -345,6 +345,16 @@ public class CarbonGoalService {
         }
         return message.toString();
     }
+    public List<CarbonGoal> getGoalsByCompanyAndYear(String year) {
+        String companyId = securityUtil.getCurrentUserCompanyId();
+        return carbonGoalRepository.findByCompanyIdAndYear(companyId, year);
+    }
+
+    public List<CarbonGoal> getAllGoals() {
+        String companyId = securityUtil.getCurrentUserCompanyId();
+        return carbonGoalRepository.findByCompanyId(companyId);
+    }
+
 
     private String capitalize(String input) {
         return input.substring(0, 1).toUpperCase() + input.substring(1);

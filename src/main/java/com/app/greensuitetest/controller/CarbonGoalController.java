@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import com.app.greensuitetest.model.CarbonGoal;
 
 @RestController
 @RequestMapping("/api/carbon/goals")
@@ -37,6 +38,18 @@ public class CarbonGoalController {
         List<String> submittedMonths = goalService.getSubmittedGoalMonths(year);
         System.out.println("[DEBUG] Returning months: " + submittedMonths);
         return ResponseEntity.ok(submittedMonths);
+    }
+    @GetMapping
+    public ResponseEntity<List<CarbonGoal>> getGoals(
+            @RequestParam(required = false) String year
+    ) {
+        List<CarbonGoal> goals;
+        if (year != null) {
+            goals = goalService.getGoalsByCompanyAndYear(year);
+        } else {
+            goals = goalService.getAllGoals();
+        }
+        return ResponseEntity.ok(goals);
     }
 
 }
