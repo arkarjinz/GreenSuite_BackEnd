@@ -79,6 +79,24 @@ public class User {
     @Field("recovery_lock_until")
     private LocalDateTime recoveryLockUntil;
 
+    // New fields for rejection tracking
+    @Field("rejection_count")
+    private int rejectionCount = 0;
+
+    @Field("is_banned")
+    private boolean isBanned = false;
+
+    @Field("banned_at")
+    private LocalDateTime bannedAt;
+
+    @Field("ban_reason")
+    private String banReason;
+
+    @Field("rejection_history")
+    private List<RejectionRecord> rejectionHistory = new ArrayList<>();
+
+    @Field("last_rejection_at")
+    private LocalDateTime lastRejectionAt;
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -93,5 +111,48 @@ public class User {
 
     public boolean isRecoveryLocked() {
         return recoveryLockUntil != null && recoveryLockUntil.isAfter(LocalDateTime.now());
+    }
+
+    // New methods for rejection tracking
+    public void incrementRejectionCount(String companyId, String companyName, String rejectedBy) {
+        this.rejectionCount++;
+        this.lastRejectionAt = LocalDateTime.now();
+
+        // Add to rejection history
+        RejectionRecord record = new RejectionRecord();
+        record.setCompanyId(companyId);
+        record.setCompanyName(companyName);
+        record.setRejectedBy(rejectedBy);
+        record.setRejectedAt(LocalDateTime.now());
+        record.setRejectionNumber(this.rejectionCount);
+
+        this.rejectionHistory.add(record);
+
+        // Check if user should be banned (5 rejections)
+        if (this.rejectionCount >= 5) {
+            this.isBanned = true;
+            this.bannedAt = LocalDateTime.now();
+            this.banReason = "Exceeded maximum rejection limit (5 rejections)";
+        }
+    }
+
+    public boolean isApproachingBan() {
+        return this.rejectionCount >= 4 && !this.isBanned;
+    }
+
+    public int getRemainingAttempts() {
+        return Math.max(0, 5 - this.rejectionCount);
+    }
+
+    // Inner class for rejection records
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RejectionRecord {
+        private String companyId;
+        private String companyName;
+        private String rejectedBy;
+        private LocalDateTime rejectedAt;
+        private int rejectionNumber;
     }
 }

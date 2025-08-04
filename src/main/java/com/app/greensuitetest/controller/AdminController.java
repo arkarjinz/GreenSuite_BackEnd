@@ -1,10 +1,12 @@
 package com.app.greensuitetest.controller;
 
 import com.app.greensuitetest.dto.AuthDTO;
+import com.app.greensuitetest.dto.UserProfileDto;
 import com.app.greensuitetest.model.Company;
 import com.app.greensuitetest.model.User;
 import com.app.greensuitetest.repository.CompanyRepository;
 import com.app.greensuitetest.repository.UserRepository;
+import com.app.greensuitetest.service.AdminService;
 import com.app.greensuitetest.util.SecurityUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +23,13 @@ import java.util.Map;
 @PreAuthorize("hasRole('ADMIN')")
 @RequiredArgsConstructor
 public class AdminController {
+    private final AdminService adminService;
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
     private final SecurityUtil securityUtil;
     private final PasswordEncoder passwordEncoder;
+
+    // ============== EXISTING ADMIN FUNCTIONALITY ==============
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
@@ -105,5 +110,45 @@ public class AdminController {
 
         userRepository.save(admin);
         return ResponseEntity.ok(Map.of("status", "Global admin created", "id", admin.getId()));
+    }
+
+    // ============== NEW BAN MANAGEMENT FUNCTIONALITY ==============
+
+    @GetMapping("/banned-users")  // FIXED: Added missing @GetMapping annotation
+    public ResponseEntity<List<UserProfileDto>> getAllBannedUsers() {
+        return ResponseEntity.ok(adminService.getAllBannedUsers());
+    }
+
+    @GetMapping("/users-approaching-ban")
+    public ResponseEntity<List<UserProfileDto>> getUsersApproachingBan() {
+        return ResponseEntity.ok(adminService.getUsersApproachingBan());
+    }
+
+    @GetMapping("/ban-statistics")
+    public ResponseEntity<Map<String, Object>> getBanStatistics() {
+        return ResponseEntity.ok(adminService.getBanStatistics());
+    }
+
+    @PostMapping("/unban-user/{userId}")
+    public ResponseEntity<UserProfileDto> unbanUser(
+            @PathVariable String userId,
+            @RequestBody Map<String, String> request) {
+
+        String reason = request.getOrDefault("reason", "No reason provided");
+        return ResponseEntity.ok(adminService.unbanUser(userId, reason));
+    }
+
+    @PostMapping("/ban-user/{userId}")
+    public ResponseEntity<UserProfileDto> manualBanUser(
+            @PathVariable String userId,
+            @RequestBody Map<String, String> request) {
+
+        String reason = request.getOrDefault("reason", "Manual ban by admin");
+        return ResponseEntity.ok(adminService.manualBanUser(userId, reason));
+    }
+
+    @GetMapping("/user/{userId}/rejection-details")
+    public ResponseEntity<Map<String, Object>> getUserRejectionDetails(@PathVariable String userId) {
+        return ResponseEntity.ok(adminService.getUserRejectionDetails(userId));
     }
 }
