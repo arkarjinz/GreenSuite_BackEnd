@@ -25,6 +25,7 @@ public class CarbonCalculatorService {
     private final CarbonActivityRepository activityRepository;
     private final SecurityUtil securityUtil;
     private final CarbonTotalRepository carbonTotalRepository;//added by thu to store total footprint in database
+    private final CarbonActivityRepository carbonActivityRepository;
 
     public double calculateFootprint(CarbonInput input) {
         return switch (input.activityType()) {
@@ -196,4 +197,14 @@ public double calculateAndStoreAll(List<CarbonInput> inputs) {
         String companyId = securityUtil.getCurrentUserCompanyId();
         return activityRepository.findByCompanyId(companyId);
     }
+    public List<String> getSubmittedMonths(int year) {
+        String companyId = securityUtil.getCurrentUserCompanyId();
+        List<CarbonActivity> activities = carbonActivityRepository.findByCompanyIdAndYearReturnMonths(companyId, String.valueOf(year));
+        return activities.stream()
+                .map(CarbonActivity::getMonth)
+                .distinct()
+                .toList();
+    }
+
+
 }

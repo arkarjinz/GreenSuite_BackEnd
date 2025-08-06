@@ -29,4 +29,20 @@ public class CarbonFootPrintController {
     public ResponseEntity<?> getCalculationHistory() {
         return ResponseEntity.ok(calculator.getCompanyHistory());
     }
+    @GetMapping("/submitted-months")
+    public ResponseEntity<?> getSubmittedMonths(
+            @RequestParam int year
+           ) {
+
+        try {
+            System.out.println("Fetching submitted months for year: " + year);
+            List<String> submittedMonths = calculator.getSubmittedMonths(year);
+            System.out.println("Submitted months: " + submittedMonths);
+            return ResponseEntity.ok(submittedMonths);
+        } catch (Exception e) {
+          //  e.printStackTrace();
+            return ResponseEntity.status(500).body("Internal server error: " + e.getMessage());
+        }
+    }
+
 }
