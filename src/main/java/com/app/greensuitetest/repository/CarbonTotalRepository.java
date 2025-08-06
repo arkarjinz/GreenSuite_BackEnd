@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CarbonTotalRepository extends MongoRepository<CarbonTotal, String> {
-    Optional<CarbonTotal> findByUserIdAndMonthAndYear(String userId,String companyId, String month, String year);
+    Optional<CarbonTotal> findByUserIdAndMonthAndYear(String userId, String companyId, String month, String year);
 
     //Htet Htet
     List<CarbonTotal> findByCompanyIdAndYearIn(String companyId, List<String> years);

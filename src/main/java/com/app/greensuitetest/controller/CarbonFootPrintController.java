@@ -1,14 +1,10 @@
 package com.app.greensuitetest.controller;
 
 import com.app.greensuitetest.dto.carbon.CarbonInput;
-
 import com.app.greensuitetest.model.CarbonActivity;
 import com.app.greensuitetest.model.CarbonTotal;
-
-
 import com.app.greensuitetest.service.CarbonCalculatorService;
 import com.app.greensuitetest.validation.MonthValidator;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +16,7 @@ import java.util.List;
 public class CarbonFootPrintController {
     private final CarbonCalculatorService calculator;
     private final MonthValidator monthValidator = new MonthValidator();
+
 
 
     /* @PostMapping("/calculate")
@@ -37,6 +34,21 @@ public class CarbonFootPrintController {
     @GetMapping("/history")
     public ResponseEntity<?> getCalculationHistory() {
         return ResponseEntity.ok(calculator.getCompanyHistory());
+    }
+    @GetMapping("/submitted-months")
+    public ResponseEntity<?> getSubmittedMonths(
+            @RequestParam int year
+           ) {
+
+        try {
+            System.out.println("Fetching submitted months for year: " + year);
+            List<String> submittedMonths = calculator.getSubmittedMonths(year);
+            System.out.println("Submitted months: " + submittedMonths);
+            return ResponseEntity.ok(submittedMonths);
+        } catch (Exception e) {
+          //  e.printStackTrace();
+            return ResponseEntity.status(500).body("Internal server error: " + e.getMessage());
+        }
     }
 
     //Htet Htet
@@ -59,4 +71,5 @@ public class CarbonFootPrintController {
         List<CarbonActivity> data = calculator.getDataForMonth(companyId, year, formattedMonth);
         return ResponseEntity.ok(data);
     }
+
 }

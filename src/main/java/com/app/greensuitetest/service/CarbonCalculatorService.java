@@ -25,6 +25,7 @@ public class CarbonCalculatorService {
     private final CarbonActivityRepository activityRepository;
     private final SecurityUtil securityUtil;
     private final CarbonTotalRepository carbonTotalRepository;//added by thu to store total footprint in database
+    private final CarbonActivityRepository carbonActivityRepository;
 
     public double calculateFootprint(CarbonInput input) {
         return switch (input.activityType()) {
@@ -33,6 +34,11 @@ public class CarbonCalculatorService {
             case WASTE -> calculateWaste(input);
             case FUEL -> calculateFuel(input);
         };
+
+
+    }
+    private double roundToTwoDecimals(double value) {
+        return Math.round(value * 100.0) / 100.0;
     }
 //for hanlding more than one activity type
 public double calculateAndStoreAll(List<CarbonInput> inputs) {
@@ -105,14 +111,16 @@ public double calculateAndStoreAll(List<CarbonInput> inputs) {
 
         double footprint = input.value() * factor;
       //  logActivity(input, footprint, "kWh");
-        return footprint;
+        //return footprint;
+        return roundToTwoDecimals(footprint);
     }
 
     private double calculateWater(CarbonInput input) {
         double factor = emissions.getFactor("water", input.region());
         double footprint = input.value() * factor;
        // logActivity(input, footprint, "m³");
-        return footprint;
+       // return footprint;
+        return roundToTwoDecimals(footprint);
     }
 
     private double calculateWaste(CarbonInput input) {
@@ -131,7 +139,8 @@ public double calculateAndStoreAll(List<CarbonInput> inputs) {
         System.out.println("Factor used: " + emissions.getFactor("waste.incinerated", input.region()));
         double footprint = input.value() * factor;
         //logActivity(input, footprint, "kg");
-        return footprint;
+        //return footprint;
+        return roundToTwoDecimals(footprint);
     }
 
     private double calculateFuel(CarbonInput input) {
@@ -144,19 +153,20 @@ public double calculateAndStoreAll(List<CarbonInput> inputs) {
         double factor = switch (input.fuelType()) {
             case GASOLINE -> emissions.getFactor("fuel.gasoline", input.region());
             case DIESEL -> emissions.getFactor("fuel.diesel", input.region());
-            case NATURAL_GAS -> emissions.getFactor("fuel.natural-gas", input.region());
+            case NATURALGAS -> emissions.getFactor("fuel.natural-gas", input.region());
         };
         System.out.println("Factor used: " + emissions.getFactor("fuel.gasoline", input.region()));
         System.out.println("Factor used: " + emissions.getFactor("fuel.diesel", input.region()));
         System.out.println("Factor used: " + emissions.getFactor("fuel.natural-gas", input.region()));
 
-        double standardAmount = input.fuelType() == FuelType.NATURAL_GAS
+        double standardAmount = input.fuelType() == FuelType.NATURALGAS
                 ? unitConverter.toCubicMeters(input.value(), input.unit())
                 : unitConverter.toLiters(input.value(), input.unit());
 
         double footprint = standardAmount * factor;
       //  logActivity(input, footprint, input.unit().name().toLowerCase());
-        return footprint;
+        //return footprint;
+        return roundToTwoDecimals(footprint);
     }
 
     private void logActivity(CarbonInput input, double footprint, String unit) {
@@ -186,6 +196,14 @@ public double calculateAndStoreAll(List<CarbonInput> inputs) {
     public List<CarbonActivity> getCompanyHistory() {
         String companyId = securityUtil.getCurrentUserCompanyId();
         return activityRepository.findByCompanyId(companyId);
+    }
+    public List<String> getSubmittedMonths(int year) {
+        String companyId = securityUtil.getCurrentUserCompanyId();
+        List<CarbonActivity> activities = carbonActivityRepository.findByCompanyIdAndYearReturnMonths(companyId, String.valueOf(year));
+        return activities.stream()
+                .map(CarbonActivity::getMonth)
+                .distinct()
+                .toList();
     }
 
     //Htet Htet
