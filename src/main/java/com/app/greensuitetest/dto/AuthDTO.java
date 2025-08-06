@@ -6,6 +6,7 @@ import com.app.greensuitetest.validation.ValidPassword;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 public record AuthDTO() {
@@ -95,5 +96,19 @@ public record AuthDTO() {
             Role role,
             String firstName,
             String lastName
+    ) {}
+
+    public record ReapplyRequest(
+            @NotBlank String token,
+            @NotBlank String password,
+            @NotBlank String companyName,
+            @NotNull Role companyRole
+    ) {}
+
+    public record ReapplyResponse(
+            String status,
+            String message,
+            String userId,
+            LocalDateTime reapplicationDate
     ) {}
 }

@@ -9,6 +9,7 @@ import com.app.greensuitetest.model.Company;
 import com.app.greensuitetest.model.User;
 import com.app.greensuitetest.repository.CompanyRepository;
 import com.app.greensuitetest.repository.UserRepository;
+import com.app.greensuitetest.security.JwtUtil;
 import com.app.greensuitetest.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ public class OwnerService {
     private final CompanyRepository companyRepository;
     private final SecurityUtil securityUtil;
     private final NotificationService notificationService;
+    private final JwtUtil jwtUtil;
 
     public List<UserProfileDto> getPendingUsers() {
         String companyId = securityUtil.getCurrentUserCompanyId();
@@ -90,13 +92,8 @@ public class OwnerService {
         if (targetUser.getApprovalStatus() != ApprovalStatus.PENDING) {
             throw new OperationNotAllowedException("User is not pending approval");
         }
-        // Update user's rejection status
-        targetUser.setApprovalStatus(ApprovalStatus.REJECTED);
-        // Remove user from company
-        targetUser.setCompanyId(null); // Reset company association
-        targetUser.setApprovalStatus(ApprovalStatus.REJECTED);
-
-        // Increment rejection count and update history
+        
+        // Increment rejection count and update history (this method handles status changes)
         targetUser.incrementRejectionCount(
                 company.getId(),
                 company.getName(),
@@ -106,6 +103,9 @@ public class OwnerService {
 
         // Save user
         User savedUser = userRepository.save(targetUser);
+
+        // Generate reapplication token
+        String reapplicationToken = jwtUtil.generateReapplicationToken(savedUser);
 
         // Create response with rejection details
         Map<String, Object> response = new HashMap<>();
@@ -144,12 +144,13 @@ public class OwnerService {
 
             log.info("User {} rejected by {} for company {}. Rejection count: {}",
                     savedUser.getEmail(), currentUser.getEmail(), company.getName(), savedUser.getRejectionCount());
-
             // Send regular rejection notification
             notificationService.sendRejectionNotification(savedUser, company, reason);
         }
 
-
+        // Add token to response
+        response.put("reapplicationToken", reapplicationToken);
+        response.put("reapplicationUrl", "/api/auth/reapply");
 
         return response;
     }

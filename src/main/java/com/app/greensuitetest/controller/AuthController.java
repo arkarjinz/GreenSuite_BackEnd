@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,5 +75,19 @@ public class AuthController {
     public ResponseEntity<?> refreshToken(@RequestBody AuthDTO.RefreshRequest request) {
         Map<String, String> tokens = authService.refreshToken(request);
         return ResponseEntity.ok(tokens);
+    }
+
+    @PostMapping("/reapply")
+    public ResponseEntity<ApiResponse> reapply(@Valid @RequestBody AuthDTO.ReapplyRequest request) {
+        User user = authService.reapply(request);
+        return ResponseEntity.ok(ApiResponse.success(
+                "Reapplication submitted successfully",
+                new AuthDTO.ReapplyResponse(
+                        "pending",
+                        "Your application is pending approval",
+                        user.getId(),
+                        LocalDateTime.now()
+                )
+        ));
     }
 }

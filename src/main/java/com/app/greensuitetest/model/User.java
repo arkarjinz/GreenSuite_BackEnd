@@ -128,7 +128,12 @@ public class User {
 
         this.rejectionHistory.add(record);
 
-        // Check if user should be banned (5 rejections)
+        // Remove company association but keep user data
+        this.companyId = null;
+        this.companyRole = null;
+        this.approvalStatus = ApprovalStatus.REJECTED;
+
+        // Check if user should be banned
         if (this.rejectionCount >= 5) {
             this.isBanned = true;
             this.bannedAt = LocalDateTime.now();

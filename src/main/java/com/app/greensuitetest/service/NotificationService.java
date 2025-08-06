@@ -116,4 +116,18 @@ public class NotificationService {
 
         log.info("Owner notification sent to: {}", owner.getEmail());
     }
+
+    public void sendRejectionNotification(User user, Company company, String reason, String reapplicationToken) {
+        String message = String.format(
+                "Your application to %s was rejected. Reason: %s\n\n" +
+                        "You can reapply using this link: %s?token=%s",
+                company.getName(),
+                reason,
+                "https://yourapp.com/reapply",
+                reapplicationToken
+        );
+
+        // Implementation to send email
+        log.info("Sending rejection notification to {}: {}", user.getEmail(), message);
+    }
 }

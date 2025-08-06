@@ -68,7 +68,7 @@ public class ConversationContextService {
 
     // Rin-specific emotional keywords
     private final Set<String> rinTsundereKeywords = Set.of(
-            "hmph", "baka", "tch", "not that i care", "it's not like",
+            "hmph", "tch", "not that i care", "it's not like",
             "don't misunderstand", "don't get the wrong idea", "whatever"
     );
 
@@ -92,6 +92,15 @@ public class ConversationContextService {
             Pattern.compile("(?i)my\\s+name\\s+is\\s+what", Pattern.CASE_INSENSITIVE)
     );
 
+    // NEW: Patterns to detect when users ask about Rin's name
+    private final List<Pattern> rinNameQuestionPatterns = Arrays.asList(
+            Pattern.compile("(?i)what\\s+is\\s+your\\s+name", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)what's\\s+your\\s+name", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)who\\s+are\\s+you", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)what\\s+should\\s+i\\s+call\\s+you", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?i)tell\\s+me\\s+your\\s+name", Pattern.CASE_INSENSITIVE)
+    );
+
     // FIXED: Patterns to detect conversation history queries
     private final List<Pattern> historyQuestionPatterns = Arrays.asList(
             Pattern.compile("(?i)what\\s+did\\s+we\\s+talk\\s+about", Pattern.CASE_INSENSITIVE),
@@ -106,6 +115,9 @@ public class ConversationContextService {
         Map<String, Object> context = new HashMap<>();
 
         try {
+            // Validate conversation ID to prevent mixing
+            validateConversationId(conversationId, userId, sessionId);
+            
             // Get conversation history
             List<Message> history = chatMemory.get(conversationId);
 
@@ -121,6 +133,7 @@ public class ConversationContextService {
 
             // Extract various context types only if not asking meta questions
             boolean isMetaQuery = (Boolean) context.getOrDefault("user_asking_about_name", false) ||
+                    (Boolean) context.getOrDefault("user_asking_about_rin_name", false) ||
                     (Boolean) context.getOrDefault("user_asking_about_conversation_history", false);
 
             if (!isMetaQuery) {
@@ -158,6 +171,24 @@ public class ConversationContextService {
     }
 
     /**
+     * Validate that the conversation ID is properly isolated and not shared
+     */
+    private void validateConversationId(String conversationId, String userId, String sessionId) {
+        if (conversationId == null || conversationId.trim().isEmpty()) {
+            log.warn("Empty conversation ID provided - this should have been handled by the controller");
+            return;
+        }
+
+        // Warning if using the old problematic default conversation ID
+        if ("default".equals(conversationId)) {
+            log.warn("DEPRECATED: Using shared 'default' conversation ID - this can cause memory mixing between users");
+        }
+
+        // Log conversation ID structure for debugging
+        log.debug("Processing conversation: {} for user: {} session: {}", conversationId, userId, sessionId);
+    }
+
+    /**
      * FIXED: Analyze current message for meta queries (name and history questions)
      */
     private Map<String, Object> analyzeCurrentMessage(String currentMessage, List<Message> history) {
@@ -169,18 +200,28 @@ public class ConversationContextService {
 
         String lowerMessage = currentMessage.toLowerCase().trim();
 
-        // FIXED: Check if asking about their own name
-        boolean isAskingAboutName = nameQuestionPatterns.stream()
+        // FIXED: First check if asking about Rin's name (higher priority)
+        boolean isAskingAboutRinName = rinNameQuestionPatterns.stream()
                 .anyMatch(pattern -> pattern.matcher(lowerMessage).find());
 
-        if (isAskingAboutName) {
+        if (isAskingAboutRinName) {
+            messageContext.put("user_asking_about_rin_name", true);
+            log.debug("User asking about Rin's name");
+            return messageContext;
+        }
+
+        // FIXED: Then check if asking about their own name
+        boolean isAskingAboutUserName = nameQuestionPatterns.stream()
+                .anyMatch(pattern -> pattern.matcher(lowerMessage).find());
+
+        if (isAskingAboutUserName) {
             messageContext.put("user_asking_about_name", true);
 
             // Look for user's name in conversation history
             String userName = extractUserNameFromHistory(history);
             messageContext.put("user_name", userName); // null if not found
 
-            log.debug("User asking about their name. Found name: {}", userName);
+            log.debug("User asking about their own name. Found name: {}", userName);
             return messageContext;
         }
 
@@ -244,7 +285,8 @@ public class ConversationContextService {
                 // Skip meta questions and very short messages
                 if (content.length() > 5 &&
                         !isMetaQuestion(content) &&
-                        !isGreeting(content)) {
+                        !isGreeting(content) &&
+                        !isSimpleAcknowledgment(content)) {
                     meaningfulCount++;
                 }
             }
@@ -258,6 +300,7 @@ public class ConversationContextService {
      */
     private boolean isMetaQuestion(String content) {
         return nameQuestionPatterns.stream().anyMatch(p -> p.matcher(content).find()) ||
+                rinNameQuestionPatterns.stream().anyMatch(p -> p.matcher(content).find()) ||
                 historyQuestionPatterns.stream().anyMatch(p -> p.matcher(content).find());
     }
 
@@ -265,8 +308,18 @@ public class ConversationContextService {
      * FIXED: Check if message is just a greeting
      */
     private boolean isGreeting(String content) {
-        String[] greetings = {"hi", "hello", "hey", "good morning", "good afternoon", "good evening"};
+        String[] greetings = {"hi", "hello", "hey", "good morning", "good afternoon", "good evening", 
+                             "greetings", "howdy", "what's up", "how are you"};
         return Arrays.stream(greetings).anyMatch(content::contains);
+    }
+
+    /**
+     * NEW: Check if message is just a simple acknowledgment
+     */
+    private boolean isSimpleAcknowledgment(String content) {
+        String[] acknowledgments = {"ok", "okay", "thanks", "thank you", "got it", "i see", 
+                                  "understood", "alright", "yes", "no", "sure", "fine"};
+        return content.length() <= 15 && Arrays.stream(acknowledgments).anyMatch(content::equals);
     }
 
     /**

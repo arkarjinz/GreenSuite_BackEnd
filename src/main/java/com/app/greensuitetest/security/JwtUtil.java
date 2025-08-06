@@ -138,4 +138,27 @@ public class JwtUtil {
             throw new JwtException("Invalid reset token");
         }
     }
+
+    // Add to JwtUtil class
+    public String generateReapplicationToken(User user) {
+        Date now = new Date();
+        Date exp = new Date(now.getTime() + 30L * 24 * 60 * 60 * 1000); // 30 days expiration
+
+        return Jwts.builder()
+                .subject(user.getId()) // Store user ID in subject
+                .claim("token_type", "reapplication")
+                .claim("email", user.getEmail())
+                .issuedAt(now)
+                .expiration(exp)
+                .signWith(key)
+                .compact();
+    }
+
+    public Claims parseReapplicationToken(String token) {
+        Claims claims = parseToken(token);
+        if (!"reapplication".equals(claims.get("token_type", String.class))) {
+            throw new JwtException("Invalid token type");
+        }
+        return claims;
+    }
 }

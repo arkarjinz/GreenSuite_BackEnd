@@ -6,6 +6,8 @@ import com.app.greensuitetest.constants.SubscriptionTier;
 import com.app.greensuitetest.dto.AuthDTO;
 import com.app.greensuitetest.dto.UserProfileDto;
 import com.app.greensuitetest.exception.AuthException;
+import com.app.greensuitetest.exception.EntityNotFoundException;
+import com.app.greensuitetest.exception.OperationNotAllowedException;
 import com.app.greensuitetest.exception.ValidationException;
 import com.app.greensuitetest.model.Company;
 import com.app.greensuitetest.model.User;
@@ -437,6 +439,65 @@ public class AuthService {
         return details;
     }
 
+    public User reapply(AuthDTO.ReapplyRequest request) {
+        // Parse and validate token
+        Claims claims = jwtUtil.parseReapplicationToken(request.token());
+        String userId = claims.getSubject();
+        String email = claims.get("email", String.class);
+
+        // Get user
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        // Validate user status
+        if (user.getApprovalStatus() != ApprovalStatus.REJECTED) {
+            throw new OperationNotAllowedException("Only rejected users can reapply");
+        }
+
+        if (user.isBanned()) {
+            throw new ValidationException("Account is permanently banned", Map.of(
+                    "banReason", user.getBanReason(),
+                    "bannedAt", user.getBannedAt().toString()
+            ));
+        }
+
+        // Get or create company
+        Company company = getOrCreateCompany(request.companyName(), request.companyRole());
+
+        // Validate user is not reapplying to a company that previously rejected them
+        validateNotPreviouslyRejectedByCompany(user, company);
+
+        // Update user details
+        // NOTE: Allowing password change during reapply - consider if this needs additional verification
+        user.setPassword(passwordEncoder.encode(request.password()));
+        user.setCompanyId(company.getId());
+        user.setCompanyRole(request.companyRole());
+        user.setApprovalStatus(ApprovalStatus.PENDING);
+        user.setLastActive(LocalDateTime.now());
+
+        // Save user
+        User savedUser = userRepository.save(user);
+
+        // Notify company owner
+        notifyCompanyOwner(company, savedUser);
+
+        log.info("User {} reapplied to company {}", email, company.getName());
+        return savedUser;
+    }
+
+    private Company getOrCreateCompany(String companyName, Role role) {
+        if (role == Role.OWNER) {
+            throw new ValidationException("Owner role requires full registration",
+                    Map.of("solution", "Use the regular registration endpoint for owner accounts"));
+        }
+
+        Company company = companyRepository.findByName(companyName);
+        if (company == null) {
+            throw new EntityNotFoundException("Company not found: " + companyName);
+        }
+        return company;
+    }
+
     public Map<String, String> refreshToken(AuthDTO.RefreshRequest request) {
         try {
             String refreshToken = request.refreshToken();
@@ -490,6 +551,25 @@ public class AuthService {
             throw new AuthException("Token refresh failed",
                     Map.of("error", ex.getMessage(),
                             "solution", "Try logging in again"));
+        }
+    }
+
+    /**
+     * Validate that user is not reapplying to a company that previously rejected them
+     */
+    private void validateNotPreviouslyRejectedByCompany(User user, Company company) {
+        boolean wasRejectedByThisCompany = user.getRejectionHistory().stream()
+                .anyMatch(record -> record.getCompanyId().equals(company.getId()));
+        
+        if (wasRejectedByThisCompany) {
+            long rejectionsByThisCompany = user.getRejectionHistory().stream()
+                    .filter(record -> record.getCompanyId().equals(company.getId()))
+                    .count();
+            
+            throw new ValidationException("Cannot reapply to a company that previously rejected you",
+                    Map.of("companyName", company.getName(),
+                           "previousRejections", rejectionsByThisCompany,
+                           "solution", "Apply to a different company"));
         }
     }
 }
