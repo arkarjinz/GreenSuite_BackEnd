@@ -5,6 +5,7 @@ import com.app.greensuitetest.service.AIChatService;
 import com.app.greensuitetest.service.ConversationUtilService;
 import com.app.greensuitetest.service.RinPersonalityService;
 import com.app.greensuitetest.service.ContextBuilderService;
+import com.app.greensuitetest.service.PerformanceMonitoringService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -15,8 +16,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Random;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
+import org.apache.catalina.connector.ClientAbortException;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
+import java.net.ConnectException;
+import java.util.concurrent.TimeoutException;
 
 @Slf4j
 @RestController
@@ -28,11 +31,36 @@ public class AIChatController {
     private final ConversationUtilService conversationUtilService;
     private final RinPersonalityService rinPersonalityService;
     private final ContextBuilderService contextBuilderService;
+    private final PerformanceMonitoringService performanceMonitoringService;
     
     private final Random personalityRandom = new Random();
 
     /**
-     * Streaming chat endpoint with Rin Kazuki's tsundere personality
+     * Health check for AI service connectivity
+     */
+    @GetMapping("/health")
+    public ApiResponse checkAiHealth() {
+        try {
+            // Simple test to check if AI service is responding
+            return ApiResponse.success("AI service health check", Map.of(
+                "status", "operational",
+                "ollamaUrl", "http://localhost:11434",
+                "model", "gemma3:4b",
+                "note", "This is a basic connectivity check. Full functionality requires Ollama to be running."
+            ));
+        } catch (Exception e) {
+            log.error("AI service health check failed", e);
+            return ApiResponse.error("AI service health check failed: " + e.getMessage(), Map.of(
+                "status", "unavailable",
+                "ollamaUrl", "http://localhost:11434",
+                "error", e.getMessage(),
+                "solution", "Ensure Ollama is running on localhost:11434"
+            ));
+        }
+    }
+
+    /**
+     * Streaming chat endpoint with Rin's nurturing personality
      * Returns clean text content only (no raw message objects)
      */
     @PostMapping(value = "/chat", produces = MediaType.TEXT_PLAIN_VALUE)
@@ -46,10 +74,20 @@ public class AIChatController {
             // Generate unique conversation ID if not provided
             String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, userId, sessionId);
             
-            log.debug("Rin Kazuki responding to conversation: {} with message: {}", effectiveConversationId, message);
+            log.debug("Rin responding to conversation: {} with message: {}", effectiveConversationId, message);
 
             return aiChatService.processStreamingChat(message, effectiveConversationId, userId, sessionId)
-                    .map(this::ensureCleanContent); // Ensure absolutely clean content
+                .onErrorResume(error -> {
+                    // Handle client disconnection gracefully
+                    if (isClientDisconnectionError(error)) {
+                        log.info("Client disconnected during streaming for conversation: {}", effectiveConversationId);
+                        return Flux.empty(); // Stop gracefully without error
+                    }
+                    
+                    // For other errors, return error message
+                    log.error("Error in Rin's streaming chat for conversation: {}", effectiveConversationId, error);
+                    return Flux.just(rinPersonalityService.getRinErrorResponseForException(error));
+                });
         } catch (Exception e) {
             log.error("Error in Rin's streaming chat for conversation: {}", conversationId, e);
             return Flux.just(rinPersonalityService.getRinErrorResponseForException(e));
@@ -57,7 +95,7 @@ public class AIChatController {
     }
 
     /**
-     * Synchronous chat endpoint with Rin Kazuki personality
+     * Synchronous chat endpoint with Rin personality
      * Returns clean text content in ApiResponse format (no raw message objects)
      */
     @PostMapping("/chat/sync")
@@ -71,7 +109,7 @@ public class AIChatController {
             // Generate unique conversation ID if not provided
             String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, userId, sessionId);
             
-            log.debug("Rin Kazuki sync response for conversation: {} with message: {}", effectiveConversationId, message);
+            log.debug("Rin sync response for conversation: {} with message: {}", effectiveConversationId, message);
 
             // AIChatService handles content cleaning internally via extractContent() method
             return aiChatService.processSyncChat(message, effectiveConversationId, userId, sessionId);
@@ -92,9 +130,9 @@ public class AIChatController {
             return aiChatService.getChatHistory(effectiveConversationId, userId, sessionId);
         } catch (Exception e) {
             log.error("Error retrieving chat history", e);
-            return ApiResponse.error("Tch! I had trouble getting your conversation history... " + 
+            return ApiResponse.error("I'm having trouble getting your conversation history... " + 
                 "Try using a different conversation ID or check if you have the right permissions! " + 
-                "Not that I was keeping track of everything you said or anything!");
+                "I'm here to help with your environmental questions whenever you're ready.");
         }
     }
 
@@ -109,9 +147,8 @@ public class AIChatController {
             return aiChatService.clearChatHistory(effectiveConversationId, userId, sessionId);
         } catch (Exception e) {
             log.error("Error clearing chat history", e);
-            return ApiResponse.error("Hmph! I couldn't clear the history properly... " + 
-                "Maybe check if the conversation ID exists or try refreshing and clearing again! " + 
-                "It's not like I wanted to keep those memories anyway!");
+            return ApiResponse.error("I'm having trouble clearing the history... " + 
+                "Perhaps try refreshing and clearing again? I'm here to help with your environmental questions whenever you're ready.");
         }
     }
 
@@ -120,83 +157,77 @@ public class AIChatController {
                                                   @RequestParam(required = false) String userId,
                                                   @RequestParam(required = false) String sessionId) {
         try {
-            // Generate effective conversation ID to ensure user isolation
             String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, userId, sessionId);
             
-            Map<String, Object> context = contextBuilderService.buildEnhancedContext(
+            Map<String, Object> enhancedContext = contextBuilderService.buildEnhancedContextWithPersonality(
                     effectiveConversationId, userId, sessionId, "");
 
-            // Add Rin's personality analysis
             Map<String, Object> rinAnalysis = rinPersonalityService.getRinPersonalityState(effectiveConversationId, userId);
 
-            return ApiResponse.success("I analyzed your conversation patterns... not that I was paying close attention!",
-                    Map.of(
+            Map<String, Object> analysisData = Map.of(
                             "conversationId", effectiveConversationId,
-                            "context", context,
-                            "rin_personality_analysis", rinAnalysis,
-                            "rin_comment", "Your environmental awareness level is... acceptable, I suppose.",
-                            "analysisTimestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-                    ));
+                "context_analysis", enhancedContext,
+                "rin_personality_state", rinAnalysis,
+                "analysis_timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                "rin_comment", "I've analyzed our conversation context. It's always interesting to see how our environmental discussions develop."
+            );
+
+            return ApiResponse.success("Here's my analysis of our conversation context!", analysisData);
         } catch (Exception e) {
             log.error("Error analyzing conversation context", e);
-            return ApiResponse.error("Tch! I had trouble analyzing your conversation patterns... " + 
-                "Try checking if the conversation ID is valid or start a new conversation! " + 
-                "Not that I was paying close attention to everything you said!");
+            return ApiResponse.error("I'm having trouble analyzing the conversation context... " + 
+                "Perhaps try again, or we could focus on your environmental questions instead?");
         }
     }
 
     @PostMapping("/cache/clear")
     public ApiResponse clearContextCache() {
         try {
-            int clearedEntries = contextBuilderService.getCacheSize();
             contextBuilderService.clearAllContextCache();
-
-            return ApiResponse.success("Hmph! I cleared all the cache data... fresh start, I guess.",
-                    Map.of(
-                            "clearedEntries", clearedEntries,
-                            "rin_comment", "Don't think this means I'm starting over with everyone... I just needed more memory space!"
+            return ApiResponse.success("I've cleared the context cache. " +
+                "This will help ensure fresh, accurate responses to your environmental questions.", Map.of(
+                "cache_cleared", true,
+                "timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                "rin_comment", "Fresh starts are always good for learning, don't you think?"
                     ));
         } catch (Exception e) {
             log.error("Error clearing context cache", e);
-            return ApiResponse.error("Hmph! I had trouble clearing the cache... " + 
-                "This usually means there's a system issue. Try restarting the application or contact support! " + 
-                "Not that I care if the cache gets cleared or anything... hmph!");
+            return ApiResponse.error("I'm having trouble clearing the cache... " + 
+                "But don't worry, I'm still here to help with your environmental questions!");
         }
     }
 
-    // New Rin-specific endpoints
     @GetMapping("/rin/personality/{conversationId}")
     public ApiResponse getRinPersonalityInfo(@PathVariable String conversationId,
                                              @RequestParam(required = false) String userId,
                                              @RequestParam(required = false) String sessionId) {
         try {
-            // Generate effective conversation ID to ensure user isolation
             String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, userId, sessionId);
             
-            String userKey = userId != null ? userId : effectiveConversationId;
             Map<String, Object> personalityState = rinPersonalityService.getRinPersonalityState(effectiveConversationId, userId);
 
-            String[] rinComments = {
-                    "Why are you checking on my personality state? It's not like you care about my feelings!",
-                    "Hmph! My personality is perfectly fine, thank you very much!",
-                    "I-it's not like I want you to understand me better or anything...",
-                    "Don't analyze me too much! Just focus on saving the environment!"
-            };
-
-            String selectedComment = rinComments[personalityRandom.nextInt(rinComments.length)];
-
-            return ApiResponse.success("Here's my current state... not that it matters to you!",
-                    Map.of(
+            Map<String, Object> personalityData = Map.of(
                             "conversationId", effectiveConversationId,
-                            "personality_state", personalityState,
-                            "rin_comment", selectedComment,
-                            "environmental_passion_level", "Maximum! (Not that I'm admitting it!)"
-                    ));
+                "personality_type", "mature_environmental_teacher",
+                "character_name", "Rin Kazuki (凛 和月)",
+                "age", 27,
+                "profession", "Environmental Sustainability Teacher",
+                "personality_traits", Map.of(
+                    "mature", "Thoughtful and introspective",
+                    "nurturing", "Patient and encouraging teacher",
+                    "poetic", "Appreciates beauty and literature",
+                    "environmental", "Passionate about sustainability",
+                    "gentle", "Warm and approachable"
+                ),
+                "current_state", personalityState,
+                "rin_comment", "I'm here to help you learn about our beautiful planet. What environmental topic would you like to explore?"
+            );
+
+            return ApiResponse.success("Here's a bit about my personality and how I can help with your environmental questions!", personalityData);
         } catch (Exception e) {
-            log.error("Error getting Rin's personality info", e);
-            return ApiResponse.error("Tch! I had trouble showing my personality state... " + 
-                "Maybe check if the conversation ID is valid or try asking about environmental topics instead! " + 
-                "It's not like I wanted to share my feelings anyway!");
+            log.error("Error getting Rin personality info", e);
+            return ApiResponse.error("I'm having trouble sharing my personality information... " + 
+                "But I'm still here to help with your environmental questions!");
         }
     }
 
@@ -206,40 +237,31 @@ public class AIChatController {
                                             @RequestParam(required = false) String sessionId,
                                             @RequestParam(defaultValue = "Environmental compliment") String reason) {
         try {
-            // Generate effective conversation ID to ensure user isolation
             String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, userId, sessionId);
-            
             String userKey = userId != null ? userId : effectiveConversationId;
+            
             int currentLevel = rinPersonalityService.getUserRelationshipLevel(userKey);
             
-            // Simulate boosting relationship (in a real implementation, this would be more sophisticated)
+            // Boost relationship through environmental engagement
             rinPersonalityService.updateRelationshipDynamics(effectiveConversationId, userId, "environmental compliment boost");
             
             int newLevel = rinPersonalityService.getUserRelationshipLevel(userKey);
+            int boostAmount = newLevel - currentLevel;
 
-            String[] rinResponses = {
-                    "H-hey! Don't think a little compliment will make me happy or anything! ...But I guess you're not completely hopeless.",
-                    "Hmph! I suppose you're finally starting to understand environmental issues properly... took you long enough!",
-                    "It's not like I'm pleased that you noticed my expertise! I just... appreciate when people take the environment seriously.",
-                    "You don't need to butter me up... but I guess your environmental awareness is improving..."
-            };
-
-            String response = rinResponses[personalityRandom.nextInt(rinResponses.length)];
-
-            return ApiResponse.success("Relationship level updated!",
-                    Map.of(
+            Map<String, Object> boostData = Map.of(
                             "conversationId", effectiveConversationId,
                             "previous_level", currentLevel,
                             "new_level", newLevel,
+                "boost_amount", boostAmount,
                             "reason", reason,
-                            "rin_response", response,
-                            "hidden_thought", "(Actually... that made me kind of happy...)"
-                    ));
+                "rin_comment", "Thank you for your kind words about environmental topics. I'm always happy to help people learn about sustainability!"
+            );
+
+            return ApiResponse.success("I appreciate your interest in environmental topics! Let's continue learning together.", boostData);
         } catch (Exception e) {
-            log.error("Error boosting relationship with Rin", e);
-            return ApiResponse.error("Tch! I had trouble updating our relationship level... " + 
-                "Maybe check if you're using a valid conversation ID or try complimenting my environmental expertise instead! " + 
-                "Not that I was excited about getting closer to you or anything!");
+            log.error("Error boosting Rin relationship", e);
+            return ApiResponse.error("I'm having trouble processing that... " + 
+                "But I'm still here to help with your environmental questions!");
         }
     }
 
@@ -249,28 +271,27 @@ public class AIChatController {
                                         @RequestParam(required = false) String sessionId,
                                         @RequestParam(required = false, defaultValue = "what did we talk about?") String testMessage) {
         try {
-            // Generate effective conversation ID to ensure user isolation
             String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, userId, sessionId);
             
-            Map<String, Object> context = contextBuilderService.buildEnhancedContextWithPersonality(
+            Map<String, Object> enhancedContext = contextBuilderService.buildEnhancedContextWithPersonality(
                     effectiveConversationId, userId, sessionId, testMessage);
 
-            return ApiResponse.success("Debug information for conversation",
-                    Map.of(
-                            "originalConversationId", conversationId,
-                            "effectiveConversationId", effectiveConversationId,
-                            "conversationIdLength", effectiveConversationId.length(),
-                            "userId", userId != null ? userId : "null",
-                            "sessionId", sessionId != null ? sessionId : "null",
-                            "testMessage", testMessage,
-                            "context", context,
-                            "isHistoryQuery", context.getOrDefault("user_asking_about_conversation_history", false),
-                            "isNewConversation", context.getOrDefault("is_new_conversation", false),
-                            "rin_comment", "Here's what I can see about this conversation... for debugging purposes only!"
-                    ));
+            String debugSystemPrompt = rinPersonalityService.buildDebugSystemPrompt(enhancedContext, "No document context");
+            
+            Map<String, Object> debugData = Map.of(
+                "conversationId", effectiveConversationId,
+                "test_message", testMessage,
+                "enhanced_context", enhancedContext,
+                "debug_system_prompt", debugSystemPrompt,
+                "context_keys", enhancedContext.keySet(),
+                "rin_comment", "I'm here to help debug any issues with our environmental discussions."
+            );
+
+            return ApiResponse.success("Here's the debug information for our conversation!", debugData);
         } catch (Exception e) {
             log.error("Error debugging conversation", e);
-            return ApiResponse.error("Debug failed: " + e.getMessage());
+            return ApiResponse.error("I'm having trouble with the debug information... " + 
+                "But I'm still here to help with your environmental questions!");
         }
     }
 
@@ -280,41 +301,29 @@ public class AIChatController {
                                      @RequestParam(required = false) String userId,
                                      @RequestParam(required = false) String sessionId) {
         try {
-            // Generate effective conversation ID
             String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, userId, sessionId);
             
-            log.info("🔍 DEBUG: Testing name query with message: {}", message);
-            
-            // Build context with personality
             Map<String, Object> enhancedContext = contextBuilderService.buildEnhancedContextWithPersonality(
                 effectiveConversationId, userId, sessionId, message);
             
-            boolean isUserNameQuery = Boolean.TRUE.equals(enhancedContext.get("user_asking_about_name"));
-            boolean isRinNameQuery = Boolean.TRUE.equals(enhancedContext.get("user_asking_about_rin_name"));
-            String userName = (String) enhancedContext.get("user_name");
-            
-            log.info("🔍 DEBUG: Is user name query: {}", isUserNameQuery);
-            log.info("🔍 DEBUG: Is Rin name query: {}", isRinNameQuery);
-            log.info("🔍 DEBUG: User name found: {}", userName);
-            
-            // Build a simplified system prompt for debugging
             String debugSystemPrompt = rinPersonalityService.buildDebugSystemPrompt(enhancedContext, "No document context");
             
-            return ApiResponse.success("Debug name query results",
-                    Map.of(
-                            "message", message,
-                            "effectiveConversationId", effectiveConversationId,
-                            "isUserNameQuery", isUserNameQuery,
-                            "isRinNameQuery", isRinNameQuery,
-                            "userNameFound", userName != null ? userName : "null",
-                            "context", enhancedContext,
-                            "systemPromptPreview", debugSystemPrompt.length() > 500 ? 
-                                debugSystemPrompt.substring(0, 500) + "..." : debugSystemPrompt,
-                            "rin_comment", "This shows how I distinguish between 'what is my name?' vs 'what is your name?'"
-                    ));
+            Map<String, Object> debugData = Map.of(
+                "conversationId", effectiveConversationId,
+                "test_message", message,
+                "enhanced_context", enhancedContext,
+                "debug_system_prompt", debugSystemPrompt,
+                "is_name_query", enhancedContext.get("user_asking_about_name"),
+                "is_rin_name_query", enhancedContext.get("user_asking_about_rin_name"),
+                "user_name", enhancedContext.get("user_name"),
+                "rin_comment", "I'm here to help debug name-related queries in our environmental discussions."
+            );
+
+            return ApiResponse.success("Here's the debug information for the name query!", debugData);
         } catch (Exception e) {
             log.error("Error debugging name query", e);
-            return ApiResponse.error("Debug name query failed: " + e.getMessage());
+            return ApiResponse.error("I'm having trouble with the name query debug... " + 
+                "But I'm still here to help with your environmental questions!");
         }
     }
 
@@ -324,40 +333,28 @@ public class AIChatController {
                                         @RequestParam(required = false) String userId,
                                         @RequestParam(required = false) String sessionId) {
         try {
-            // Generate effective conversation ID
             String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, userId, sessionId);
             
-            log.info("🔍 DEBUG: Testing history query with message: {}", message);
-            log.info("🔍 DEBUG: Effective conversation ID: {} (length: {})", effectiveConversationId, effectiveConversationId.length());
-            
-            // Build context with personality
             Map<String, Object> enhancedContext = contextBuilderService.buildEnhancedContextWithPersonality(
                 effectiveConversationId, userId, sessionId, message);
             
-            boolean isHistoryQuery = Boolean.TRUE.equals(enhancedContext.get("user_asking_about_conversation_history"));
-            boolean isNewConversation = Boolean.TRUE.equals(enhancedContext.get("is_new_conversation"));
-            
-            log.info("🔍 DEBUG: Is history query: {}", isHistoryQuery);
-            log.info("🔍 DEBUG: Is new conversation: {}", isNewConversation);
-            
-            // Build a simplified system prompt for debugging
             String debugSystemPrompt = rinPersonalityService.buildDebugSystemPrompt(enhancedContext, "No document context");
             
-            return ApiResponse.success("Debug history query results",
-                    Map.of(
-                            "message", message,
-                            "effectiveConversationId", effectiveConversationId,
-                            "conversationIdLength", effectiveConversationId.length(),
-                            "isHistoryQuery", isHistoryQuery,
-                            "isNewConversation", isNewConversation,
-                            "context", enhancedContext,
-                            "systemPromptPreview", debugSystemPrompt.length() > 500 ? 
-                                debugSystemPrompt.substring(0, 500) + "..." : debugSystemPrompt,
-                            "rin_comment", "This is a debug analysis of how I would handle this history query."
-                    ));
+            Map<String, Object> debugData = Map.of(
+                "conversationId", effectiveConversationId,
+                "test_message", message,
+                "enhanced_context", enhancedContext,
+                "debug_system_prompt", debugSystemPrompt,
+                "is_history_query", enhancedContext.get("user_asking_about_conversation_history"),
+                "conversation_metrics", enhancedContext.get("conversation_metrics"),
+                "rin_comment", "I'm here to help debug conversation history queries in our environmental discussions."
+            );
+
+            return ApiResponse.success("Here's the debug information for the history query!", debugData);
         } catch (Exception e) {
             log.error("Error debugging history query", e);
-            return ApiResponse.error("Debug history query failed: " + e.getMessage());
+            return ApiResponse.error("I'm having trouble with the history query debug... " + 
+                "But I'm still here to help with your environmental questions!");
         }
     }
 
@@ -366,123 +363,164 @@ public class AIChatController {
         try {
             String persistentId = conversationUtilService.getPersistentConversationId(userId);
             
-            return ApiResponse.success("Generated persistent conversation ID",
-                    Map.of(
-                            "conversationId", persistentId,
-                            "userId", userId != null ? userId : "anonymous",
-                            "persistent", true,
-                            "rin_comment", "This ID will stay the same even if you log out and back in! Not that I care about remembering you or anything..."
-                    ));
+            Map<String, Object> idData = Map.of(
+                "persistent_conversation_id", persistentId,
+                "user_id", userId,
+                "generation_timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                "rin_comment", "Here's your persistent conversation ID. I'll remember our environmental discussions across sessions."
+            );
+
+            return ApiResponse.success("Here's your persistent conversation ID for our environmental discussions!", idData);
         } catch (Exception e) {
             log.error("Error generating persistent conversation ID", e);
-            return ApiResponse.error("Couldn't generate persistent conversation ID: " + e.getMessage());
+            return ApiResponse.error("I'm having trouble generating a persistent conversation ID... " + 
+                "But I'm still here to help with your environmental questions!");
         }
     }
 
     @GetMapping("/conversation/info")
     public ApiResponse getConversationInfo() {
-        return ApiResponse.success("Conversation memory system information",
-                Map.of(
-                        "how_memory_works", "Your conversations are now persistent across login/logout cycles",
-                        "persistent_ids", "Each user gets a permanent conversation ID that doesn't change",
-                        "knowledge_integration", "Environmental documents are integrated as Rin's natural expertise",
-                        "no_document_references", "Rin will never mention sources or documents explicitly",
-                        "endpoints", Map.of(
-                                "get_persistent_id", "GET /api/ai/conversation/persistent/{userId}",
-                                "load_history", "GET /api/ai/conversation/{conversationId}/history?userId=USER_ID",
-                                "chat_streaming", "POST /api/ai/chat?message=MSG&conversationId=ID&userId=USER&sessionId=SESSION",
-                                "chat_sync", "POST /api/ai/chat/sync?message=MSG&conversationId=ID&userId=USER&sessionId=SESSION",
-                                "get_memory", "GET /api/ai/memory/{conversationId}?userId=USER&sessionId=SESSION",
-                                "clear_memory", "DELETE /api/ai/memory/{conversationId}?userId=USER&sessionId=SESSION",
-                                "clear_memory_alt", "DELETE /api/ai/conversation/{conversationId}/history?userId=USER&sessionId=SESSION"
-                        ),
-                        "frontend_integration", Map.of(
-                                "step_1", "Call GET /api/ai/conversation/persistent/{userId} to get conversationId",
-                                "step_2", "Call GET /api/ai/conversation/{conversationId}/history to load existing messages",
-                                "step_3", "Use POST /api/ai/chat with the conversationId for new messages",
-                                "step_4", "Messages automatically save to ChatMemory during chat processing"
-                        ),
-                        "rin_comment", "Now I'll actually remember our conversations! Not that I was trying to forget you before... hmph!"
-                ));
+        try {
+            Map<String, Object> infoData = Map.of(
+                "ai_personality", "Rin Kazuki (凛 和月)",
+                "personality_type", "Mature Environmental Teacher",
+                "age", 27,
+                "specialization", "Environmental Sustainability",
+                "teaching_style", "Patient, nurturing, and encouraging",
+                "personality_traits", Map.of(
+                    "mature", "Thoughtful and introspective",
+                    "nurturing", "Patient and encouraging teacher",
+                    "poetic", "Appreciates beauty and literature",
+                    "environmental", "Passionate about sustainability",
+                    "gentle", "Warm and approachable"
+                ),
+                "environmental_expertise", Map.of(
+                    "carbon_footprints", "Expert knowledge and calculations",
+                    "renewable_energy", "Comprehensive understanding",
+                    "sustainability_practices", "Practical guidance and advice",
+                    "environmental_science", "Deep theoretical knowledge"
+                ),
+                "rin_comment", "I'm here to help you learn about our beautiful planet and how we can protect it together."
+            );
+
+            return ApiResponse.success("Here's some information about me and how I can help with your environmental questions!", infoData);
+        } catch (Exception e) {
+            log.error("Error getting conversation info", e);
+            return ApiResponse.error("I'm having trouble sharing my information... " + 
+                "But I'm still here to help with your environmental questions!");
+        }
+    }
+
+    @GetMapping("/performance/metrics")
+    public ApiResponse getPerformanceMetrics() {
+        try {
+            Map<String, Object> metrics = performanceMonitoringService.getPerformanceMetrics();
+            Map<String, Object> redisHealth = performanceMonitoringService.checkRedisHealth();
+            Map<String, Object> cacheStats = performanceMonitoringService.getCacheStatistics();
+            
+            Map<String, Object> performanceData = Map.of(
+                "metrics", metrics,
+                "redis_health", redisHealth,
+                "cache_statistics", cacheStats,
+                "timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+            );
+            
+            return ApiResponse.success("Performance metrics retrieved successfully", performanceData);
+        } catch (Exception e) {
+            log.error("Error getting performance metrics", e);
+            return ApiResponse.error("Failed to retrieve performance metrics: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/performance/reset")
+    public ApiResponse resetPerformanceMetrics() {
+        try {
+            performanceMonitoringService.resetMetrics();
+            return ApiResponse.success("Performance metrics reset successfully");
+        } catch (Exception e) {
+            log.error("Error resetting performance metrics", e);
+            return ApiResponse.error("Failed to reset performance metrics: " + e.getMessage());
+        }
     }
 
     @GetMapping("/rin/environmental-tips")
     public ApiResponse getRinEnvironmentalTips() {
         try {
             String[] tips = {
-                    "Hmph! Fine, I'll give you ONE tip: Start measuring your Scope 1, 2, and 3 emissions properly! It's basic stuff, really.",
-                    "Listen up! Switch to renewable energy sources already! Solar and wind power aren't just trendy - they actually work!",
-                    "Tch! You want advice? Implement a proper waste management system with circular economy principles. It's not rocket science!",
-                    "I suppose I could mention that water conservation is crucial... not that I care if you waste water or anything!",
-                    "Don't make me repeat myself! Carbon offsetting is only effective if you ACTUALLY reduce emissions first. Quality over quantity!",
-                    "Here's a freebie: Use life cycle assessments for your products. If you don't know the environmental impact, how can you improve it? Obviously!",
-                    "Fine! I'll tell you about supply chain optimization - work with suppliers who share your environmental values. It's common sense!",
-                    "Honestly... just start with energy audits. You can't improve what you don't measure. Even someone like you should understand that!"
+                "Consider using energy-efficient LED bulbs - they use up to 90% less energy than traditional incandescent bulbs and last much longer.",
+                "Try to reduce your meat consumption by having one meatless day per week. This can significantly reduce your carbon footprint.",
+                "Use reusable water bottles and coffee cups instead of disposable ones. Every small change makes a difference.",
+                "Consider walking, cycling, or using public transportation when possible. It's good for both you and the environment.",
+                "Start composting your food waste. It's a wonderful way to reduce landfill waste and create nutrient-rich soil for plants.",
+                "Switch to renewable energy sources if available in your area. Solar and wind power are becoming more accessible.",
+                "Reduce your water usage by taking shorter showers and fixing any leaks. Every drop counts.",
+                "Choose products with minimal packaging or packaging that can be recycled. This helps reduce waste significantly.",
+                "Plant native trees and flowers in your garden. They provide habitat for local wildlife and help clean the air.",
+                "Consider the environmental impact of your purchases. Sometimes spending a bit more on sustainable products pays off in the long run."
             };
 
             String selectedTip = tips[personalityRandom.nextInt(tips.length)];
 
             String[] additionalComments = {
-                    "There! I helped you... but don't expect me to do this all the time!",
-                    "Not that I enjoy teaching people about the environment or anything...",
-                    "I-it's not like I want to save the planet with you... I just hate seeing waste!",
-                    "Don't thank me! I'm only doing this because someone has to educate you properly!"
+                "I hope this tip helps you on your environmental journey!",
+                "Every small step toward sustainability makes our planet a better place.",
+                "It's wonderful to see people taking an interest in environmental protection.",
+                "Remember, we're all learning together how to care for our beautiful planet."
             };
 
             String additionalComment = additionalComments[personalityRandom.nextInt(additionalComments.length)];
 
-            return ApiResponse.success("Here's your environmental tip!",
+            return ApiResponse.success("Here's an environmental tip for you!",
                     Map.of(
                             "tip", selectedTip,
                             "additional_comment", additionalComment,
-                            "expertise_level", "Expert (Obviously!)",
-                            "passion_level", "Secretly Maximum"
+                            "expertise_level", "Expert Environmental Teacher",
+                            "passion_level", "Deeply Caring"
                     ));
         } catch (Exception e) {
             log.error("Error getting Rin's environmental tips", e);
-            return ApiResponse.error("Tch! I had trouble giving you environmental advice... " + 
-                "This is unusual since I know tons about sustainability! Try asking me a specific environmental question instead! " + 
-                "Not that I'm eager to teach you or anything... hmph!");
+            return ApiResponse.error("I'm having trouble sharing environmental advice... " + 
+                "But I'm still here to help with your sustainability questions! " + 
+                "What specific environmental topic would you like to learn about?");
         }
     }
 
     /**
-     * Ensure content is clean and doesn't contain raw Spring AI message objects
-     * This is a final validation layer for streaming responses
+     * Detect if an error is related to client disconnection
      */
-    private String ensureCleanContent(String content) {
-        if (content == null || content.trim().isEmpty()) {
-            return "";
+    private boolean isClientDisconnectionError(Throwable error) {
+        // Check for client abort exceptions (client disconnected)
+        if (error instanceof ClientAbortException) {
+            return true;
         }
         
-        // If it's already clean (no message object markers), return as-is
-        if (!content.contains("Message{") && !content.contains("content=") && !content.contains("textContent=")) {
-            return content;
+        // Check for async request not usable (client disconnected during streaming)
+        if (error instanceof AsyncRequestNotUsableException) {
+            return true;
         }
         
-        // Clean up any raw message object content that might have slipped through
-        // Pattern 1: Extract from content='text'
-        Pattern pattern = Pattern.compile("content='([^']*)'");
-        Matcher matcher = pattern.matcher(content);
-        if (matcher.find()) {
-            return matcher.group(1);
+        // Check for connection-related exceptions
+        if (error instanceof ConnectException || error instanceof TimeoutException) {
+            return true;
         }
         
-        // Pattern 2: Extract from textContent=text
-        pattern = Pattern.compile("textContent=([^,}]*)");
-        matcher = pattern.matcher(content);
-        if (matcher.find()) {
-            return matcher.group(1).trim();
+        // Check for IO exceptions that might indicate client disconnection
+        if (error instanceof java.io.IOException) {
+            String message = error.getMessage();
+            return message != null && (
+                message.contains("Connection reset") ||
+                message.contains("Broken pipe") ||
+                message.contains("Connection aborted") ||
+                message.contains("Software caused connection abort")
+            );
         }
         
-        // Pattern 3: Remove message object wrapper
-        String cleaned = content
-                .replaceAll("^[A-Za-z]*Message\\{.*?content='", "")
-                .replaceAll("'.*?\\}$", "")
-                .replaceAll("^[A-Za-z]*Message\\{.*?textContent=", "")
-                .replaceAll(",.*?\\}$", "")
-                .trim();
+        // Check for underlying cause
+        Throwable cause = error.getCause();
+        if (cause != null && cause != error) {
+            return isClientDisconnectionError(cause);
+        }
         
-        return cleaned.isEmpty() ? content.trim() : cleaned;
+        return false;
     }
 } 

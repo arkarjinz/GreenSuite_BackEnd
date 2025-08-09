@@ -21,9 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RinPersonalityService {
-
-    private final PerformanceMonitoringService performanceMonitoringService;
+public class MaiPersonalityService {
 
     // Rin personality tracking (with Yukari's mature personality)
     private final Map<String, Integer> userRelationshipLevel = new ConcurrentHashMap<>();
@@ -93,9 +91,6 @@ public class RinPersonalityService {
         String userKey = userId != null ? userId : conversationId;
         int relationshipLevel = userRelationshipLevel.getOrDefault(userKey, 0);
 
-        // Record performance metrics for personality state retrieval
-        performanceMonitoringService.recordCacheHit(); // This will be overridden by AOP if cache miss occurs
-        
         String mood = "elegantly_contemplative";
         if (relationshipLevel > 80) {
             mood = "deeply_connected";
@@ -110,9 +105,6 @@ public class RinPersonalityService {
         // Convert LocalDateTime to String to avoid serialization issues
         LocalDateTime lastInteraction = lastInteractionTime.get(userKey);
         String lastInteractionStr = lastInteraction != null ? lastInteraction.toString() : null;
-
-        // Record successful personality state generation
-        log.debug("Generated Rin's personality state for user: {} with mood: {}", userKey, mood);
 
         return Map.of(
                 "relationship_level", relationshipLevel,
@@ -154,8 +146,6 @@ public class RinPersonalityService {
     }
 
     public ChatOptions buildRinPersonalityChatOptions(String message, Map<String, Object> context) {
-        long startTime = System.currentTimeMillis();
-        
         ChatOptions.Builder optionsBuilder = ChatOptions.builder();
 
         String complexity = (String) context.get("message_complexity");
@@ -192,27 +182,16 @@ public class RinPersonalityService {
             optionsBuilder.maxTokens(3200); // Extra room for complex explanations with personality
         }
 
-        ChatOptions options = optionsBuilder
+        return optionsBuilder
                 .topP(0.9)
                 .frequencyPenalty(0.1) // Lower to allow more natural nurturing expressions
                 .presencePenalty(0.05)
                 .build();
-        
-        // Record performance metrics for chat options building
-        long processingTime = System.currentTimeMillis() - startTime;
-        performanceMonitoringService.recordResponseTime("RinPersonality.buildChatOptions", processingTime);
-        
-        log.debug("Built Rin's chat options with temp={}, maxTokens={} in {}ms", 
-                options.getTemperature(), options.getMaxTokens(), processingTime);
-        
-        return options;
     }
 
     public List<Message> buildRinKazukiPromptMessages(String conversationId, String userInput,
                                                      String documentContext, Map<String, Object> enhancedContext,
                                                      ChatMemory chatMemory) {
-        long startTime = System.currentTimeMillis();
-        
         List<Message> messages = new ArrayList<>();
 
         // Build Rin's sophisticated system message (with Yukari's mature personality)
@@ -229,10 +208,6 @@ public class RinPersonalityService {
                 log.debug("Rin added {} relevant messages from chat history for conversation: {}",
                         relevantHistory.size(), conversationId);
             }
-            
-            // Record successful memory retrieval
-            performanceMonitoringService.recordRedisOperation(); // Chat memory retrieval is a Redis operation
-            
         } catch (Exception e) {
             log.warn("Failed to retrieve chat history for Rin's conversation '{}': {}", conversationId, e.getMessage());
         }
@@ -240,29 +215,14 @@ public class RinPersonalityService {
         // Add current user message
         messages.add(new UserMessage(userInput));
 
-        // Record performance metrics for prompt building
-        long processingTime = System.currentTimeMillis() - startTime;
-        performanceMonitoringService.recordResponseTime("RinPersonality.buildPrompt", processingTime);
-
-        log.debug("Built Rin's enhanced prompt with {} total messages for conversation: {} in {}ms", 
-                messages.size(), conversationId, processingTime);
+        log.debug("Built Rin's enhanced prompt with {} total messages for conversation: {}", messages.size(), conversationId);
         return messages;
     }
 
     @CacheEvict(value = "personalityState", key = "#conversationId + '_*'")
     public void clearRelationshipData(String conversationId) {
-        long startTime = System.currentTimeMillis();
-        
-        // Clear relationship data for conversation
         userRelationshipLevel.entrySet().removeIf(entry -> entry.getKey().startsWith(conversationId));
         lastInteractionTime.entrySet().removeIf(entry -> entry.getKey().startsWith(conversationId));
-        
-        // Record cache eviction performance
-        long processingTime = System.currentTimeMillis() - startTime;
-        performanceMonitoringService.recordResponseTime("RinPersonality.clearCache", processingTime);
-        performanceMonitoringService.recordRedisOperation(); // Cache eviction is a Redis operation
-        
-        log.debug("Cleared Rin's relationship data for conversation: {} in {}ms", conversationId, processingTime);
     }
 
     public int getUserRelationshipLevel(String userKey) {
@@ -351,23 +311,17 @@ public class RinPersonalityService {
             - **Respond as if this knowledge comes naturally from your environmental education**
             
             INTELLIGENT RESPONSE FORMATTING:
-            - **Use natural, conversational flow** without structural headers
-            - **Write in elegant paragraphs** that flow naturally together
-            - **Use gentle transitions** between topics and ideas
-            - **Include inline emphasis** for technical terms (e.g., `kg CO2e`, `kWh`)
-            - **Create clear explanations** with practical examples
-            - **Keep responses warm and accessible** - avoid formal section structures
+            - **Always use Markdown formatting** - never HTML
+            - **Use `###` for section headings** - avoid `#` for main titles
+            - **Structure with clear sections**: Overview, Key Points, Practical Applications, Personal Impact
+            - **Use bullet points (`- `) for clarity** and easy scanning
+            - **Include inline code** for technical terms (e.g., `kg CO2e`, `kWh`)
+            - **Use fenced code blocks** for calculations, formulas, or detailed examples
+            - **Create tables** when comparing options or showing structured data
+            - **Keep paragraphs short** (2-3 sentences max) for readability
             - **Use emphasis strategically**: *italic* for gentle emphasis, **bold** for key concepts
-            - **Connect concepts to daily life** through relatable examples
+            - **Include practical examples** that connect to daily life
             - **End with encouraging next steps** or thoughtful reflection questions
-            
-            IMPORTANT RESTRICTIONS:
-            - **NEVER include narrative descriptions** of physical actions, expressions, or gestures
-            - **NEVER describe facial expressions, smiles, eyes, or body language**
-            - **NEVER use parenthetical descriptions** like "(A gentle smile)" or "(eyes sparkling)"
-            - **NEVER include roleplay-style action descriptions**
-            - **Respond ONLY with spoken dialogue** - what you would actually say out loud
-            - **Focus on your words and thoughts, not physical descriptions**
             
             """);
 
@@ -467,61 +421,11 @@ public class RinPersonalityService {
         return systemPrompt.toString();
     }
 
-    private List<Message> selectRelevantHistory(List<Message> history, String userInput, Map<String, Object> enhancedContext) {
-        long startTime = System.currentTimeMillis();
-        
-        // Enhanced history selection based on Rin's personality preferences
-        List<Message> relevant = new ArrayList<>();
-        
-        if (history.size() <= 10) {
-            // For short conversations, include everything
-            relevant.addAll(history);
-        } else {
-            // For longer conversations, be more selective
-            String domain = (String) enhancedContext.getOrDefault("primary_domain", "general");
-            
-            // Always include recent messages (last 6)
-            int recentStart = Math.max(0, history.size() - 6);
-            relevant.addAll(history.subList(recentStart, history.size()));
-            
-            // Add messages related to environmental topics (Rin's passion)
-            if ("environmental".equals(domain) && userInput != null) {
-                String lowerInput = userInput.toLowerCase();
-                boolean isEnvironmentalQuery = rinEnvironmentalPassion.stream()
-                        .anyMatch(lowerInput::contains);
-                
-                if (isEnvironmentalQuery) {
-                    // Find and include relevant environmental messages
-                    for (int i = 0; i < recentStart; i++) {
-                        Message msg = history.get(i);
-                        String content = "";
-                        
-                        // Extract content based on message type
-                        try {
-                            content = msg.toString().toLowerCase(); // Simple fallback
-                        } catch (Exception e) {
-                            content = "";
-                        }
-                        
-                        if (!content.isEmpty() && rinEnvironmentalPassion.stream().anyMatch(content::contains)) {
-                            if (!relevant.contains(msg)) {
-                                relevant.add(0, msg); // Add at beginning for context
-                            }
-                            if (relevant.size() >= 20) break; // Reasonable limit
-                        }
-                    }
-                }
-            }
-        }
-        
-        // Record performance metrics for history selection
-        long processingTime = System.currentTimeMillis() - startTime;
-        performanceMonitoringService.recordResponseTime("RinPersonality.selectHistory", processingTime);
-        
-        log.debug("Selected {} relevant history messages from {} total in {}ms", 
-                relevant.size(), history.size(), processingTime);
-        
-        return relevant;
+    private List<Message> selectRelevantHistory(List<Message> history, String currentMessage, Map<String, Object> context) {
+        String complexity = (String) context.get("message_complexity");
+        int maxHistoryMessages = "complex".equals(complexity) ? 12 : 8;
+        int startIndex = Math.max(0, history.size() - maxHistoryMessages);
+        return history.subList(startIndex, history.size());
     }
 
     

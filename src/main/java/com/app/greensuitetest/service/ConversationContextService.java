@@ -7,6 +7,9 @@ import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -111,6 +114,8 @@ public class ConversationContextService {
             Pattern.compile("(?i)conversation\\s+summary", Pattern.CASE_INSENSITIVE)
     );
 
+    // Temporarily disable caching to avoid serialization issues
+    // @Cacheable(value = "conversationContext", key = "#conversationId + '_' + #currentMessage.hashCode()")
     public Map<String, Object> buildComprehensiveContext(String conversationId, String userId, String sessionId, String currentMessage) {
         Map<String, Object> context = new HashMap<>();
 
@@ -1268,6 +1273,8 @@ public class ConversationContextService {
         return environmentalEngagementScore.getOrDefault(conversationId, 0);
     }
 
+    // Temporarily disable cache eviction
+    // @CacheEvict(value = "conversationContext", key = "#conversationId + '_*'")
     public void clearContextCache(String conversationId) {
         contextCache.remove(conversationId);
         // NEW: Clear Rin personality data

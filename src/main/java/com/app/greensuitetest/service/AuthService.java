@@ -216,16 +216,18 @@ public class AuthService {
                 .approvalStatus(approvalStatus)
                 .createdAt(LocalDateTime.now())
                 .lastActive(LocalDateTime.now())
-                .rejectionCount(0)  // Initialize rejection count
-                .isBanned(false);   // Initialize ban status
-
+                .rejectionCount(0)
+                .isBanned(false)
+                .aiCredits(50);  // Initialize with 50 AI credits
+    
         // Add premium benefits if applicable
         if (company.getTier() == SubscriptionTier.PREMIUM) {
-            builder.aiCredits(500);
+            builder.aiCredits(500); // Premium users get more credits
         }
-
+    
         return builder.build();
     }
+    
 
     private void handlePostRegistration(AuthDTO.RegisterRequest request, Company company, User user) {
         // Notify owner if this is a non-owner registration
@@ -347,7 +349,7 @@ public class AuthService {
         Map<String, Object> response = new HashMap<>();
         response.put("accessToken", accessToken);
         response.put("refreshToken", refreshToken);
-
+    
         Map<String, Object> userProfile = new HashMap<>();
         userProfile.put("id", user.getId());
         userProfile.put("firstName", user.getFirstName());
@@ -360,14 +362,20 @@ public class AuthService {
         userProfile.put("approvalStatus", user.getApprovalStatus().name());
         userProfile.put("rejectionCount", user.getRejectionCount());
         userProfile.put("isBanned", user.isBanned());
-
+        
+        // Add AI credit information
+        userProfile.put("aiCredits", user.getAiCredits());
+        userProfile.put("canChat", user.hasCreditsForChat());
+        userProfile.put("maxPossibleChats", user.getMaxPossibleChats());
+        userProfile.put("isLowOnCredits", user.isLowOnCredits());
+    
         // Add company name
         if (user.getCompanyId() != null) {
             companyRepository.findById(user.getCompanyId()).ifPresent(company -> {
                 userProfile.put("companyName", company.getName());
             });
         }
-
+    
         response.put("user", userProfile);
         return response;
     }

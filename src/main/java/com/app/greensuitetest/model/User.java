@@ -2,6 +2,7 @@ package com.app.greensuitetest.model;
 
 import com.app.greensuitetest.constants.ApprovalStatus;
 import com.app.greensuitetest.constants.Role;
+import com.app.greensuitetest.constants.SubscriptionTier;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -46,6 +47,10 @@ public class User {
     @Field("global_admin")
     private boolean globalAdmin;
 
+    @Field("subscription_tier")
+    @Builder.Default
+    private SubscriptionTier subscriptionTier = SubscriptionTier.FREE;
+
     @Field("approval_status")
     private ApprovalStatus approvalStatus = ApprovalStatus.PENDING;
 
@@ -62,7 +67,8 @@ public class User {
     private Set<String> badges = new HashSet<>();
 
     @Field("ai_credits")
-    private int aiCredits;
+    @Builder.Default
+    private int aiCredits = 50; // Default 50 credits for new users
 
     @Field("purchased_features")
     private Set<String> purchasedFeatures = new HashSet<>();
@@ -98,6 +104,18 @@ public class User {
     @Field("last_rejection_at")
     private LocalDateTime lastRejectionAt;
 
+    // New fields for AI credit tracking
+    @Field("total_credits_purchased")
+    @Builder.Default
+    private int totalCreditsPurchased = 0;
+
+    @Field("total_credits_used")
+    @Builder.Default
+    private int totalCreditsUsed = 0;
+
+    @Field("last_credit_purchase")
+    private LocalDateTime lastCreditPurchase;
+
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         if (this.isGlobalAdmin()) {
@@ -113,7 +131,51 @@ public class User {
         return recoveryLockUntil != null && recoveryLockUntil.isAfter(LocalDateTime.now());
     }
 
-    // New methods for rejection tracking
+    // Credit-related methods
+    public boolean hasCreditsForChat() {
+        return this.aiCredits >= 2;
+    }
+
+    public int getMaxPossibleChats() {
+        return this.aiCredits / 2;
+    }
+
+    public boolean isLowOnCredits() {
+        return this.aiCredits < 10;
+    }
+
+    public void deductCredits(int amount) {
+        this.aiCredits = Math.max(0, this.aiCredits - amount);
+        this.totalCreditsUsed += amount;
+        this.lastActive = LocalDateTime.now();
+    }
+
+    public void addCredits(int amount) {
+        this.aiCredits += amount;
+        this.totalCreditsPurchased += amount;
+        this.lastCreditPurchase = LocalDateTime.now();
+        this.lastActive = LocalDateTime.now();
+    }
+
+    /**
+     * Get maximum credits allowed for the user's subscription tier
+     */
+    public int getMaxCredits() {
+        return switch (this.subscriptionTier) {
+            case FREE -> 50;
+            case PREMIUM -> 200;
+            case ENTERPRISE -> 500;
+        };
+    }
+
+    /**
+     * Check if user can receive more credits (not at max)
+     */
+    public boolean canReceiveCredits() {
+        return this.aiCredits < getMaxCredits();
+    }
+
+    // Rejection tracking methods
     public void incrementRejectionCount(String companyId, String companyName, String rejectedBy) {
         this.rejectionCount++;
         this.lastRejectionAt = LocalDateTime.now();
@@ -147,6 +209,25 @@ public class User {
 
     public int getRemainingAttempts() {
         return Math.max(0, 5 - this.rejectionCount);
+    }
+
+    // Initialize default values for existing users
+    public void initializeDefaults() {
+        if (this.aiCredits == 0) {
+            this.aiCredits = 50; // Give existing users default credits
+        }
+        if (this.badges == null) {
+            this.badges = new HashSet<>();
+        }
+        if (this.purchasedFeatures == null) {
+            this.purchasedFeatures = new HashSet<>();
+        }
+        if (this.securityQuestions == null) {
+            this.securityQuestions = new HashMap<>();
+        }
+        if (this.rejectionHistory == null) {
+            this.rejectionHistory = new ArrayList<>();
+        }
     }
 
     // Inner class for rejection records

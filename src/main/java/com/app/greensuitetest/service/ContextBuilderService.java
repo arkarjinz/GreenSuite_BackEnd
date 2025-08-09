@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -21,14 +22,39 @@ public class ContextBuilderService {
     // Cache for conversation contexts to improve performance
     private final Map<String, Map<String, Object>> conversationCache = new ConcurrentHashMap<>();
 
+    // Environmental sustainability keywords
+    private final Set<String> sustainabilityKeywords = Set.of(
+        "environment", "sustainability", "green", "eco", "carbon", "emission", "footprint",
+        "renewable", "energy", "solar", "wind", "recycling", "waste", "conservation",
+        "climate", "global warming", "pollution", "biodiversity", "organic", "sustainable"
+    );
+
     public Map<String, Object> buildEnhancedContextWithPersonality(String conversationId, String userId, String sessionId, String message) {
-        Map<String, Object> context = buildEnhancedContext(conversationId, userId, sessionId, message);
+        Map<String, Object> context = new HashMap<>();
+        String userKey = userId != null ? userId : conversationId;
 
         // Add Rin's personality context
-        String userKey = userId != null ? userId : conversationId;
         context.put("rin_relationship_level", rinPersonalityService.getUserRelationshipLevel(userKey));
         context.put("rin_personality_state", rinPersonalityService.getRinPersonalityState(conversationId, userId));
-        context.put("user_interaction_history", getUserInteractionHistory(userKey));
+
+        // Add conversation context
+        Map<String, Object> conversationContext = conversationContextService.buildComprehensiveContext(conversationId, userId, sessionId, message);
+        context.putAll(conversationContext);
+
+        // Add message analysis
+        Map<String, Object> messageAnalysis = analyzeMessage(message);
+        context.putAll(messageAnalysis);
+
+        // Add environmental context
+        Map<String, Object> environmentalContext = buildEnvironmentalContext(message, conversationContext);
+        context.putAll(environmentalContext);
+
+        // Add temporal context
+        Map<String, Object> temporalContext = buildTemporalContext();
+        context.putAll(temporalContext);
+
+        // Cache the context
+        conversationCache.put(conversationId, context);
 
         return context;
     }
@@ -85,7 +111,7 @@ public class ContextBuilderService {
         int relationshipLevel = rinPersonalityService.getUserRelationshipLevel(userKey);
 
         return Map.of(
-                "is_returning_user", lastTime != null,
+                "last_interaction", lastTime,
                 "relationship_level", relationshipLevel,
                 "interaction_count", getInteractionCount(userKey)
         );
@@ -141,5 +167,70 @@ public class ContextBuilderService {
         } else {
             return "simple";
         }
+    }
+
+    private Map<String, Object> analyzeMessage(String message) {
+        Map<String, Object> messageAnalysis = new HashMap<>();
+        messageAnalysis.put("message_intent", analyzeMessageIntent(message));
+        messageAnalysis.put("message_complexity", analyzeMessageComplexity(message));
+        return messageAnalysis;
+    }
+
+    private Map<String, Object> buildEnvironmentalContext(String message, Map<String, Object> conversationContext) {
+        Map<String, Object> envContext = new HashMap<>();
+        
+        // Analyze environmental engagement
+        String lowerMessage = message.toLowerCase();
+        int environmentalScore = 0;
+        
+        for (String keyword : sustainabilityKeywords) {
+            if (lowerMessage.contains(keyword)) {
+                environmentalScore += 2;
+            }
+        }
+        
+        // Check for specific environmental topics
+        if (lowerMessage.contains("carbon") || lowerMessage.contains("emission")) {
+            envContext.put("environmental_topic", "carbon_footprint");
+            environmentalScore += 3;
+        } else if (lowerMessage.contains("energy") || lowerMessage.contains("renewable")) {
+            envContext.put("environmental_topic", "energy");
+            environmentalScore += 3;
+        } else if (lowerMessage.contains("waste") || lowerMessage.contains("recycling")) {
+            envContext.put("environmental_topic", "waste_management");
+            environmentalScore += 3;
+        } else if (lowerMessage.contains("water") || lowerMessage.contains("conservation")) {
+            envContext.put("environmental_topic", "water_conservation");
+            environmentalScore += 3;
+        }
+        
+        envContext.put("environmental_engagement_score", environmentalScore);
+        
+        // Add Rin's environmental expertise level - use conversationId as fallback for userKey
+        String userKey = (String) conversationContext.get("user_id");
+        if (userKey == null) {
+            userKey = (String) conversationContext.get("conversation_id");
+        }
+        
+        if (userKey != null) {
+            LocalDateTime lastTime = rinPersonalityService.getLastInteractionTime(userKey);
+            int relationshipLevel = rinPersonalityService.getUserRelationshipLevel(userKey);
+            
+            if (lastTime != null) {
+                long hoursSinceLastInteraction = java.time.Duration.between(lastTime, LocalDateTime.now()).toHours();
+                envContext.put("hours_since_last_interaction", hoursSinceLastInteraction);
+            }
+            
+            // Estimate user's environmental knowledge level
+            envContext.put("estimated_user_expertise", relationshipLevel / 2); // Rough estimate
+        }
+        
+        return envContext;
+    }
+
+    private Map<String, Object> buildTemporalContext() {
+        Map<String, Object> temporalContext = new HashMap<>();
+        temporalContext.put("current_time", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        return temporalContext;
     }
 } 
