@@ -223,7 +223,7 @@ public class CarbonCalculatorService {
 
         // Get all activities for this company/user for the specified month/year/region
         List<CarbonActivity> activities = activityRepository.findByCompanyIdAndUserIdAndMonthAndYearAndRegion(
-                companyId, userId, month, year, region
+                companyId,  month, year, region
         );
 
         Map<String, Object> resourceData = new HashMap<>();
@@ -379,7 +379,7 @@ public class CarbonCalculatorService {
         String companyId = securityUtil.getCurrentUserCompanyId();
         String userId = securityUtil.getCurrentUserId();
         List<CarbonActivity> existingActivities = activityRepository.findByCompanyIdAndUserIdAndMonthAndYearAndRegion(
-                companyId, userId, month, year, region
+                companyId, month, year, region
         );
         if (!existingActivities.isEmpty()) {
             activityRepository.deleteAll(existingActivities);

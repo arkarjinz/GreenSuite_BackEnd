@@ -52,6 +52,10 @@ public class CarbonGoalService {
         Map<String, Double> currentEmissions = getEmissionsByCategory(currentMonth.getYear(), currentMonth.getMonthValue());
         Map<String, Double> previousEmissions = getEmissionsByCategory(previousMonth.getYear(), previousMonth.getMonthValue());
         Map<String, Boolean> result = new HashMap<>();
+        if (currentEmissions.isEmpty()) {
+            System.out.println("No current month emissions data found for " + currentMonth + ". Skipping save.");
+            return;
+        }
         if (previousEmissions.isEmpty()) {
             System.out.println("No previous emissions data found. Skipping save.");
             return;
@@ -179,6 +183,12 @@ public class CarbonGoalService {
 
         System.out.println("Current emissions: " + currentEmissions);
         System.out.println("Previous emissions: " + previousEmissions);
+        // ✅ NEW: Check if current month has emission data
+        if (currentEmissions.isEmpty()) {
+            System.out.println("No current month emissions data found for " + currentMonth + ". Skipping save.");
+            return false; // EXITS WITHOUT SAVING THE GOAL
+        }
+
         // If no previous data at all, assume goal is not yet evaluable
         if (previousEmissions.isEmpty()) {
             System.out.println("No previous emissions data found.");
@@ -228,7 +238,12 @@ public class CarbonGoalService {
         // Fetch emissions data for both months
         Map<String, Double> currentEmissions = getEmissionsByCategory(currentMonth.getYear(), currentMonth.getMonthValue());
         Map<String, Double> previousEmissions = getEmissionsByCategory(previousMonth.getYear(), previousMonth.getMonthValue());
-// If no previous month data, return a message asking user to add it
+
+        if (currentEmissions.isEmpty()) {
+            String message = "No data found for the selected month (" + currentMonth + "). Please add emissions data for " + currentMonth + " before setting goals.";
+            return new CarbonGoalResponse(message, new HashMap<>());
+        }
+        // If no previous month data, return a message asking user to add it
         if (previousEmissions.isEmpty()) {
             String message = "No data found for the previous month (" + previousMonth + "). Please add emissions data for the previous month to evaluate your goals.";
             return new CarbonGoalResponse(message, new HashMap<>());
