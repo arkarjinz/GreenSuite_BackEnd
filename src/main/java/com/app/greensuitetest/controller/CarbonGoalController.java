@@ -51,5 +51,11 @@ public class CarbonGoalController {
         }
         return ResponseEntity.ok(goals);
     }
+    // NEW: Get a single goal by ID
+    @GetMapping("/{goalId}")
+    public ResponseEntity<CarbonGoal> getGoalById(@PathVariable String goalId) {
+        CarbonGoal goal = goalService.getGoalById(goalId);
+        return ResponseEntity.ok(goal);
+    }
 
 }

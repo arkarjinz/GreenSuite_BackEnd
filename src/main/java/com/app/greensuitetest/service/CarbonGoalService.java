@@ -359,4 +359,18 @@ public class CarbonGoalService {
     private String capitalize(String input) {
         return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
+    // Add this method to your CarbonGoalService.java class
+
+    public CarbonGoal getGoalById(String goalId) {
+        String companyId = securityUtil.getCurrentUserCompanyId();
+        CarbonGoal goal = carbonGoalRepository.findById(goalId)
+                .orElseThrow(() -> new RuntimeException("Goal not found with id: " + goalId));
+
+        // Security check: ensure the goal belongs to the current user's company
+        if (!goal.getCompanyId().equals(companyId)) {
+            throw new RuntimeException("Access denied: Goal does not belong to your company");
+        }
+
+        return goal;
+    }
 }
