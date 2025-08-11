@@ -1,27 +1,33 @@
 //Htet Htet
 
 package com.app.greensuitetest.validation;
+
 import java.time.Month;
-import java.time.format.TextStyle;
-import java.util.Locale;
 
 public class MonthValidator {
 
     public String normalizeMonth(String inputMonth) {
         try {
-            // Handle numeric input: "07" => 7 => JULY
+            // Handle numeric input (with or without leading zero)
             if (inputMonth.matches("\\d+")) {
                 int monthNumber = Integer.parseInt(inputMonth);
-                return Month.of(monthNumber).name(); // returns "JULY"
+                if (monthNumber < 1 || monthNumber > 12) {
+                    throw new IllegalArgumentException("Invalid month number: " + monthNumber);
+                }
+                return String.format("%02d", monthNumber); // Always two digits
             }
 
-            // Handle string input: "july", "Jul", "JuLy" => JULY
-            return Month.valueOf(inputMonth.trim().toUpperCase()).name();
+            // Handle text month (e.g., August, AUG, aug)
+            Month month = Month.valueOf(inputMonth.trim().toUpperCase());
+            return String.format("%02d", month.getValue()); // Always two digits
+
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid month format: " + inputMonth);
         }
     }
 }
+
+
 
 
 
