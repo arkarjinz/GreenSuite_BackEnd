@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 @RestController
 @RequestMapping("/api/carbon")
 @RequiredArgsConstructor
@@ -38,7 +39,7 @@ public class CarbonFootPrintController {
     @GetMapping("/submitted-months")
     public ResponseEntity<?> getSubmittedMonths(
             @RequestParam int year
-           ) {
+    ) {
 
         try {
             System.out.println("Fetching submitted months for year: " + year);
@@ -46,11 +47,41 @@ public class CarbonFootPrintController {
             System.out.println("Submitted months: " + submittedMonths);
             return ResponseEntity.ok(submittedMonths);
         } catch (Exception e) {
-          //  e.printStackTrace();
+            //  e.printStackTrace();
             return ResponseEntity.status(500).body("Internal server error: " + e.getMessage());
         }
     }
-
+    // NEW: Get existing resource data for a specific month/year/region
+    @GetMapping("/resource-data")
+    public ResponseEntity<?> getResourceDataForMonth(
+            @RequestParam String month,
+            @RequestParam String year,
+            @RequestParam String region) {
+        try {
+            System.out.println("Fetching resource data for: " + month + "/" + year + " in " + region);
+            Map<String, Object> resourceData = calculator.getResourceDataForMonth(month, year, region);
+            return ResponseEntity.ok(resourceData);
+        } catch (Exception e) {
+            System.err.println("Error fetching resource data: " + e.getMessage());
+            return ResponseEntity.status(500).body("Failed to fetch resource data: " + e.getMessage());
+        }
+    }
+    // NEW: Update existing carbon footprint data
+    @PutMapping("/update")
+    public ResponseEntity<?> updateFootprint(
+            @Valid @RequestBody List<@Valid CarbonInput> inputs,
+            @RequestParam String month,
+            @RequestParam String year,
+            @RequestParam String region) {
+        try {
+            System.out.println("Updating footprint for: " + month + "/" + year + " in " + region);
+            Map<String, Object> result = calculator.updateFootprintData(inputs, month, year, region);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            System.err.println("Error updating footprint: " + e.getMessage());
+            return ResponseEntity.status(500).body("Failed to update footprint: " + e.getMessage());
+        }
+    }
     //Htet Htet
     @GetMapping("/company/{companyId}/years")
     public ResponseEntity<List<CarbonTotal>> getByYears(
@@ -71,5 +102,4 @@ public class CarbonFootPrintController {
         List<CarbonActivity> data = calculator.getDataForMonth(companyId, year, formattedMonth);
         return ResponseEntity.ok(data);
     }
-
 }

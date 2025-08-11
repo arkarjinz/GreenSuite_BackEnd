@@ -11,10 +11,13 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import com.app.greensuitetest.repository.CarbonTotalRepository;
 import com.app.greensuitetest.model.CarbonTotal;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -34,21 +37,21 @@ public class CarbonCalculatorService {
             case WASTE -> calculateWaste(input);
             case FUEL -> calculateFuel(input);
         };
-
-
     }
+
     private double roundToTwoDecimals(double value) {
         return Math.round(value * 100.0) / 100.0;
     }
-//for hanlding more than one activity type
-public double calculateAndStoreAll(List<CarbonInput> inputs) {
+
+    //for hanlding more than one activity type
+    public double calculateAndStoreAll(List<CarbonInput> inputs) {
         double totalFootprint = 0.0;
         String month = null;
         String year = null;
         for (CarbonInput input : inputs) {
             System.out.println("Calculating footprint for: " + input);
             double footprint = calculateFootprint(input);
-           // saveToDatabase(input, footprint);
+            // saveToDatabase(input, footprint);
             logActivity(input, footprint, input.unit() != null ? input.unit().name() : null);
             totalFootprint += footprint;
             // Track month/year for saving summary
@@ -56,18 +59,19 @@ public double calculateAndStoreAll(List<CarbonInput> inputs) {
             year = input.year();
             System.out.println("Footprint calculated: " + footprint);
         }
-    // Save total footprint
-    if (month != null && year != null) {
-        saveTotalFootprint(month, year, totalFootprint);
-    }
-    System.out.println("Total footprint: " + totalFootprint);
+        // Save total footprint
+        if (month != null && year != null) {
+            saveTotalFootprint(month, year, totalFootprint);
+        }
+        System.out.println("Total footprint: " + totalFootprint);
         return totalFootprint;
     }
+
     private void saveTotalFootprint(String month, String year, double totalFootprint) {
         String userId = securityUtil.getCurrentUserId();
         String companyId = securityUtil.getCurrentUserCompanyId();
 
-        carbonTotalRepository.findByUserIdAndMonthAndYear(userId,companyId, month, year)
+        carbonTotalRepository.findByUserIdAndMonthAndYear(userId, companyId, month, year)
                 .ifPresentOrElse(existing -> {
                     existing.setTotalFootprint(totalFootprint);
                     carbonTotalRepository.save(existing);
@@ -110,7 +114,7 @@ public double calculateAndStoreAll(List<CarbonInput> inputs) {
         System.out.println("Electricity factor for region " + input.region() + " = " + factor);
 
         double footprint = input.value() * factor;
-      //  logActivity(input, footprint, "kWh");
+        //  logActivity(input, footprint, "kWh");
         //return footprint;
         return roundToTwoDecimals(footprint);
     }
@@ -118,8 +122,8 @@ public double calculateAndStoreAll(List<CarbonInput> inputs) {
     private double calculateWater(CarbonInput input) {
         double factor = emissions.getFactor("water", input.region());
         double footprint = input.value() * factor;
-       // logActivity(input, footprint, "m³");
-       // return footprint;
+        // logActivity(input, footprint, "m³");
+        // return footprint;
         return roundToTwoDecimals(footprint);
     }
 
@@ -164,7 +168,7 @@ public double calculateAndStoreAll(List<CarbonInput> inputs) {
                 : unitConverter.toLiters(input.value(), input.unit());
 
         double footprint = standardAmount * factor;
-      //  logActivity(input, footprint, input.unit().name().toLowerCase());
+        //  logActivity(input, footprint, input.unit().name().toLowerCase());
         //return footprint;
         return roundToTwoDecimals(footprint);
     }
@@ -197,6 +201,7 @@ public double calculateAndStoreAll(List<CarbonInput> inputs) {
         String companyId = securityUtil.getCurrentUserCompanyId();
         return activityRepository.findByCompanyId(companyId);
     }
+
     public List<String> getSubmittedMonths(int year) {
         String companyId = securityUtil.getCurrentUserCompanyId();
         List<CarbonActivity> activities = carbonActivityRepository.findByCompanyIdAndYearReturnMonths(companyId, String.valueOf(year));
@@ -206,6 +211,229 @@ public double calculateAndStoreAll(List<CarbonInput> inputs) {
                 .toList();
     }
 
+    // Get existing resource data for a specific month/year/region for editing
+
+    public Map<String, Object> getResourceDataForMonth(String month, String year, String region) {
+        String companyId = securityUtil.getCurrentUserCompanyId();
+        String userId = securityUtil.getCurrentUserId();
+
+        System.out.println("Fetching resource data for company: " + companyId + ", month: " + month + ", year: " + year + ", region: " + region);
+
+        // Get all activities for this company/user for the specified month/year/region
+        List<CarbonActivity> activities = activityRepository.findByCompanyIdAndUserIdAndMonthAndYearAndRegion(
+                companyId,  month, year, region
+        );
+
+        Map<String, Object> resourceData = new HashMap<>();
+
+        // Set default values
+        resourceData.put("month", month);
+        resourceData.put("year", year);
+        resourceData.put("region", region);
+        resourceData.put("companyId", companyId);
+        resourceData.put("userId", userId);
+
+        // Process each activity and populate the resource data
+        for (CarbonActivity activity : activities) {
+            ActivityType activityType = ActivityType.valueOf(activity.getActivityType());
+
+            switch (activityType) {
+                case ELECTRICITY:
+                    resourceData.put("electricity", activity.getInputValue());
+                    break;
+
+                case WATER:
+                    resourceData.put("water", activity.getInputValue());
+                    break;
+
+                case FUEL:
+                    resourceData.put("fuel", activity.getInputValue());
+                    if (activity.getFuelType() != null) {
+                        // Convert from uppercase enum to lowercase for frontend
+                        resourceData.put("fuelType", activity.getFuelType().toLowerCase().replace("naturalgas", "naturalGas"));
+                    }
+                    if (activity.getInputUnit() != null) {
+                        resourceData.put("unit", activity.getInputUnit());
+                    }
+                    break;
+
+                case WASTE:
+                    resourceData.put("waste", activity.getInputValue());
+                    if (activity.getDisposalMethod() != null) {
+                        resourceData.put("disposalMethod", activity.getDisposalMethod().toLowerCase());
+                    }
+                    break;
+            }
+        }
+
+        System.out.println("Retrieved resource data: " + resourceData);
+        return resourceData;
+    }
+
+    /**
+     * Update existing carbon footprint data for a specific month/year/region
+     */
+    /*public Map<String, Object> updateFootprintData(List<CarbonInput> inputs, String month, String year, String region) {
+        String companyId = securityUtil.getCurrentUserCompanyId();
+        String userId = securityUtil.getCurrentUserId();
+        if (companyId == null || userId == null) {
+            throw new IllegalStateException("User not authenticated");
+        }
+        System.out.println("Updating footprint data for company: " + companyId + ", month: " + month + ", year: " + year + ", region: " + region);
+
+        // Delete existing activities for this month/year/region combination
+        List<CarbonActivity> existingActivities = activityRepository.findByCompanyIdAndUserIdAndMonthAndYearAndRegion(
+                companyId, userId, month, year, region
+        );
+
+        if (!existingActivities.isEmpty()) {
+            activityRepository.deleteAll(existingActivities);
+            System.out.println("Deleted " + existingActivities.size() + " existing activities");
+        }
+
+        // Calculate and store new activities
+        double totalFootprint = calculateAndStoreAll(inputs);
+
+        // Prepare response
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "Footprint data updated successfully");
+        response.put("totalFootprint", totalFootprint);
+        response.put("updatedRecords", inputs.size());
+        response.put("month", month);
+        response.put("year", year);
+        response.put("region", region);
+
+        System.out.println("Update completed. New total footprint: " + totalFootprint);
+        return response;
+    }*/
+    /*@Transactional
+    public Map<String, Object> updateFootprintData(List<CarbonInput> inputs, String month, String year, String region) {
+        // 1. Auth & validation (keep existing)
+        String companyId = securityUtil.getCurrentUserCompanyId();
+        String userId = securityUtil.getCurrentUserId();
+        if (companyId == null || userId == null) {
+            throw new IllegalStateException("User not authenticated");
+        }
+
+        // 2. Delete existing records (keep existing)
+        List<CarbonActivity> existingActivities = activityRepository.findByCompanyIdAndUserIdAndMonthAndYearAndRegion(
+                companyId, userId, month, year, region
+        );
+        if (!existingActivities.isEmpty()) {
+            activityRepository.deleteAll(existingActivities);
+        }
+
+        // 3. CALCULATE ONLY (modified)
+        double totalFootprint = 0.0;
+        List<CarbonActivity> newActivities = new ArrayList<>();
+
+        for (CarbonInput input : inputs) {
+            // Use calculateFootprint() instead of calculateAndStoreAll()
+            double footprint = calculateFootprint(input);
+            totalFootprint += footprint;
+
+            // Manually create activity WITHOUT auto-saving
+            CarbonActivity activity = new CarbonActivity();
+            activity.setCompanyId(companyId);
+            activity.setUserId(userId);
+            activity.setMonth(input.month());
+            activity.setYear(input.year());
+            activity.setActivityType(input.activityType().name());
+            activity.setInputValue(input.value());
+            activity.setInputUnit(input.unit() != null ? input.unit().name() : null);
+            activity.setFootprint(footprint);
+            activity.setRegion(input.region());
+            activity.setTimestamp(LocalDateTime.now());
+
+            if (input.activityType() == ActivityType.FUEL) {
+                activity.setFuelType(input.fuelType().name());
+            } else if (input.activityType() == ActivityType.WASTE) {
+                activity.setDisposalMethod(input.disposalMethod().name());
+            }
+
+            newActivities.add(activity);
+        }
+
+        // 4. BATCH SAVE (new)
+        activityRepository.saveAll(newActivities);
+
+        // 5. Update total (keep existing)
+        saveTotalFootprint(month, year, totalFootprint);
+
+        // Return response (keep existing)
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("totalFootprint", totalFootprint);
+        response.put("updatedRecords", inputs.size());
+        return response;
+    }
+
+
+     */
+    @Transactional
+    public Map<String, Object> updateFootprintData(List<CarbonInput> inputs, String month, String year, String region) {
+        // 1. Auth & delete old records (keep this part exactly as-is)
+        String companyId = securityUtil.getCurrentUserCompanyId();
+        String userId = securityUtil.getCurrentUserId();
+        List<CarbonActivity> existingActivities = activityRepository.findByCompanyIdAndUserIdAndMonthAndYearAndRegion(
+                companyId, month, year, region
+        );
+        if (!existingActivities.isEmpty()) {
+            activityRepository.deleteAll(existingActivities);
+        }
+
+        // 2. Use calculateAndStoreAll BUT prevent auto-save
+        double totalFootprint = 0.0;
+        List<CarbonActivity> activitiesToSave = new ArrayList<>();
+
+        for (CarbonInput input : inputs) {
+            double footprint = calculateFootprint(input); // Pure calculation
+            totalFootprint += footprint;
+
+            // Manually build activities (bypass logActivity)
+            CarbonActivity activity = new CarbonActivity();
+            activity.setCompanyId(companyId);
+            activity.setUserId(userId);
+            activity.setMonth(input.month());
+            activity.setYear(year);
+            activity.setActivityType(input.activityType().name());
+            activity.setInputValue(input.value());  // Make sure this is set!
+            activity.setFootprint(footprint);       // Make sure this is set!
+            activity.setRegion(region);
+            activity.setTimestamp(LocalDateTime.now());
+            // ... set all other fields ...
+            // Handle activity-specific fields
+            if (input.activityType() == ActivityType.FUEL && input.fuelType() != null) {
+                activity.setFuelType(input.fuelType().name());
+                activity.setInputUnit(input.unit() != null ? input.unit().name() : "LITERS");
+            }
+            else if (input.activityType() == ActivityType.WASTE && input.disposalMethod() != null) {
+                activity.setDisposalMethod(input.disposalMethod().name());
+                activity.setInputUnit("kg"); // Default unit for waste
+            }
+            else {
+                // Set default units for electricity and water
+                activity.setInputUnit(
+                        input.activityType() == ActivityType.ELECTRICITY ? "kWh" : "LITERS"
+                );
+            }
+            activitiesToSave.add(activity);
+        }
+
+        // 3. Single save operation
+        activityRepository.saveAll(activitiesToSave);
+
+        // 4. Update total (unchanged)
+        saveTotalFootprint(month, year, totalFootprint);
+
+        // Return response (unchanged)
+        return Map.of(
+                "success", true,
+                "totalFootprint", totalFootprint,
+                "updatedRecords", inputs.size()
+        );
+    }
     //Htet Htet
     public List<CarbonTotal> getDataForYears(String companyId, List<String> years) {
         return carbonTotalRepository.findByCompanyIdAndYearIn(companyId, years);
@@ -215,4 +443,6 @@ public double calculateAndStoreAll(List<CarbonInput> inputs) {
     public List<CarbonActivity> getDataForMonth(String companyId, String year, String month) {
         return activityRepository.findByCompanyIdAndYearAndMonth(companyId, year, month);
     }
+
+
 }

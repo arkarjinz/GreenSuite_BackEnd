@@ -52,6 +52,10 @@ public class CarbonGoalService {
         Map<String, Double> currentEmissions = getEmissionsByCategory(currentMonth.getYear(), currentMonth.getMonthValue());
         Map<String, Double> previousEmissions = getEmissionsByCategory(previousMonth.getYear(), previousMonth.getMonthValue());
         Map<String, Boolean> result = new HashMap<>();
+        if (currentEmissions.isEmpty()) {
+            System.out.println("No current month emissions data found for " + currentMonth + ". Skipping save.");
+            return;
+        }
         if (previousEmissions.isEmpty()) {
             System.out.println("No previous emissions data found. Skipping save.");
             return;
@@ -179,6 +183,12 @@ public class CarbonGoalService {
 
         System.out.println("Current emissions: " + currentEmissions);
         System.out.println("Previous emissions: " + previousEmissions);
+        // ✅ NEW: Check if current month has emission data
+        if (currentEmissions.isEmpty()) {
+            System.out.println("No current month emissions data found for " + currentMonth + ". Skipping save.");
+            return false; // EXITS WITHOUT SAVING THE GOAL
+        }
+
         // If no previous data at all, assume goal is not yet evaluable
         if (previousEmissions.isEmpty()) {
             System.out.println("No previous emissions data found.");
@@ -228,7 +238,12 @@ public class CarbonGoalService {
         // Fetch emissions data for both months
         Map<String, Double> currentEmissions = getEmissionsByCategory(currentMonth.getYear(), currentMonth.getMonthValue());
         Map<String, Double> previousEmissions = getEmissionsByCategory(previousMonth.getYear(), previousMonth.getMonthValue());
-// If no previous month data, return a message asking user to add it
+
+        if (currentEmissions.isEmpty()) {
+            String message = "No data found for the selected month (" + currentMonth + "). Please add emissions data for " + currentMonth + " before setting goals.";
+            return new CarbonGoalResponse(message, new HashMap<>());
+        }
+        // If no previous month data, return a message asking user to add it
         if (previousEmissions.isEmpty()) {
             String message = "No data found for the previous month (" + previousMonth + "). Please add emissions data for the previous month to evaluate your goals.";
             return new CarbonGoalResponse(message, new HashMap<>());
@@ -358,5 +373,90 @@ public class CarbonGoalService {
 
     private String capitalize(String input) {
         return input.substring(0, 1).toUpperCase() + input.substring(1);
+    }
+    // Add this method to your CarbonGoalService.java class
+
+    public CarbonGoal getGoalById(String goalId) {
+        String companyId = securityUtil.getCurrentUserCompanyId();
+        CarbonGoal goal = carbonGoalRepository.findById(goalId)
+                .orElseThrow(() -> new RuntimeException("Goal not found with id: " + goalId));
+
+        // Security check: ensure the goal belongs to the current user's company
+        if (!goal.getCompanyId().equals(companyId)) {
+            throw new RuntimeException("Access denied: Goal does not belong to your company");
+        }
+
+        return goal;
+    }
+
+    //Added by Htet Htet
+    public CarbonGoalResponse getMonthlyGoal(String month, String year) {
+        String companyId = securityUtil.getCurrentUserCompanyId();
+        Optional<CarbonGoal> goalOpt = carbonGoalRepository.findByCompanyIdAndMonthAndYear(
+                companyId, month, year);
+
+        if (goalOpt.isEmpty()) {
+            return new CarbonGoalResponse("No goal found for " + getMonthName(month) + " " + year, new HashMap<>());
+        }
+
+        CarbonGoal goal = goalOpt.get();
+        Map<String, CarbonGoalResponse.CategoryResult> results = new HashMap<>();
+
+        // Electricity
+        if (goal.getTargetElectricity() != null && goal.getTargetElectricity() > 0) {
+            results.put("electricity", new CarbonGoalResponse.CategoryResult(
+                    goal.getElectricityGoalMet(),
+                    goal.getElectricityReduction(),
+                    goal.getElectricityRemaining(),
+                    true
+            ));
+        }
+
+        // Fuel
+        if (goal.getTargetFuel() != null && goal.getTargetFuel() > 0) {
+            results.put("fuel", new CarbonGoalResponse.CategoryResult(
+                    goal.getFuelGoalMet(),
+                    goal.getFuelReduction(),
+                    goal.getFuelRemaining(),
+                    true
+            ));
+        }
+
+        // Water
+        if (goal.getTargetWater() != null && goal.getTargetWater() > 0) {
+            results.put("water", new CarbonGoalResponse.CategoryResult(
+                    goal.getWaterGoalMet(),
+                    goal.getWaterReduction(),
+                    goal.getWaterRemaining(),
+                    true
+            ));
+        }
+
+        // Waste
+        if (goal.getTargetWaste() != null && goal.getTargetWaste() > 0) {
+            results.put("waste", new CarbonGoalResponse.CategoryResult(
+                    goal.getWasteGoalMet(),
+                    goal.getWasteReduction(),
+                    goal.getWasteRemaining(),
+                    true
+            ));
+        }
+
+        return new CarbonGoalResponse(
+                "Goal summary for " + getMonthName(month) + " " + year,
+                results
+        );
+    }
+
+    // Helper method to get month name
+    private String getMonthName(String month) {
+        String[] monthNames = {"January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"};
+        try {
+            int monthNum = Integer.parseInt(month);
+            return monthNames[monthNum - 1];
+        } catch (Exception e) {
+            return "Month";
+        }
     }
 }
