@@ -436,6 +436,61 @@ public class CarbonCalculatorService {
                 "updatedRecords", inputs.size()
         );
     }
+    //to show result for calculated footprint
+    public Map<String, Object> getChartData(String month, String year, String region) {
+        String companyId = securityUtil.getCurrentUserCompanyId();
+        String userId = securityUtil.getCurrentUserId();
+
+        // Get all activities for this month/year/region
+        List<CarbonActivity> activities = activityRepository.findByCompanyIdAndUserIdAndMonthAndYearAndRegion(
+                companyId, month, year, region
+        );
+
+        // Calculate totals by category
+        double electricityTotal = 0;
+        double waterTotal = 0;
+        double fuelTotal = 0;
+        double wasteTotal = 0;
+
+        for (CarbonActivity activity : activities) {
+            switch (ActivityType.valueOf(activity.getActivityType())) {
+                case ELECTRICITY -> electricityTotal += activity.getFootprint();
+                case WATER -> waterTotal += activity.getFootprint();
+                case FUEL -> fuelTotal += activity.getFootprint();
+                case WASTE -> wasteTotal += activity.getFootprint();
+            }
+        }
+
+        double totalFootprint = electricityTotal + waterTotal + fuelTotal + wasteTotal;
+
+        // Prepare data for charts
+        Map<String, Object> chartData = new HashMap<>();
+
+        // Pie chart data
+        List<Map<String, Object>> pieData = List.of(
+                Map.of("name", "Electricity", "value", electricityTotal),
+                Map.of("name", "Water", "value", waterTotal),
+                Map.of("name", "Fuel", "value", fuelTotal),
+                Map.of("name", "Waste", "value", wasteTotal)
+        );
+
+        // Bar chart data
+        List<Map<String, Object>> barData = List.of(
+                Map.of("category", "Electricity", "value", electricityTotal),
+                Map.of("category", "Water", "value", waterTotal),
+                Map.of("category", "Fuel", "value", fuelTotal),
+                Map.of("category", "Waste", "value", wasteTotal)
+        );
+
+        chartData.put("pieData", pieData);
+        chartData.put("barData", barData);
+        chartData.put("totalFootprint", totalFootprint);
+        chartData.put("month", month);
+        chartData.put("year", year);
+        chartData.put("region", region);
+
+        return chartData;
+    }
 
 
 }
