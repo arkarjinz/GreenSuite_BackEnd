@@ -77,6 +77,19 @@ public class CarbonFootPrintController {
         }
     }
     //to show calculated result
+   /* @GetMapping("/chart-data")
+    public ResponseEntity<?> getChartData(
+            @RequestParam String month,
+            @RequestParam String year,
+            @RequestParam String region) {
+        try {
+            Map<String, Object> chartData = calculator.getChartData(month, year, region);
+            return ResponseEntity.ok(chartData);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error fetching chart data: " + e.getMessage());
+        }
+    }*/
+    //to show calculated result
     @GetMapping("/chart-data")
     public ResponseEntity<?> getChartData(
             @RequestParam String month,
@@ -89,5 +102,6 @@ public class CarbonFootPrintController {
             return ResponseEntity.status(500).body("Error fetching chart data: " + e.getMessage());
         }
     }
+
 
 }
