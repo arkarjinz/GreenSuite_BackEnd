@@ -23,4 +23,5 @@ public interface CarbonActivityRepository extends MongoRepository<CarbonActivity
             String region
     );
 
+
 }

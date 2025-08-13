@@ -1,4 +1,3 @@
-//added by thuthu
 package com.app.greensuitetest.dto.carbon;
 
 import lombok.AllArgsConstructor;
@@ -8,7 +7,7 @@ import java.util.Map;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+//@AllArgsConstructor Comment By Htet Htet For tempoary
 public class CarbonGoalResponse {
     private String message;
     private Map<String, CategoryResult> results;
@@ -38,5 +37,20 @@ public class CarbonGoalResponse {
         private boolean dataAvailable;
 
 
+    }
+
+    //Added by Htet Htet
+    public CarbonGoalResponse(String message,
+                              Map<String, CategoryResult> results,
+                              boolean electricityGoalMet,
+                              boolean fuelGoalMet,
+                              boolean waterGoalMet,
+                              boolean wasteGoalMet) {
+        this.message = message;
+        this.results = results;
+        this.electricityGoalMet = electricityGoalMet;
+        this.fuelGoalMet = fuelGoalMet;
+        this.waterGoalMet = waterGoalMet;
+        this.wasteGoalMet = wasteGoalMet;
     }
 }
