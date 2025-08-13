@@ -1,6 +1,8 @@
 package com.app.greensuitetest.controller;
 
 import com.app.greensuitetest.dto.ApiResponse;
+import com.app.greensuitetest.dto.CreditHistoryDto;
+import com.app.greensuitetest.model.CreditTransaction;
 import com.app.greensuitetest.service.AICreditService;
 import com.app.greensuitetest.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -88,58 +92,41 @@ public class AICreditController {
     }
 
     /**
-     * Purchase credits (placeholder for payment integration)
+     * Purchase credits via Stripe (redirects to Stripe payment)
      */
     @PostMapping("/purchase")
     @PreAuthorize("hasRole('OWNER') or hasRole('MANAGER') or hasRole('EMPLOYEE')")
-    public ApiResponse purchaseCredits(
-            @RequestParam int amount,
-            @RequestParam String paymentMethod) {
+    public ApiResponse purchaseCredits(@RequestParam String creditPackage) {
         try {
-            String userId = securityUtil.getCurrentUser().getId();
-            
-            if (amount <= 0) {
-                return ApiResponse.error("Purchase amount must be positive");
-            }
-
-            // TODO: Integrate with payment processor (Stripe, PayPal, etc.)
-            // For now, this is a placeholder that simulates a successful purchase
-            
-            // Simulate payment processing delay
-            Thread.sleep(1000);
-            
-            // Add credits after "successful" payment
-            int newBalance = aiCreditService.addCredits(userId, amount, "Credit purchase via " + paymentMethod);
-            
-            return ApiResponse.success("Credits purchased successfully!", Map.of(
-                "creditsPurchased", amount,
-                "newBalance", newBalance,
-                "paymentMethod", paymentMethod,
-                "transactionId", "sim_" + System.currentTimeMillis(), // Simulated transaction ID
-                "note", "This is a simulation - integrate with real payment processor"
+            return ApiResponse.success("Please use /api/stripe/create-payment-intent for credit purchases", Map.of(
+                "message", "Credit purchases are now handled through Stripe",
+                "endpoint", "/api/stripe/create-payment-intent",
+                "method", "POST",
+                "body", Map.of(
+                    "operationType", "CREDIT_PURCHASE",
+                    "creditPackage", creditPackage
+                )
             ));
         } catch (Exception e) {
-            log.error("Error purchasing credits", e);
-            return ApiResponse.error("Failed to purchase credits: " + e.getMessage());
+            log.error("Error with credit purchase redirect", e);
+            return ApiResponse.error("Failed to process credit purchase: " + e.getMessage());
         }
     }
 
     /**
-     * Get credit usage history (basic stats)
+     * Get simple credit usage history
      */
     @GetMapping("/history")
     @PreAuthorize("hasRole('OWNER') or hasRole('MANAGER') or hasRole('EMPLOYEE')")
-    public ApiResponse getCreditHistory() {
+    public ApiResponse getCreditHistory(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
         try {
             String userId = securityUtil.getCurrentUser().getId();
-            Map<String, Object> stats = aiCreditService.getCreditStats(userId);
             
-            // TODO: Implement detailed credit transaction history
-            // For now, return basic stats
-            return ApiResponse.success("Credit usage statistics", Map.of(
-                "currentStats", stats,
-                "note", "Detailed transaction history coming soon!"
-            ));
+            CreditHistoryDto history = aiCreditService.getCreditHistory(userId, page, size);
+            
+            return ApiResponse.success("Credit usage history", history);
         } catch (Exception e) {
             log.error("Error getting credit history", e);
             return ApiResponse.error("Failed to retrieve credit history: " + e.getMessage());
@@ -187,8 +174,8 @@ public class AICreditController {
     /**
      * Admin endpoint to view all users' credit stats
      */
-    @GetMapping("/admin/overview")
-    @PreAuthorize("hasRole('OWNER')")
+    @GetMapping("/credit-overview")
+    @PreAuthorize("hasRole('OWNER') or hasRole('MANAGER') or hasRole('EMPLOYEE')")
     public ApiResponse getCreditsOverview() {
         try {
             // TODO: Implement admin overview of all users' credits

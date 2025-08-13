@@ -115,6 +115,9 @@ public class User {
 
     @Field("last_credit_purchase")
     private LocalDateTime lastCreditPurchase;
+    
+    @Field("stripe_customer_id")
+    private String stripeCustomerId;
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -158,21 +161,26 @@ public class User {
     }
 
     /**
-     * Get maximum credits allowed for the user's subscription tier
+     * Get maximum credits allowed for the user
+     * Note: Users can have unlimited credits, but auto-refill stops at 50
      */
     public int getMaxCredits() {
-        return switch (this.subscriptionTier) {
-            case FREE -> 50;
-            case PREMIUM -> 200;
-            case ENTERPRISE -> 500;
-        };
+        return Integer.MAX_VALUE; // Users can have unlimited credits
     }
 
     /**
-     * Check if user can receive more credits (not at max)
+     * Check if user can receive auto-refill credits
+     * Note: Auto-refill stops when users reach 50 credits
      */
     public boolean canReceiveCredits() {
-        return this.aiCredits < getMaxCredits();
+        return this.aiCredits < 50; // Auto-refill stops at 50
+    }
+
+    /**
+     * Get the maximum amount of credits that can be added in a single refill
+     */
+    public int getMaxRefillAmount() {
+        return 50; // Maximum 50 credits per refill
     }
 
     // Rejection tracking methods
