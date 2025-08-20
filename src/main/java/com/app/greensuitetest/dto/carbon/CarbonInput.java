@@ -10,15 +10,18 @@ public record CarbonInput(
 
         @Positive(message = "Value must be positive")
         double value,
+        @NotNull String year,
 
+        @NotNull String month,       // Add this field
         String region,
-
+        String userId,//added to save who updated
         FuelType fuelType,       // Required for FUEL
         DisposalMethod disposalMethod, // Required for WASTE
         VolumeUnit unit          // Required for FUEL
 ) {
     public CarbonInput {
         validateInput(activityType, fuelType, disposalMethod, unit);
+        validateYear(year);
     }
 
     private void validateInput(
@@ -51,6 +54,11 @@ public record CarbonInput(
     private void validateRequired(Object value, String fieldName) {
         if (value == null) {
             throw new IllegalArgumentException(fieldName + " is required for " + activityType + " activity");
+        }
+    }
+    private void validateYear(String year) {
+        if (year == null || !year.matches("\\d{4}")) {
+            throw new IllegalArgumentException("Year must be a 4-digit string, e.g. '2025'");
         }
     }
 }

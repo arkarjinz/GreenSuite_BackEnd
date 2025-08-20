@@ -34,7 +34,7 @@ public class EmissionProperties {
         private double naturalGas;
     }
 
-    public double getFactor(String key, String region) {
+   /* public double getFactor(String key, String region) {
         if (region != null && regionFactors.containsKey(region)){
             Map<String, Double> regional = regionFactors.get(region);
             if (regional.containsKey(key)) {
@@ -42,5 +42,19 @@ public class EmissionProperties {
             }
         }
         return defaultFactors.getOrDefault(key, 0.0);
-    }
+    }*/
+    //added by thu modified getting region
+   public double getFactor(String key, String region) {
+       if (region != null) {
+           String normalizedRegion = region.toLowerCase();
+           if (regionFactors.containsKey(normalizedRegion)) {
+               Map<String, Double> regional = regionFactors.get(normalizedRegion);
+               if (regional.containsKey(key)) {
+                   return regional.get(key);
+               }
+           }
+       }
+       return defaultFactors.getOrDefault(key, 0.0);
+   }
+
 }
