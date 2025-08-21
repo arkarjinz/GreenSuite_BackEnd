@@ -26,7 +26,10 @@
         <tag/>
         <url/>
     </scm>
-
+    <properties>
+        <java.version>21</java.version>
+        <spring-ai.version>1.0.0</spring-ai.version>
+    </properties>
 
 
     <dependencies>
@@ -59,10 +62,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
@@ -180,7 +185,7 @@
         </dependency>
     </dependencies>
 
-   <!-- <dependencyManagement>
+   <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.springframework.ai</groupId>
@@ -190,7 +195,7 @@
                 <scope>import</scope>
             </dependency>
         </dependencies>
-    </dependencyManagement>-->
+    </dependencyManagement>
 
     <build>
         <plugins>
