@@ -41,7 +41,7 @@ public record AuthDTO() {
             Role companyRole,
 
             // For non-owners
-            //String companyId,
+            String companyId,//uncommented by thu bec getting 500 error when log in
 
             @NotBlank(message = "Company name is required")
             String companyName,
