@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 @Slf4j
 @RestController
@@ -92,25 +93,80 @@ public class AICreditController {
     }
 
     /**
-     * Purchase credits via Stripe (redirects to Stripe payment)
+     * Purchase credits via account balance (replaces Stripe redirect)
      */
     @PostMapping("/purchase")
     @PreAuthorize("hasRole('OWNER') or hasRole('MANAGER') or hasRole('EMPLOYEE')")
-    public ApiResponse purchaseCredits(@RequestParam String creditPackage) {
+    public ApiResponse purchaseCredits(
+            @RequestParam String creditPackage,
+            @RequestParam(defaultValue = "USD") String currency) {
         try {
-            return ApiResponse.success("Please use /api/stripe/create-payment-intent for credit purchases", Map.of(
-                "message", "Credit purchases are now handled through Stripe",
-                "endpoint", "/api/stripe/create-payment-intent",
+            // Validate credit package
+            if (!List.of("basic", "standard", "premium", "enterprise").contains(creditPackage.toLowerCase())) {
+                return ApiResponse.error("Invalid credit package. Available: basic, standard, premium, enterprise");
+            }
+            
+            String userId = securityUtil.getCurrentUser().getId();
+            
+            // Get credit pricing information for the selected package
+            Map<String, Object> packageInfo = getCreditPackageInfo(creditPackage);
+            
+            return ApiResponse.success("Credit purchase information", Map.of(
+                "message", "To complete your credit purchase, please use the payment system",
+                "selectedPackage", packageInfo,
+                "steps", List.of(
+                    "1. Ensure you have sufficient balance in your payment account",
+                    "2. Use endpoint: POST /api/payment/credits/purchase",
+                    "3. Credits will be added automatically upon successful payment"
+                ),
+                "endpoint", "/api/payment/credits/purchase",
                 "method", "POST",
-                "body", Map.of(
-                    "operationType", "CREDIT_PURCHASE",
-                    "creditPackage", creditPackage
+                "currentCredits", aiCreditService.getUserCredits(userId),
+                "requiredBody", Map.of(
+                    "creditPackage", creditPackage,
+                    "currency", currency
                 )
             ));
         } catch (Exception e) {
-            log.error("Error with credit purchase redirect", e);
-            return ApiResponse.error("Failed to process credit purchase: " + e.getMessage());
+            log.error("Error with credit purchase information", e);
+            return ApiResponse.error("Failed to get credit purchase information: " + e.getMessage());
         }
+    }
+    
+    /**
+     * Get credit package information
+     */
+    private Map<String, Object> getCreditPackageInfo(String packageName) {
+        Map<String, Map<String, Object>> packages = Map.of(
+            "basic", Map.of(
+                "credits", 50,
+                "price", 4.99,
+                "currency", "USD",
+                "description", "Perfect for casual users"
+            ),
+            "standard", Map.of(
+                "credits", 150,
+                "price", 12.99,
+                "currency", "USD",
+                "description", "Great for regular users",
+                "bonus", "15% bonus credits"
+            ),
+            "premium", Map.of(
+                "credits", 350,
+                "price", 24.99,
+                "currency", "USD",
+                "description", "Best value for power users",
+                "bonus", "25% bonus credits"
+            ),
+            "enterprise", Map.of(
+                "credits", 500,
+                "price", 39.99,
+                "currency", "USD",
+                "description", "Maximum productivity"
+            )
+        );
+        
+        return packages.getOrDefault(packageName.toLowerCase(), new HashMap<>());
     }
 
     /**
@@ -178,16 +234,9 @@ public class AICreditController {
     @PreAuthorize("hasRole('OWNER') or hasRole('MANAGER') or hasRole('EMPLOYEE')")
     public ApiResponse getCreditsOverview() {
         try {
-            // TODO: Implement admin overview of all users' credits
-            return ApiResponse.success("Credit system overview", Map.of(
-                "note", "Admin credit overview coming soon!",
-                "features", Map.of(
-                    "totalUsersWithCredits", "TBD",
-                    "totalCreditsInCirculation", "TBD",
-                    "averageCreditsPerUser", "TBD",
-                    "dailyCreditUsage", "TBD"
-                )
-            ));
+            Map<String, Object> analytics = aiCreditService.getCreditSystemAnalytics();
+            
+            return ApiResponse.success("Credit system overview", analytics);
         } catch (Exception e) {
             log.error("Error getting credits overview", e);
             return ApiResponse.error("Failed to retrieve credits overview: " + e.getMessage());

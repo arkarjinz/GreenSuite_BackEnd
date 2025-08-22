@@ -41,7 +41,7 @@ public record AuthDTO() {
             Role companyRole,
 
             // For non-owners
-            //String companyId,
+             String companyId,
 
             @NotBlank(message = "Company name is required")
             String companyName,

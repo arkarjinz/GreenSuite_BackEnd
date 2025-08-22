@@ -115,7 +115,7 @@ public class User {
 
     @Field("last_credit_purchase")
     private LocalDateTime lastCreditPurchase;
-    
+
     @Field("stripe_customer_id")
     private String stripeCustomerId;
 

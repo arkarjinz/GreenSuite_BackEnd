@@ -25,7 +25,7 @@ public interface CreditTransactionRepository extends MongoRepository<CreditTrans
      * Find transactions for a specific conversation
      */
     List<CreditTransaction> findByConversationIdOrderByTimestampDesc(String conversationId);
-    
+
     /**
      * Find transactions by user ID and type, ordered by timestamp descending
      */

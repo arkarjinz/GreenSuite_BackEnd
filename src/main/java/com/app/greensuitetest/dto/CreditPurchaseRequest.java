@@ -15,7 +15,8 @@ import jakarta.validation.constraints.Pattern;
 public class CreditPurchaseRequest {
     
     @NotBlank(message = "Credit package is required")
-    @Pattern(regexp = "^(basic|standard|premium|enterprise)$", message = "Invalid credit package")
+    @Pattern(regexp = "^(basic|standard|premium|enterprise)$", 
+             message = "Invalid credit package. Available: basic, standard, premium, enterprise")
     private String creditPackage;
     
     @Pattern(regexp = "^[A-Z]{3}$", message = "Currency must be a 3-letter currency code")

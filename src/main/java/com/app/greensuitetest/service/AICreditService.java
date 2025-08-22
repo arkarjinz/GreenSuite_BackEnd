@@ -1,21 +1,22 @@
 package com.app.greensuitetest.service;
 
-import com.app.greensuitetest.exception.InsufficientCreditsException;
-import com.app.greensuitetest.exception.EntityNotFoundException;
-import com.app.greensuitetest.model.User;
-import com.app.greensuitetest.model.CreditTransaction;
-import com.app.greensuitetest.repository.UserRepository;
-import com.app.greensuitetest.repository.CreditTransactionRepository;
 import com.app.greensuitetest.dto.CreditHistoryDto;
+import com.app.greensuitetest.exception.EntityNotFoundException;
+import com.app.greensuitetest.exception.InsufficientCreditsException;
+import com.app.greensuitetest.model.CreditTransaction;
+import com.app.greensuitetest.model.User;
+import com.app.greensuitetest.repository.CreditTransactionRepository;
+import com.app.greensuitetest.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -130,7 +131,17 @@ public class AICreditService {
     /**
      * Add credits to user account (unlimited total, but auto-refill stops at 50)
      */
+    @CacheEvict(value = "userCredits", key = "#userId + '_*'")
+    @Transactional
     public int addCredits(String userId, int amount, String reason) {
+        // Input validation
+        if (userId == null || userId.trim().isEmpty()) {
+            throw new IllegalArgumentException("User ID cannot be null or empty");
+        }
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Credit amount must be positive");
+        }
+        
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         
@@ -156,6 +167,8 @@ public class AICreditService {
         CreditTransaction.TransactionType transactionType = CreditTransaction.TransactionType.ADMIN_GRANT;
         if (reason != null && reason.toLowerCase().contains("purchase")) {
             transactionType = CreditTransaction.TransactionType.CREDIT_PURCHASE;
+        } else if (reason != null && reason.toLowerCase().contains("automatic")) {
+            transactionType = CreditTransaction.TransactionType.AUTO_REFILL;
         }
         
         // Log the transaction
@@ -233,13 +246,24 @@ public class AICreditService {
     /**
      * Refund credits with conversation ID (e.g., if chat fails)
      */
+    @CacheEvict(value = "userCredits", key = "#userId + '_*'")
+    @Transactional
     public int refundCredits(String userId, int amount, String reason, String conversationId) {
+        // Input validation
+        if (userId == null || userId.trim().isEmpty()) {
+            throw new IllegalArgumentException("User ID cannot be null or empty");
+        }
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Refund amount must be positive");
+        }
+        
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         
         int balanceBefore = user.getAiCredits();
         int newBalance = user.getAiCredits() + amount;
         user.setAiCredits(newBalance);
+        user.setLastActive(LocalDateTime.now());
         
         User savedUser = userRepository.save(user);
         
@@ -254,9 +278,19 @@ public class AICreditService {
     }
     
     /**
-     * Deduct credits from user account (for refunds)
+     * Deduct credits from user account (for admin deductions)
      */
+    @CacheEvict(value = "userCredits", key = "#userId + '_*'")
+    @Transactional
     public int deductCredits(String userId, int amount, String reason) {
+        // Input validation
+        if (userId == null || userId.trim().isEmpty()) {
+            throw new IllegalArgumentException("User ID cannot be null or empty");
+        }
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Deduction amount must be positive");
+        }
+        
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         
@@ -275,8 +309,8 @@ public class AICreditService {
         
         User savedUser = userRepository.save(user);
         
-        // Log the transaction
-        logCreditTransaction(userId, CreditTransaction.TransactionType.REFUND, amount, currentCredits, newBalance,
+        // Log the transaction with correct transaction type
+        logCreditTransaction(userId, CreditTransaction.TransactionType.ADMIN_GRANT, -amount, currentCredits, newBalance,
                            reason, null);
         
         log.info("Deducted {} AI credits from user {} ({}). New balance: {}", 
@@ -332,34 +366,121 @@ public class AICreditService {
      * Note: Auto-refill stops when users reach 50 credits
      */
     @Scheduled(fixedRate = 300000) // 5 minutes = 300,000 milliseconds
+    @Transactional
     public void autoRefillCredits() {
         try {
-            List<User> allUsers = userRepository.findAll();
+            List<User> eligibleUsers = userRepository.findUsersEligibleForAutoRefill(50);
             int refilledCount = 0;
             int skippedCount = 0;
             
-            for (User user : allUsers) {
-                // Only add credit if user hasn't reached the maximum of 50 credits
-                if (user.canReceiveCredits()) {
+            for (User user : eligibleUsers) {
+                try {
+                    // Only add credit if user has less than 50 credits
+                    if (user.getAiCredits() < 50) {
                     int balanceBefore = user.getAiCredits();
                     user.setAiCredits(user.getAiCredits() + 1);
                     user.setLastActive(LocalDateTime.now());
-                    userRepository.save(user);
+                        User savedUser = userRepository.save(user);
                     
                     // Log auto-refill transaction
                     logCreditTransaction(user.getId(), CreditTransaction.TransactionType.AUTO_REFILL, 1,
-                                       balanceBefore, user.getAiCredits(), "Automatic credit refill", null);
+                                           balanceBefore, savedUser.getAiCredits(),
+                                           "Automatic credit refill (1 credit every 5 minutes)", null);
                     
                     refilledCount++;
+                        log.debug("Auto-refilled 1 credit for user {} (Balance: {} -> {})", 
+                                user.getId(), balanceBefore, savedUser.getAiCredits());
                 } else {
+                        skippedCount++;
+                    }
+                } catch (Exception e) {
+                    log.error("Failed to auto-refill credits for user {}: {}", user.getId(), e.getMessage());
                     skippedCount++;
                 }
             }
             
-            log.info("Auto-refill completed: {} users refilled, {} users at max credits (50)", 
+            if (refilledCount > 0 || skippedCount > 0) {
+                log.info("Auto-refill completed: {} users refilled, {} users skipped (at 50+ credits)", 
                     refilledCount, skippedCount);
+            }
         } catch (Exception e) {
-            log.error("Error during automatic credit refill", e);
+            log.error("Error during auto-refill process: {}", e.getMessage(), e);
+        }
+    }
+    
+    /**
+     * Get detailed credit analytics for admin dashboard
+     */
+    public Map<String, Object> getCreditSystemAnalytics() {
+        try {
+            List<User> allUsers = userRepository.findAll();
+            List<User> lowCreditUsers = userRepository.findUsersWithLowCredits();
+            List<User> zeroCreditUsers = userRepository.findUsersWithZeroCredits();
+            
+            int totalCreditsInSystem = allUsers.stream()
+                    .mapToInt(User::getAiCredits)
+                    .sum();
+            
+            double averageCreditsPerUser = allUsers.isEmpty() ? 0 : 
+                    (double) totalCreditsInSystem / allUsers.size();
+            
+            Map<String, Object> analytics = new HashMap<>();
+            analytics.put("totalUsersWithCredits", allUsers.size());
+            analytics.put("totalCreditsInCirculation", totalCreditsInSystem);
+            analytics.put("averageCreditsPerUser", Math.round(averageCreditsPerUser * 100.0) / 100.0);
+            analytics.put("usersWithLowCredits", lowCreditUsers.size());
+            analytics.put("usersWithZeroCredits", zeroCreditUsers.size());
+            analytics.put("chatCostPerUser", CHAT_COST);
+            analytics.put("autoRefillRate", "1 credit every 5 minutes");
+            analytics.put("maxAutoRefillLimit", 50);
+            
+            return analytics;
+        } catch (Exception e) {
+            log.error("Error getting credit system analytics: {}", e.getMessage());
+            return Map.of("error", "Failed to generate analytics");
+        }
+    }
+    
+    /**
+     * Bulk credit operation for admin (add credits to multiple users)
+     */
+    @Transactional
+    public Map<String, Object> bulkAddCredits(List<String> userIds, int amount, String reason) {
+        int successCount = 0;
+        int failureCount = 0;
+        List<String> failedUsers = new java.util.ArrayList<>();
+        
+        for (String userId : userIds) {
+            try {
+                addCredits(userId, amount, reason);
+                successCount++;
+            } catch (Exception e) {
+                failureCount++;
+                failedUsers.add(userId);
+                log.error("Failed to add credits to user {}: {}", userId, e.getMessage());
+            }
+        }
+        
+        return Map.of(
+            "successCount", successCount,
+            "failureCount", failureCount,
+            "failedUsers", failedUsers,
+            "totalRequested", userIds.size()
+        );
+    }
+    
+    /**
+     * Validate user eligibility for credit operations
+     */
+    public boolean isUserEligibleForCredits(String userId) {
+        try {
+            User user = userRepository.findById(userId).orElse(null);
+            return user != null && 
+                   !user.isBanned() && 
+                   user.getApprovalStatus().name().equals("APPROVED");
+        } catch (Exception e) {
+            log.error("Error checking user eligibility: {}", e.getMessage());
+            return false;
         }
     }
 }
