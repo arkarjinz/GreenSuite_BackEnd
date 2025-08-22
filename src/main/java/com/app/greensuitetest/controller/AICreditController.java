@@ -3,6 +3,8 @@ package com.app.greensuitetest.controller;
 import com.app.greensuitetest.dto.ApiResponse;
 import com.app.greensuitetest.dto.CreditHistoryDto;
 import com.app.greensuitetest.model.CreditTransaction;
+import com.app.greensuitetest.model.User;
+import com.app.greensuitetest.repository.UserRepository;
 import com.app.greensuitetest.service.AICreditService;
 import com.app.greensuitetest.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class AICreditController {
 
     private final AICreditService aiCreditService;
     private final SecurityUtil securityUtil;
+    private final UserRepository userRepository;
 
     /**
      * Get current user's credit balance and stats
@@ -68,7 +71,7 @@ public class AICreditController {
      * Add credits to user account (Admin only or payment processing)
      */
     @PostMapping("/add")
-    @PreAuthorize("hasRole('OWNER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse addCredits(
             @RequestParam String userId,
             @RequestParam int amount,
@@ -111,21 +114,17 @@ public class AICreditController {
             // Get credit pricing information for the selected package
             Map<String, Object> packageInfo = getCreditPackageInfo(creditPackage);
             
-            return ApiResponse.success("Credit purchase information", Map.of(
-                "message", "To complete your credit purchase, please use the payment system",
+            return ApiResponse.success("Credit package information", Map.of(
+                "message", "Credits are automatically refilled every 5 minutes. Maximum 50 credits total.",
                 "selectedPackage", packageInfo,
-                "steps", List.of(
-                    "1. Ensure you have sufficient balance in your payment account",
-                    "2. Use endpoint: POST /api/payment/credits/purchase",
-                    "3. Credits will be added automatically upon successful payment"
+                "autoRefillInfo", Map.of(
+                    "enabled", true,
+                    "interval", "5 minutes",
+                    "amount", "1 credit",
+                    "maxCredits", 50,
+                    "maxLimit", 50
                 ),
-                "endpoint", "/api/payment/credits/purchase",
-                "method", "POST",
-                "currentCredits", aiCreditService.getUserCredits(userId),
-                "requiredBody", Map.of(
-                    "creditPackage", creditPackage,
-                    "currency", currency
-                )
+                "currentCredits", aiCreditService.getUserCredits(userId)
             ));
         } catch (Exception e) {
             log.error("Error with credit purchase information", e);
@@ -190,33 +189,24 @@ public class AICreditController {
     }
 
     /**
-     * Get credit pricing information
+     * Get credit system information
      */
-    @GetMapping("/pricing")
-    public ApiResponse getCreditPricing() {
-        return ApiResponse.success("AI Credit Pricing Information", Map.of(
+    @GetMapping("/info")
+    public ApiResponse getCreditSystemInfo() {
+        return ApiResponse.success("AI Credit System Information", Map.of(
             "chatCost", 2,
-            "pricingTiers", Map.of(
-                "basic", Map.of(
-                    "credits", 50,
-                    "price", 4.99,
-                    "currency", "USD",
-                    "description", "Perfect for casual users"
-                ),
-                "standard", Map.of(
-                    "credits", 150,
-                    "price", 12.99,
-                    "currency", "USD",
-                    "description", "Great for regular users",
-                    "bonus", "15% bonus credits"
-                ),
-                "premium", Map.of(
-                    "credits", 350,
-                    "price", 24.99,
-                    "currency", "USD",
-                    "description", "Best value for power users",
-                    "bonus", "25% bonus credits"
-                )
+            "autoRefill", Map.of(
+                "enabled", true,
+                "interval", "5 minutes",
+                "amount", 1,
+                "maxCredits", 50,
+                "maxLimit", 50,
+                "description", "Credits are automatically refilled every 5 minutes. Maximum 50 credits total per user."
+            ),
+            "systemInfo", Map.of(
+                "maxCreditsPerUser", 50,
+                "autoRefillMax", 50,
+                "chatDeduction", 2
             ),
             "features", Map.of(
                 "chatWithRin", "2 credits per conversation",
@@ -240,6 +230,47 @@ public class AICreditController {
         } catch (Exception e) {
             log.error("Error getting credits overview", e);
             return ApiResponse.error("Failed to retrieve credits overview: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Get refill status for all users in the company
+     */
+    @GetMapping("/status/all")
+    @PreAuthorize("hasRole('OWNER') or hasRole('MANAGER')")
+    public ApiResponse getAllUsersRefillStatus() {
+        try {
+            // Get current user's company ID
+            String companyId = securityUtil.getCurrentUser().getCompanyId();
+            
+            // Get all users in the company
+            List<User> allUsers = userRepository.findByCompanyId(companyId);
+            
+            // Count users eligible for refill (credits < 50)
+            long usersEligibleForRefill = allUsers.stream()
+                .mapToInt(user -> aiCreditService.getUserCredits(user.getId()))
+                .filter(credits -> credits < 50)
+                .count();
+            
+            // Count users at max credits (credits >= 50)
+            long usersAtMaxCredits = allUsers.stream()
+                .mapToInt(user -> aiCreditService.getUserCredits(user.getId()))
+                .filter(credits -> credits >= 50)
+                .count();
+            
+            Map<String, Object> status = Map.of(
+                "totalUsers", allUsers.size(),
+                "usersEligibleForRefill", usersEligibleForRefill,
+                "usersAtMaxCredits", usersAtMaxCredits,
+                "lastSystemRefill", LocalDateTime.now(), // This should come from a scheduled task
+                "nextSystemRefill", LocalDateTime.now().plusMinutes(5), // This should be calculated
+                "refillEnabled", true
+            );
+            
+            return ApiResponse.success("All users refill status retrieved", status);
+        } catch (Exception e) {
+            log.error("Error getting all users refill status", e);
+            return ApiResponse.error("Failed to get refill status: " + e.getMessage());
         }
     }
 }

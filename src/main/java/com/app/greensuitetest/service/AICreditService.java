@@ -129,7 +129,7 @@ public class AICreditService {
     }
     
     /**
-     * Add credits to user account (unlimited total, but auto-refill stops at 50)
+     * Add credits to user account (maximum 50 credits total)
      */
     @CacheEvict(value = "userCredits", key = "#userId + '_*'")
     @Transactional
@@ -147,13 +147,18 @@ public class AICreditService {
         
         int currentCredits = user.getAiCredits();
         
-        // For purchases, allow unlimited credits
-        // For auto-refill, only add if under 50 credits
-        int actualAmount = amount;
+        // Enforce maximum credit limit of 50
+        if (currentCredits >= 50) {
+            log.debug("Cannot add credits for user {}: already at maximum limit of 50 credits (current: {})", userId, currentCredits);
+            return currentCredits;
+        }
         
-        // Check if this is an auto-refill and user is at 50+ credits
-        if (reason != null && reason.toLowerCase().contains("automatic") && currentCredits >= 50) {
-            log.debug("Skipping auto-refill for user {}: already at 50+ credits (current: {})", userId, currentCredits);
+        // Calculate how many credits can actually be added
+        int maxCanAdd = 50 - currentCredits;
+        int actualAmount = Math.min(amount, maxCanAdd);
+        
+        if (actualAmount == 0) {
+            log.debug("No credits added for user {}: already at maximum limit of 50", userId);
             return currentCredits;
         }
         
@@ -165,9 +170,7 @@ public class AICreditService {
         
         // Determine transaction type based on reason
         CreditTransaction.TransactionType transactionType = CreditTransaction.TransactionType.ADMIN_GRANT;
-        if (reason != null && reason.toLowerCase().contains("purchase")) {
-            transactionType = CreditTransaction.TransactionType.CREDIT_PURCHASE;
-        } else if (reason != null && reason.toLowerCase().contains("automatic")) {
+        if (reason != null && reason.toLowerCase().contains("automatic")) {
             transactionType = CreditTransaction.TransactionType.AUTO_REFILL;
         }
         
@@ -175,7 +178,7 @@ public class AICreditService {
         logCreditTransaction(userId, transactionType, actualAmount, currentCredits, newBalance,
                            reason, null);
         
-        log.info("Added {} AI credits to user {} ({}). New balance: {} (unlimited)", 
+        log.info("Added {} AI credits to user {} ({}). New balance: {} (max: 50)", 
                 actualAmount, userId, reason, newBalance);
         
         return savedUser.getAiCredits();
@@ -218,14 +221,14 @@ public class AICreditService {
         stats.put("canChat", canChat);
         stats.put("possibleChats", possibleChats);
         stats.put("isLowOnCredits", isLow);
-        stats.put("maxRefillAmount", 50);
-        stats.put("totalCreditsLimit", "Unlimited");
+        stats.put("maxCredits", 50);
+        stats.put("totalCreditsLimit", 50);
         stats.put("autoRefillEnabled", true);
         stats.put("autoRefillAmount", 1);
         stats.put("autoRefillInterval", "5 minutes");
         
         if (isLow) {
-            stats.put("warning", "You're running low on AI credits! You can purchase up to 50 credits at a time.");
+            stats.put("warning", "You're running low on AI credits! Credits will auto-refill every 5 minutes up to 50.");
         }
         
         if (currentCredits >= 50) {
@@ -268,7 +271,7 @@ public class AICreditService {
         User savedUser = userRepository.save(user);
         
         // Log the transaction
-        logCreditTransaction(userId, CreditTransaction.TransactionType.REFUND, amount, 
+        logCreditTransaction(userId, CreditTransaction.TransactionType.ADMIN_GRANT, amount, 
                            balanceBefore, newBalance, reason, conversationId);
         
         log.info("Refunded {} AI credits to user {} ({}). New balance: {}", 

@@ -1,14 +1,13 @@
 package com.app.greensuitetest.controller;
 
-import com.app.greensuitetest.dto.ApiResponse;
 import com.app.greensuitetest.model.CreditTransaction;
 import com.app.greensuitetest.service.TransactionService;
+import com.app.greensuitetest.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,7 +21,7 @@ public class TransactionController {
     private final TransactionService transactionService;
     
     /**
-     * Get user's transaction history with pagination
+     * Get transaction history for current user
      */
     @GetMapping("/history")
     @PreAuthorize("hasRole('OWNER') or hasRole('MANAGER') or hasRole('EMPLOYEE')")
@@ -37,7 +36,7 @@ public class TransactionController {
                 "transactions", transactions,
                 "page", page,
                 "size", size,
-                "totalTransactions", transactions.size()
+                "count", transactions.size()
             ));
         } catch (Exception e) {
             log.error("Error retrieving transaction history", e);
@@ -46,11 +45,11 @@ public class TransactionController {
     }
     
     /**
-     * Get transaction statistics for user
+     * Get transaction statistics for current user
      */
     @GetMapping("/stats")
     @PreAuthorize("hasRole('OWNER') or hasRole('MANAGER') or hasRole('EMPLOYEE')")
-    public ApiResponse getTransactionStats() {
+    public ApiResponse getTransactionStatistics() {
         try {
             String userId = transactionService.getCurrentUserId();
             Map<String, Object> stats = transactionService.getUserTransactionStats(userId);
@@ -63,82 +62,42 @@ public class TransactionController {
     }
     
     /**
-     * Get Stripe payment transactions
+     * Get auto-refill transactions
      */
-    @GetMapping("/stripe-payments")
+    @GetMapping("/auto-refills")
     @PreAuthorize("hasRole('OWNER') or hasRole('MANAGER') or hasRole('EMPLOYEE')")
-    public ApiResponse getStripePaymentTransactions() {
+    public ApiResponse getAutoRefillTransactions() {
         try {
             String userId = transactionService.getCurrentUserId();
-            List<CreditTransaction> transactions = transactionService.getStripePaymentTransactions(userId);
+            List<CreditTransaction> transactions = transactionService.getAutoRefillTransactions(userId);
             
-            return ApiResponse.success("Stripe payment transactions retrieved successfully", Map.of(
+            return ApiResponse.success("Auto-refill transactions retrieved successfully", Map.of(
                 "transactions", transactions,
                 "count", transactions.size()
             ));
         } catch (Exception e) {
-            log.error("Error retrieving Stripe payment transactions", e);
-            return ApiResponse.error("Failed to retrieve Stripe payment transactions: " + e.getMessage());
+            log.error("Error retrieving auto-refill transactions", e);
+            return ApiResponse.error("Failed to retrieve auto-refill transactions: " + e.getMessage());
         }
     }
     
     /**
-     * Get account deposit transactions
+     * Get chat deduction transactions
      */
-    @GetMapping("/account-deposits")
+    @GetMapping("/chat-deductions")
     @PreAuthorize("hasRole('OWNER') or hasRole('MANAGER') or hasRole('EMPLOYEE')")
-    public ApiResponse getAccountDepositTransactions() {
+    public ApiResponse getChatDeductionTransactions() {
         try {
             String userId = transactionService.getCurrentUserId();
-            List<CreditTransaction> transactions = transactionService.getAccountDepositTransactions(userId);
+            List<CreditTransaction> transactions = transactionService.getChatDeductionTransactions(userId);
             
-            return ApiResponse.success("Account deposit transactions retrieved successfully", Map.of(
+            return ApiResponse.success("Chat deduction transactions retrieved successfully", Map.of(
                 "transactions", transactions,
                 "count", transactions.size()
             ));
         } catch (Exception e) {
-            log.error("Error retrieving account deposit transactions", e);
-            return ApiResponse.error("Failed to retrieve account deposit transactions: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * Get credit purchase transactions
-     */
-    @GetMapping("/credit-purchases")
-    @PreAuthorize("hasRole('OWNER') or hasRole('MANAGER') or hasRole('EMPLOYEE')")
-    public ApiResponse getCreditPurchaseTransactions() {
-        try {
-            String userId = transactionService.getCurrentUserId();
-            List<CreditTransaction> transactions = transactionService.getCreditPurchaseTransactions(userId);
-            
-            return ApiResponse.success("Credit purchase transactions retrieved successfully", Map.of(
-                "transactions", transactions,
-                "count", transactions.size()
-            ));
-        } catch (Exception e) {
-            log.error("Error retrieving credit purchase transactions", e);
-            return ApiResponse.error("Failed to retrieve credit purchase transactions: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * Get transaction by Stripe payment intent ID
-     */
-    @GetMapping("/by-payment-intent/{paymentIntentId}")
-    @PreAuthorize("hasRole('OWNER') or hasRole('MANAGER') or hasRole('EMPLOYEE')")
-    public ApiResponse getTransactionByPaymentIntentId(@PathVariable String paymentIntentId) {
-        try {
-            CreditTransaction transaction = transactionService.getTransactionByStripePaymentIntentId(paymentIntentId);
-            
-            if (transaction == null) {
-                return ApiResponse.error("Transaction not found for payment intent ID: " + paymentIntentId);
-            }
-            
-            return ApiResponse.success("Transaction retrieved successfully", transaction);
-        } catch (Exception e) {
-            log.error("Error retrieving transaction by payment intent ID", e);
-            return ApiResponse.error("Failed to retrieve transaction: " + e.getMessage());
+            log.error("Error retrieving chat deduction transactions", e);
+            return ApiResponse.error("Failed to retrieve chat deduction transactions: " + e.getMessage());
         }
     }
     
@@ -187,57 +146,6 @@ public class TransactionController {
         } catch (Exception e) {
             log.error("Error retrieving transaction types", e);
             return ApiResponse.error("Failed to retrieve transaction types: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Get refund transactions for current user
-     */
-    @GetMapping("/refunds")
-    @PreAuthorize("hasRole('OWNER') or hasRole('MANAGER') or hasRole('EMPLOYEE')")
-    public ApiResponse getRefundTransactions() {
-        try {
-            String userId = transactionService.getCurrentUserId();
-            List<CreditTransaction> refunds = transactionService.getRefundTransactions(userId);
-            
-            List<Map<String, Object>> refundData = refunds.stream()
-                .map(refund -> {
-                    Map<String, Object> refundMap = new HashMap<>();
-                    refundMap.put("id", refund.getId());
-                    refundMap.put("amount", refund.getAmount());
-                    refundMap.put("paymentAmount", refund.getPaymentAmount());
-                    refundMap.put("paymentCurrency", refund.getPaymentCurrency());
-                    refundMap.put("reason", refund.getReason());
-                    refundMap.put("stripePaymentIntentId", refund.getStripePaymentIntentId());
-                    refundMap.put("stripeTransactionId", refund.getStripeTransactionId());
-                    refundMap.put("timestamp", refund.getTimestamp());
-                    return refundMap;
-                })
-                .collect(Collectors.toList());
-            
-            return ApiResponse.success("Refund transactions retrieved successfully", Map.of(
-                "refunds", refundData,
-                "count", refunds.size()
-            ));
-        } catch (Exception e) {
-            log.error("Error retrieving refund transactions", e);
-            return ApiResponse.error("Failed to retrieve refund transactions: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * Get refund statistics for current user
-     */
-    @GetMapping("/refunds/stats")
-    @PreAuthorize("hasRole('OWNER') or hasRole('MANAGER') or hasRole('EMPLOYEE')")
-    public ApiResponse getRefundStatistics() {
-        try {
-            String userId = transactionService.getCurrentUserId();
-            Map<String, Object> stats = transactionService.getRefundStatistics(userId);
-            return ApiResponse.success("Refund statistics retrieved successfully", stats);
-        } catch (Exception e) {
-            log.error("Error retrieving refund statistics", e);
-            return ApiResponse.error("Failed to retrieve refund statistics: " + e.getMessage());
         }
     }
 } 

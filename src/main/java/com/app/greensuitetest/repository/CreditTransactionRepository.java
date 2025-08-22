@@ -32,11 +32,6 @@ public interface CreditTransactionRepository extends MongoRepository<CreditTrans
     List<CreditTransaction> findByUserIdAndTypeOrderByTimestampDesc(String userId, CreditTransaction.TransactionType type);
     
     /**
-     * Find transaction by Stripe payment intent ID
-     */
-    java.util.Optional<CreditTransaction> findByStripePaymentIntentId(String stripePaymentIntentId);
-    
-    /**
      * Find all transactions for a user (for statistics)
      */
     List<CreditTransaction> findByUserId(String userId);

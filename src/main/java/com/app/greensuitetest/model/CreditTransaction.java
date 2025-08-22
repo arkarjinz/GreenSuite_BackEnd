@@ -30,33 +30,13 @@ public class CreditTransaction {
     private String reason;
     private String conversationId; // For chat-related transactions
     
-    // Stripe integration fields
-    private String stripePaymentIntentId;
-    private String stripeCustomerId;
-    private String stripeTransactionId;
-    private Double paymentAmount;
-    private String paymentCurrency;
-    private String paymentMethod;
-    private String creditPackage;
-    
-    // Account balance fields (for add money functionality)
-    private String accountNumber;
-    private Double accountBalanceBefore;
-    private Double accountBalanceAfter;
-    
     @Indexed
     private LocalDateTime timestamp;
     
     public enum TransactionType {
         CHAT_DEDUCTION("Chat Credit Deduction"),
-        CREDIT_PURCHASE("Credit Purchase"),
         ADMIN_GRANT("Admin Credit Grant"),
-        REFUND("Credit Refund"),
-        AUTO_REFILL("Automatic Credit Refill"),
-        ACCOUNT_DEPOSIT("Account Deposit"),
-        ACCOUNT_WITHDRAWAL("Account Withdrawal"),
-        STRIPE_PAYMENT("Stripe Payment"),
-        STRIPE_REFUND("Stripe Refund");
+        AUTO_REFILL("Automatic Credit Refill");
         
         private final String description;
         

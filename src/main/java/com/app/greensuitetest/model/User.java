@@ -162,25 +162,25 @@ public class User {
 
     /**
      * Get maximum credits allowed for the user
-     * Note: Users can have unlimited credits, but auto-refill stops at 50
+     * Note: Users can have maximum 50 credits total
      */
     public int getMaxCredits() {
-        return Integer.MAX_VALUE; // Users can have unlimited credits
+        return 50; // Maximum 50 credits total
     }
 
     /**
-     * Check if user can receive auto-refill credits
-     * Note: Auto-refill stops when users reach 50 credits
+     * Check if user can receive credits
+     * Note: Users cannot exceed 50 credits total
      */
     public boolean canReceiveCredits() {
-        return this.aiCredits < 50; // Auto-refill stops at 50
+        return this.aiCredits < 50; // Cannot exceed 50 credits
     }
 
     /**
-     * Get the maximum amount of credits that can be added in a single refill
+     * Get the maximum amount of credits that can be added
      */
     public int getMaxRefillAmount() {
-        return 50; // Maximum 50 credits per refill
+        return Math.max(0, 50 - this.aiCredits); // Maximum credits that can be added
     }
 
     // Rejection tracking methods
