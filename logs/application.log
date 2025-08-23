@@ -4137,3 +4137,47 @@ java.lang.Exception: Apparent connection leak detected
 2025-08-23 12:20:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/submitted-months: 15 requests, avg 16ms
 2025-08-23 12:20:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 3 requests, avg 104ms
 2025-08-23 12:20:08 [scheduling-1] INFO  c.a.g.service.AICreditService - Auto-refill completed: 0 users refilled, 10 users at max credits
+2025-08-23 12:22:29 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/reports
+2025-08-23 12:22:29 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/reports - 11ms
+2025-08-23 12:22:29 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals
+2025-08-23 12:22:29 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals - 8ms
+2025-08-23 12:24:13 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/reports
+2025-08-23 12:24:13 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/reports - 10ms
+2025-08-23 12:24:13 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals
+2025-08-23 12:24:13 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals - 8ms
+2025-08-23 12:24:33 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/reports
+2025-08-23 12:24:33 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/reports - 11ms
+2025-08-23 12:24:33 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals
+2025-08-23 12:24:33 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals - 10ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 158
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 0.0%
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 0
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 4ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/owner/approve-user/{id}a94ffd11bd8e49f1b0426d: 1 requests, avg 35ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/owner/pending-users: 4 requests, avg 32ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/submittedMonths: 7 requests, avg 16ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/carbon/calculate: 4 requests, avg 145ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/register: 14 requests, avg 311ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/carbon/goals/check: 2 requests, avg 140ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/chart-data: 10 requests, avg 18ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/resource-data: 4 requests, avg 22ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/owner/approve-user/{id}a953ab11bd8e49f1b04270: 1 requests, avg 19ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/{id}a931470d5897868495a0aa: 3 requests, avg 25ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/carbon/goals/save: 2 requests, avg 84ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/public/companies/{id}a85e30b217d2e84df9b942: 4 requests, avg 11ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/reports: 36 requests, avg 14ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/login: 8 requests, avg 1564ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/public/companies: 3 requests, avg 24ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - PUT /api/carbon/update: 1 requests, avg 170ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals: 36 requests, avg 12ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/submitted-months: 15 requests, avg 16ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 3 requests, avg 104ms
+2025-08-23 12:25:08 [scheduling-1] INFO  c.a.g.service.AICreditService - Auto-refill completed: 0 users refilled, 10 users at max credits
+2025-08-23 12:25:41 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-08-23 12:25:41 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-08-23 12:25:41 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-08-23 12:25:41 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-08-23 12:25:41 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
