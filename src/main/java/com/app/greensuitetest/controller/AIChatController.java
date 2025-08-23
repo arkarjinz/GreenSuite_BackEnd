@@ -6,9 +6,12 @@ import com.app.greensuitetest.service.ConversationUtilService;
 import com.app.greensuitetest.service.RinPersonalityService;
 import com.app.greensuitetest.service.ContextBuilderService;
 import com.app.greensuitetest.service.PerformanceMonitoringService;
+import com.app.greensuitetest.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
@@ -32,8 +35,35 @@ public class AIChatController {
     private final RinPersonalityService rinPersonalityService;
     private final ContextBuilderService contextBuilderService;
     private final PerformanceMonitoringService performanceMonitoringService;
+    private final SecurityUtil securityUtil;
     
     private final Random personalityRandom = new Random();
+
+    /**
+     * Get current user ID from security context or return null if not authenticated
+     */
+    private String getCurrentUserId() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated() && 
+                !"anonymousUser".equals(authentication.getName())) {
+                return securityUtil.getCurrentUser().getId();
+            }
+        } catch (Exception e) {
+            log.debug("Could not get current user ID from security context: {}", e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Get effective user ID - use provided userId or get from security context
+     */
+    private String getEffectiveUserId(String providedUserId) {
+        if (providedUserId != null && !providedUserId.trim().isEmpty()) {
+            return providedUserId;
+        }
+        return getCurrentUserId();
+    }
 
     /**
      * Health check for AI service connectivity
@@ -71,12 +101,15 @@ public class AIChatController {
             @RequestParam(required = false) String sessionId) {
 
         try {
-            // Generate unique conversation ID if not provided
-            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, userId, sessionId);
+            // Get effective user ID from security context if not provided
+            String effectiveUserId = getEffectiveUserId(userId);
             
-            log.debug("Rin responding to conversation: {} with message: {}", effectiveConversationId, message);
+            // Generate unique conversation ID if not provided
+            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, effectiveUserId, sessionId);
+            
+            log.debug("Rin responding to conversation: {} with message: {} for user: {}", effectiveConversationId, message, effectiveUserId);
 
-            return aiChatService.processStreamingChat(message, effectiveConversationId, userId, sessionId)
+            return aiChatService.processStreamingChat(message, effectiveConversationId, effectiveUserId, sessionId)
                 .onErrorResume(error -> {
                     // Handle client disconnection gracefully
                     if (isClientDisconnectionError(error)) {
@@ -106,13 +139,16 @@ public class AIChatController {
             @RequestParam(required = false) String sessionId) {
 
         try {
-            // Generate unique conversation ID if not provided
-            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, userId, sessionId);
+            // Get effective user ID from security context if not provided
+            String effectiveUserId = getEffectiveUserId(userId);
             
-            log.debug("Rin sync response for conversation: {} with message: {}", effectiveConversationId, message);
+            // Generate unique conversation ID if not provided
+            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, effectiveUserId, sessionId);
+            
+            log.debug("Rin sync response for conversation: {} with message: {} for user: {}", effectiveConversationId, message, effectiveUserId);
 
             // AIChatService handles content cleaning internally via extractContent() method
-            return aiChatService.processSyncChat(message, effectiveConversationId, userId, sessionId);
+            return aiChatService.processSyncChat(message, effectiveConversationId, effectiveUserId, sessionId);
         } catch (Exception e) {
             log.error("Error in Rin's sync chat for conversation: {}", conversationId, e);
             return ApiResponse.error("Rin encountered an error: " + rinPersonalityService.getRinErrorResponseForException(e));
@@ -124,10 +160,13 @@ public class AIChatController {
                                       @RequestParam(required = false) String userId,
                                       @RequestParam(required = false) String sessionId) {
         try {
-            // Generate effective conversation ID to ensure user isolation
-            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, userId, sessionId);
+            // Get effective user ID from security context if not provided
+            String effectiveUserId = getEffectiveUserId(userId);
             
-            return aiChatService.getChatHistory(effectiveConversationId, userId, sessionId);
+            // Generate effective conversation ID to ensure user isolation
+            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, effectiveUserId, sessionId);
+            
+            return aiChatService.getChatHistory(effectiveConversationId, effectiveUserId, sessionId);
         } catch (Exception e) {
             log.error("Error retrieving chat history", e);
             return ApiResponse.error("I'm having trouble getting your conversation history... " + 
@@ -141,10 +180,13 @@ public class AIChatController {
                                         @RequestParam(required = false) String userId,
                                         @RequestParam(required = false) String sessionId) {
         try {
-            // Generate effective conversation ID to ensure user isolation
-            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, userId, sessionId);
+            // Get effective user ID from security context if not provided
+            String effectiveUserId = getEffectiveUserId(userId);
             
-            return aiChatService.clearChatHistory(effectiveConversationId, userId, sessionId);
+            // Generate effective conversation ID to ensure user isolation
+            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, effectiveUserId, sessionId);
+            
+            return aiChatService.clearChatHistory(effectiveConversationId, effectiveUserId, sessionId);
         } catch (Exception e) {
             log.error("Error clearing chat history", e);
             return ApiResponse.error("I'm having trouble clearing the history... " + 
@@ -157,12 +199,15 @@ public class AIChatController {
                                                   @RequestParam(required = false) String userId,
                                                   @RequestParam(required = false) String sessionId) {
         try {
-            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, userId, sessionId);
+            // Get effective user ID from security context if not provided
+            String effectiveUserId = getEffectiveUserId(userId);
+            
+            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, effectiveUserId, sessionId);
             
             Map<String, Object> enhancedContext = contextBuilderService.buildEnhancedContextWithPersonality(
-                    effectiveConversationId, userId, sessionId, "");
+                    effectiveConversationId, effectiveUserId, sessionId, "");
 
-            Map<String, Object> rinAnalysis = rinPersonalityService.getRinPersonalityState(effectiveConversationId, userId);
+            Map<String, Object> rinAnalysis = rinPersonalityService.getRinPersonalityState(effectiveConversationId, effectiveUserId);
 
             Map<String, Object> analysisData = Map.of(
                             "conversationId", effectiveConversationId,
@@ -202,9 +247,12 @@ public class AIChatController {
                                              @RequestParam(required = false) String userId,
                                              @RequestParam(required = false) String sessionId) {
         try {
-            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, userId, sessionId);
+            // Get effective user ID from security context if not provided
+            String effectiveUserId = getEffectiveUserId(userId);
             
-            Map<String, Object> personalityState = rinPersonalityService.getRinPersonalityState(effectiveConversationId, userId);
+            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, effectiveUserId, sessionId);
+            
+            Map<String, Object> personalityState = rinPersonalityService.getRinPersonalityState(effectiveConversationId, effectiveUserId);
 
             Map<String, Object> personalityData = Map.of(
                             "conversationId", effectiveConversationId,
@@ -237,13 +285,16 @@ public class AIChatController {
                                             @RequestParam(required = false) String sessionId,
                                             @RequestParam(defaultValue = "Environmental compliment") String reason) {
         try {
-            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, userId, sessionId);
-            String userKey = userId != null ? userId : effectiveConversationId;
+            // Get effective user ID from security context if not provided
+            String effectiveUserId = getEffectiveUserId(userId);
+            
+            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, effectiveUserId, sessionId);
+            String userKey = effectiveUserId != null ? effectiveUserId : effectiveConversationId;
             
             int currentLevel = rinPersonalityService.getUserRelationshipLevel(userKey);
             
             // Boost relationship through environmental engagement
-            rinPersonalityService.updateRelationshipDynamics(effectiveConversationId, userId, "environmental compliment boost");
+            rinPersonalityService.updateRelationshipDynamics(effectiveConversationId, effectiveUserId, "environmental compliment boost");
             
             int newLevel = rinPersonalityService.getUserRelationshipLevel(userKey);
             int boostAmount = newLevel - currentLevel;
@@ -271,10 +322,13 @@ public class AIChatController {
                                         @RequestParam(required = false) String sessionId,
                                         @RequestParam(required = false, defaultValue = "what did we talk about?") String testMessage) {
         try {
-            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, userId, sessionId);
+            // Get effective user ID from security context if not provided
+            String effectiveUserId = getEffectiveUserId(userId);
+            
+            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, effectiveUserId, sessionId);
             
             Map<String, Object> enhancedContext = contextBuilderService.buildEnhancedContextWithPersonality(
-                    effectiveConversationId, userId, sessionId, testMessage);
+                    effectiveConversationId, effectiveUserId, sessionId, testMessage);
 
             String debugSystemPrompt = rinPersonalityService.buildDebugSystemPrompt(enhancedContext, "No document context");
             
@@ -301,10 +355,13 @@ public class AIChatController {
                                      @RequestParam(required = false) String userId,
                                      @RequestParam(required = false) String sessionId) {
         try {
-            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, userId, sessionId);
+            // Get effective user ID from security context if not provided
+            String effectiveUserId = getEffectiveUserId(userId);
+            
+            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, effectiveUserId, sessionId);
             
             Map<String, Object> enhancedContext = contextBuilderService.buildEnhancedContextWithPersonality(
-                effectiveConversationId, userId, sessionId, message);
+                effectiveConversationId, effectiveUserId, sessionId, message);
             
             String debugSystemPrompt = rinPersonalityService.buildDebugSystemPrompt(enhancedContext, "No document context");
             
@@ -333,10 +390,13 @@ public class AIChatController {
                                         @RequestParam(required = false) String userId,
                                         @RequestParam(required = false) String sessionId) {
         try {
-            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, userId, sessionId);
+            // Get effective user ID from security context if not provided
+            String effectiveUserId = getEffectiveUserId(userId);
+            
+            String effectiveConversationId = conversationUtilService.generateUniqueConversationId(conversationId, effectiveUserId, sessionId);
             
             Map<String, Object> enhancedContext = contextBuilderService.buildEnhancedContextWithPersonality(
-                effectiveConversationId, userId, sessionId, message);
+                effectiveConversationId, effectiveUserId, sessionId, message);
             
             String debugSystemPrompt = rinPersonalityService.buildDebugSystemPrompt(enhancedContext, "No document context");
             
@@ -361,11 +421,14 @@ public class AIChatController {
     @GetMapping("/conversation/persistent-id")
     public ApiResponse getPersistentConversationId(@RequestParam(required = false) String userId) {
         try {
-            String persistentId = conversationUtilService.getPersistentConversationId(userId);
+            // Get effective user ID from security context if not provided
+            String effectiveUserId = getEffectiveUserId(userId);
+            
+            String persistentId = conversationUtilService.getPersistentConversationId(effectiveUserId);
             
             Map<String, Object> idData = Map.of(
                 "persistent_conversation_id", persistentId,
-                "user_id", userId,
+                "user_id", effectiveUserId,
                 "generation_timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 "rin_comment", "Here's your persistent conversation ID. I'll remember our environmental discussions across sessions."
             );

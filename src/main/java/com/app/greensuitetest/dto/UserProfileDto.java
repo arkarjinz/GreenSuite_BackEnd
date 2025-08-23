@@ -28,6 +28,7 @@ public class UserProfileDto {
     private int remainingAttempts;
     private boolean approachingBan;
     private LocalDateTime lastRejectionAt;
+    
 
     public UserProfileDto(User user) {
         this.id = user.getId();
@@ -48,7 +49,8 @@ public class UserProfileDto {
         this.remainingAttempts = user.getRemainingAttempts();
         this.approachingBan = user.isApproachingBan();
         this.lastRejectionAt = user.getLastRejectionAt();
-    }
+     
+        }
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
@@ -69,4 +71,5 @@ public class UserProfileDto {
     public void setBanned(boolean banned) {
         this.banned = banned;
     }
+
 }

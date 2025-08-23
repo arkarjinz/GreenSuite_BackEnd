@@ -54,10 +54,15 @@ public class AIChatService {
     public Flux<String> processStreamingChat(String message, String conversationId, String userId, String sessionId) {
         try {
             // Check and deduct credits BEFORE processing
+            final AtomicReference<Boolean> creditsDeducted = new AtomicReference<>(false);
             if (userId != null) {
                 if (!aiCreditService.hasCreditsForChat(userId)) {
                     return Flux.just(rinPersonalityService.getRinInsufficientCreditsMessage());
                 }
+                // Deduct credits upfront for streaming as well
+                aiCreditService.deductChatCredits(userId, conversationId, "Streaming chat");
+                creditsDeducted.set(true);
+                log.info("Deducted 2 AI credits from user {} for streaming chat", userId);
             }
 
             // Update relationship dynamics
@@ -72,7 +77,7 @@ public class AIChatService {
                     log.error("Error in Rin's streaming chat for conversation: {}", conversationId, error);
                     
                     // Refund credits if chat failed after deduction
-                    if (userId != null) {
+                    if (userId != null && creditsDeducted.get()) {
                         try {
                             aiCreditService.refundCredits(userId, 2, "Streaming chat failed");
                             log.info("Refunded 2 credits to user {} due to streaming failure", userId);
@@ -105,7 +110,7 @@ public class AIChatService {
                 if (!aiCreditService.hasCreditsForChat(userId)) {
                     return createInsufficientCreditsResponse(userId);
                 }
-                remainingCredits = aiCreditService.deductChatCredits(userId);
+                remainingCredits = aiCreditService.deductChatCredits(userId, conversationId, "Sync chat");
             }
 
             rinPersonalityService.updateRelationshipDynamics(conversationId, userId, message);
@@ -150,7 +155,7 @@ public class AIChatService {
             // Refund credits if chat failed after deduction
             if (userId != null) {
                 try {
-                    aiCreditService.refundCredits(userId, 2, "Chat processing failed");
+                    aiCreditService.refundCredits(userId, 2, "Chat processing failed", conversationId);
                     log.info("Refunded 2 credits to user {} due to chat failure", userId);
                 } catch (Exception refundError) {
                     log.error("Failed to refund credits to user {}: {}", userId, refundError.getMessage());
@@ -256,20 +261,9 @@ public class AIChatService {
 
                     // Stream response with Rin's personality tracking
                     AtomicReference<StringBuilder> responseBuilder = new AtomicReference<>(new StringBuilder());
-                    AtomicReference<Boolean> creditsDeducted = new AtomicReference<>(false);
 
                     return streamingChatModel.stream(prompt)
                     .map(chatResponse -> {
-                        // Deduct credits on first successful chunk
-                        if (userId != null && !creditsDeducted.get()) {
-                            try {
-                                aiCreditService.deductChatCredits(userId);
-                                creditsDeducted.set(true);
-                                log.info("Deducted 2 AI credits from user {} during streaming", userId);
-                            } catch (Exception e) {
-                                log.warn("Failed to deduct credits during streaming for user {}: {}", userId, e.getMessage());
-                            }
-                        }
 
                         // CRITICAL: Get content without aggressive processing
                         String content = extractContent(chatResponse.getResult().getOutput());
@@ -291,15 +285,15 @@ public class AIChatService {
                         conversationContextService.updateContextAfterInteraction(conversationId, message, finalResponse);
                     })
                     .doOnError(error -> {
-                        // Refund credits if streaming fails after deduction
-                        if (userId != null && creditsDeducted.get()) {
-                            try {
-                                aiCreditService.refundCredits(userId, 2, "Streaming chat failed");
-                                log.info("Refunded 2 credits to user {} due to streaming failure", userId);
-                            } catch (Exception refundError) {
-                                log.error("Failed to refund credits to user {}: {}", userId, refundError.getMessage());
-                            }
+                                            // Refund credits if streaming fails after deduction
+                    if (userId != null) {
+                        try {
+                            aiCreditService.refundCredits(userId, 2, "Streaming chat failed", conversationId);
+                            log.info("Refunded 2 credits to user {} due to streaming failure", userId);
+                        } catch (Exception refundError) {
+                            log.error("Failed to refund credits to user {}: {}", userId, refundError.getMessage());
                         }
+                    }
                         
                         // Handle different types of streaming errors
                         if (isClientDisconnectionError(error)) {

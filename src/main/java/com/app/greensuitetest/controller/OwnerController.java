@@ -45,4 +45,7 @@ public class OwnerController {
         // This could include stats about pending users, rejection rates, etc.
         return ResponseEntity.ok(ownerService.getCompanyStats());
     }
+
+    
+   
 }

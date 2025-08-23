@@ -130,4 +130,18 @@ public interface UserRepository extends MongoRepository<User, String> {
     // Users pending approval with warnings needed
     @Query("{ 'approvalStatus': 'PENDING', 'rejectionCount': { $in: [3, 4] } }")
     List<User> findPendingUsersNearBan();
+    
+    // ============== AI CREDIT QUERIES ==============
+    
+    // Find users eligible for auto-refill (active users with less than specified credit limit)
+    @Query("{ 'isBanned': false, 'approvalStatus': 'APPROVED', 'aiCredits': { $lt: ?0 } }")
+    List<User> findUsersEligibleForAutoRefill(int creditLimit);
+    
+    // Find users with low credits (for notifications)
+    @Query("{ 'isBanned': false, 'approvalStatus': 'APPROVED', 'aiCredits': { $lt: 10 } }")
+    List<User> findUsersWithLowCredits();
+    
+    // Find users with zero credits
+    @Query("{ 'isBanned': false, 'approvalStatus': 'APPROVED', 'aiCredits': 0 }")
+    List<User> findUsersWithZeroCredits();
 }
