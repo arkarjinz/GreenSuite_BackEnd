@@ -14,6 +14,7 @@ public record CarbonInput(
 
         @NotNull String month,       // Add this field
         String region,
+       // String companyId,     // ❌ ADD THIS FIELD!
         String userId,//added to save who updated
         FuelType fuelType,       // Required for FUEL
         DisposalMethod disposalMethod, // Required for WASTE

@@ -178,7 +178,8 @@ public class CarbonCalculatorService {
     private void logActivity(CarbonInput input, double footprint, String unit) {
         CarbonActivity activity = new CarbonActivity();
         activity.setCompanyId(securityUtil.getCurrentUserCompanyId());
-        activity.setUserId(securityUtil.getCurrentUserId());
+        //activity.setUserId(securityUtil.getCurrentUserId());
+        activity.setUserId(input.userId()); // ✅ Use the userId from the input
         activity.setMonth(input.month()); // expects String like "07"
         activity.setYear(input.year());   // expects String like "2025"
 

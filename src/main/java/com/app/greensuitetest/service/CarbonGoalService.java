@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 
@@ -27,6 +27,7 @@ public class CarbonGoalService {
     //for storing data to database
     public void saveGoal(CarbonGoalRequest request) {
         String companyId = securityUtil.getCurrentUserCompanyId(); // moved here
+        String userId = securityUtil.getCurrentUserId(); // ← ADD THIS LINE
         //String month = request.getSelectedMonth();
         YearMonth ym = YearMonth.parse(request.getSelectedMonth());
 
@@ -38,8 +39,14 @@ public class CarbonGoalService {
 
         CarbonGoal goal = existing.orElseGet(CarbonGoal::new);
         goal.setCompanyId(companyId);
+        goal.setUserId(userId); // ← ADD THIS LINE
         goal.setMonth(monthValue);
         goal.setYear(year);         // NEW
+        // ✅ ADD TIMESTAMPS HERE
+        if (goal.getCreatedAt() == null) {
+            goal.setCreatedAt(LocalDateTime.now());
+        }
+        goal.setUpdatedAt(LocalDateTime.now());
         // If you store target values individually
         goal.setTargetElectricity(request.getTargetPercentByCategory().get("electricity"));
         goal.setTargetFuel(request.getTargetPercentByCategory().get("fuel"));
