@@ -198,6 +198,9 @@ public class OwnerService {
         return stats;
     }
 
+   
+
+
     private UserProfileDto createUserProfileDto(User user) {
         UserProfileDto dto = new UserProfileDto(user);
         // Add company name only if company exists

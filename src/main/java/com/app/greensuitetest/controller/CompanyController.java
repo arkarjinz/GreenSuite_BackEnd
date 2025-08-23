@@ -1,15 +1,20 @@
 package com.app.greensuitetest.controller;
 
+import com.app.greensuitetest.dto.UserProfileDto;
 import com.app.greensuitetest.model.Company;
 import com.app.greensuitetest.repository.CompanyRepository;
+import com.app.greensuitetest.repository.UserRepository;
+import com.app.greensuitetest.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -17,6 +22,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CompanyController {
     private final CompanyRepository companyRepository;
+    private final UserRepository userRepository;
+    private final SecurityUtil securityUtil;
 
     @GetMapping("/companies")
     public ResponseEntity<?> searchCompanies(@RequestParam(required = false) String query) {
@@ -45,6 +52,30 @@ public class CompanyController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("error", "Failed to get company"));
+        }
+    }
+
+    /**
+     * Get all users from the current user's company (for regular users)
+     */
+    @GetMapping("/company/users")
+    @PreAuthorize("hasRole('OWNER') or hasRole('MANAGER') or hasRole('EMPLOYEE')")
+    public ResponseEntity<List<UserProfileDto>> getCompanyUsers() {
+        try {
+            String companyId = securityUtil.getCurrentUser().getCompanyId();
+            if (companyId == null) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            List<UserProfileDto> users = userRepository.findByCompanyId(companyId)
+                .stream()
+                .map(UserProfileDto::new)
+                .collect(Collectors.toList());
+
+            return ResponseEntity.ok(users);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(List.of());
         }
     }
 }
