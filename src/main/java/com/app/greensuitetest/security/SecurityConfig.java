@@ -104,6 +104,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                                 "/api/ai/**",
                                 "/api/auth/login",
                                 "/api/auth/refresh",
+                                "/api/auth/reapply",
                                 "/actuator/health",
                                 "/api/library/**",
                                 "/api/public/**",

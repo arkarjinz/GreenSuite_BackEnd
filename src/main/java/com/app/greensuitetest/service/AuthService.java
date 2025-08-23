@@ -326,7 +326,30 @@ public class AuthService {
         response.put("status", "pending");
         response.put("user", new UserProfileDto(user));
 
-        if (user.getRejectionCount() > 0) {
+        // Handle rejected users specifically
+        if (user.getApprovalStatus() == ApprovalStatus.REJECTED) {
+            // Generate reapplication token for rejected users
+            String reapplicationToken = jwtUtil.generateReapplicationToken(user);
+            
+            // Create rejection info
+            Map<String, Object> rejectionInfo = Map.of(
+                "count", user.getRejectionCount(),
+                "remaining", user.getRemainingAttempts(),
+                "isApproachingBan", user.isApproachingBan()
+            );
+            
+            response.put("status", "rejected");
+            response.put("message", String.format("Account pending approval (Previously rejected %d times)",
+                    user.getRejectionCount()));
+            response.put("reapplicationToken", reapplicationToken);
+            response.put("rejectionInfo", rejectionInfo);
+            response.put("reapplicationUrl", "/api/auth/reapply");
+            
+            if (user.isApproachingBan()) {
+                response.put("warning", "WARNING: You have 1 rejection remaining before permanent ban");
+            }
+        } else if (user.getRejectionCount() > 0) {
+            // Handle users with rejection history but not currently rejected
             response.put("message", String.format("Account pending approval (Previously rejected %d times)",
                     user.getRejectionCount()));
             response.put("rejectionCount", user.getRejectionCount());
