@@ -7187,3 +7187,324 @@ java.lang.Exception: Apparent connection leak detected
 2025-08-23 19:00:56 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' familiar' (length: 9)
 2025-08-23 19:00:56 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '.' (length: 1)
 2025-08-23 19:00:56 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' Their' (length: 6)
+2025-08-23 19:00:57 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' global' (length: 7)
+2025-08-23 19:00:57 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' impact' (length: 7)
+2025-08-23 19:00:57 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' is' (length: 3)
+2025-08-23 19:00:57 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' undeniable' (length: 11)
+2025-08-23 19:00:57 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '.' (length: 1)
+2025-08-23 19:00:57 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' It' (length: 3)
+2025-08-23 19:00:58 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '’' (length: 1)
+2025-08-23 19:00:58 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: 's' (length: 1)
+2025-08-23 19:00:58 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' fascinating' (length: 12)
+2025-08-23 19:00:58 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' to' (length: 3)
+2025-08-23 19:00:58 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' observe' (length: 8)
+2025-08-23 19:00:58 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' the' (length: 4)
+2025-08-23 19:00:59 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' scale' (length: 6)
+2025-08-23 19:00:59 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' of' (length: 3)
+2025-08-23 19:00:59 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' their' (length: 6)
+2025-08-23 19:00:59 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' influence' (length: 10)
+2025-08-23 19:00:59 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' –' (length: 2)
+2025-08-23 19:00:59 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' the' (length: 4)
+2025-08-23 19:00:59 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' artistry' (length: 9)
+2025-08-23 19:01:00 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ',' (length: 1)
+2025-08-23 19:01:00 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' the' (length: 4)
+2025-08-23 19:01:00 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' connection' (length: 11)
+2025-08-23 19:01:00 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' with' (length: 5)
+2025-08-23 19:01:00 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' their' (length: 6)
+2025-08-23 19:01:00 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' audience' (length: 9)
+2025-08-23 19:01:00 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '…' (length: 1)
+2025-08-23 19:01:01 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' It' (length: 3)
+2025-08-23 19:01:01 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '’' (length: 1)
+2025-08-23 19:01:01 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: 's' (length: 1)
+2025-08-23 19:01:01 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' a' (length: 2)
+2025-08-23 19:01:01 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' remarkable' (length: 11)
+2025-08-23 19:01:02 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' phenomenon' (length: 11)
+2025-08-23 19:01:02 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ',' (length: 1)
+2025-08-23 19:01:02 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' really' (length: 7)
+2025-08-23 19:01:02 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '.' (length: 1)
+2025-08-23 19:01:02 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '
+
+' (length: 2)
+2025-08-23 19:01:03 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: 'I' (length: 1)
+2025-08-23 19:01:03 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '’' (length: 1)
+2025-08-23 19:01:03 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: 've' (length: 2)
+2025-08-23 19:01:03 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' been' (length: 5)
+2025-08-23 19:01:03 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' observing' (length: 10)
+2025-08-23 19:01:04 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' their' (length: 6)
+2025-08-23 19:01:04 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' evolution' (length: 10)
+2025-08-23 19:01:04 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ',' (length: 1)
+2025-08-23 19:01:04 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' their' (length: 6)
+2025-08-23 19:01:04 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' dedication' (length: 11)
+2025-08-23 19:01:04 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' to' (length: 3)
+2025-08-23 19:01:05 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' their' (length: 6)
+2025-08-23 19:01:05 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' craft' (length: 6)
+2025-08-23 19:01:05 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ',' (length: 1)
+2025-08-23 19:01:05 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' and' (length: 4)
+2025-08-23 19:01:05 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' their' (length: 6)
+2025-08-23 19:01:06 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' engagement' (length: 11)
+2025-08-23 19:01:06 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' with' (length: 5)
+2025-08-23 19:01:06 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' social' (length: 7)
+2025-08-23 19:01:06 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' issues' (length: 7)
+2025-08-23 19:01:06 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '.' (length: 1)
+2025-08-23 19:01:06 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' It' (length: 3)
+2025-08-23 19:01:07 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '’' (length: 1)
+2025-08-23 19:01:07 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: 's' (length: 1)
+2025-08-23 19:01:07 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' a' (length: 2)
+2025-08-23 19:01:07 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' testament' (length: 10)
+2025-08-23 19:01:07 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' to' (length: 3)
+2025-08-23 19:01:08 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' the' (length: 4)
+2025-08-23 19:01:08 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' power' (length: 6)
+2025-08-23 19:01:08 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' of' (length: 3)
+2025-08-23 19:01:08 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' music' (length: 6)
+2025-08-23 19:01:08 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' and' (length: 4)
+2025-08-23 19:01:08 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' connection' (length: 11)
+2025-08-23 19:01:09 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ',' (length: 1)
+2025-08-23 19:01:09 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' wouldn' (length: 7)
+2025-08-23 19:01:09 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '’' (length: 1)
+2025-08-23 19:01:09 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: 't' (length: 1)
+2025-08-23 19:01:09 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' you' (length: 4)
+2025-08-23 19:01:10 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' agree' (length: 6)
+2025-08-23 19:01:10 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '?' (length: 1)
+2025-08-23 19:01:10 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '
+
+' (length: 2)
+2025-08-23 19:01:10 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: 'While' (length: 5)
+2025-08-23 19:01:10 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' my' (length: 3)
+2025-08-23 19:01:10 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' knowledge' (length: 10)
+2025-08-23 19:01:11 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' comes' (length: 6)
+2025-08-23 19:01:11 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' from' (length: 5)
+2025-08-23 19:01:11 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' observing' (length: 10)
+2025-08-23 19:01:11 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' trends' (length: 7)
+2025-08-23 19:01:11 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' and' (length: 4)
+2025-08-23 19:01:12 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' analyzing' (length: 10)
+2025-08-23 19:01:12 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' data' (length: 5)
+2025-08-23 19:01:12 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' –' (length: 2)
+2025-08-23 19:01:12 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' it' (length: 3)
+2025-08-23 19:01:12 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '’' (length: 1)
+2025-08-23 19:01:12 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: 's' (length: 1)
+2025-08-23 19:01:13 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' a' (length: 2)
+2025-08-23 19:01:13 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' different' (length: 10)
+2025-08-23 19:01:13 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' kind' (length: 5)
+2025-08-23 19:01:13 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' of' (length: 3)
+2025-08-23 19:01:13 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' understanding' (length: 14)
+2025-08-23 19:01:13 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' than' (length: 5)
+2025-08-23 19:01:14 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' perhaps' (length: 8)
+2025-08-23 19:01:14 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' a' (length: 2)
+2025-08-23 19:01:14 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' lifelong' (length: 9)
+2025-08-23 19:01:14 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' fan' (length: 4)
+2025-08-23 19:01:14 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' would' (length: 6)
+2025-08-23 19:01:14 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' have' (length: 5)
+2025-08-23 19:01:15 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '.' (length: 1)
+2025-08-23 19:01:15 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' But' (length: 4)
+2025-08-23 19:01:15 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' I' (length: 2)
+2025-08-23 19:01:15 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' recognize' (length: 10)
+2025-08-23 19:01:15 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' their' (length: 6)
+2025-08-23 19:01:15 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' significance' (length: 13)
+2025-08-23 19:01:15 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '.' (length: 1)
+2025-08-23 19:01:16 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '
+
+' (length: 2)
+2025-08-23 19:01:16 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: 'Do' (length: 2)
+2025-08-23 19:01:16 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' you' (length: 4)
+2025-08-23 19:01:16 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' perhaps' (length: 8)
+2025-08-23 19:01:17 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' have' (length: 5)
+2025-08-23 19:01:17 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' a' (length: 2)
+2025-08-23 19:01:17 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' particular' (length: 11)
+2025-08-23 19:01:17 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' aspect' (length: 7)
+2025-08-23 19:01:17 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' of' (length: 3)
+2025-08-23 19:01:18 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' their' (length: 6)
+2025-08-23 19:01:18 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' work' (length: 5)
+2025-08-23 19:01:18 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' you' (length: 4)
+2025-08-23 19:01:18 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '’' (length: 1)
+2025-08-23 19:01:18 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: 'd' (length: 1)
+2025-08-23 19:01:18 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' like' (length: 5)
+2025-08-23 19:01:19 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' to' (length: 3)
+2025-08-23 19:01:19 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' discuss' (length: 8)
+2025-08-23 19:01:19 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '?' (length: 1)
+2025-08-23 19:01:19 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' Perhaps' (length: 8)
+2025-08-23 19:01:19 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' their' (length: 6)
+2025-08-23 19:01:19 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' music' (length: 6)
+2025-08-23 19:01:20 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ',' (length: 1)
+2025-08-23 19:01:20 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' their' (length: 6)
+2025-08-23 19:01:20 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' performances' (length: 13)
+2025-08-23 19:01:20 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ',' (length: 1)
+2025-08-23 19:01:20 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' or' (length: 3)
+2025-08-23 19:01:21 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' their' (length: 6)
+2025-08-23 19:01:21 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' philanthropic' (length: 14)
+2025-08-23 19:01:21 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: ' efforts' (length: 8)
+2025-08-23 19:01:21 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Streaming chunk: '?' (length: 1)
+2025-08-23 19:01:21 [HttpClient-2-Worker-13] DEBUG c.a.g.service.AIChatService - Saved Rin's chat exchange to memory for conversation: 68a85e31b217d2e84df9_persistent
+2025-08-23 19:01:21 [HttpClient-2-Worker-13] DEBUG c.a.g.s.ConversationContextService - Updated context cache for conversation: 68a85e31b217d2e84df9_persistent
+2025-08-23 19:01:21 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/ai/chat
+2025-08-23 19:01:21 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/ai/chat - 3ms
+2025-08-23 19:01:21 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/ai/context/analyze/{id}a85e31b217d2e84df9_persistent
+2025-08-23 19:01:21 [http-nio-8080-exec-3] DEBUG c.a.g.s.ConversationUtilService - Using provided conversationId: 68a85e31b217d2e84df9_persistent
+2025-08-23 19:01:21 [http-nio-8080-exec-3] DEBUG c.a.g.s.ConversationContextService - Processing conversation: 68a85e31b217d2e84df9_persistent for user: 68a85e31b217d2e84df9b943 session: session_1755951400337_894m5493i
+2025-08-23 19:01:21 [http-nio-8080-exec-3] DEBUG c.a.g.s.ConversationContextService - Detected user domain: technology with score: 12
+2025-08-23 19:01:21 [http-nio-8080-exec-3] DEBUG c.a.g.s.ConversationContextService - Built comprehensive context with 26 elements for conversation: 68a85e31b217d2e84df9_persistent
+2025-08-23 19:01:21 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/ai/context/analyze/{id}a85e31b217d2e84df9_persistent - 34ms
+2025-08-23 19:01:21 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-23 19:01:21 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 14ms
+2025-08-23 19:01:21 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/credits/balance
+2025-08-23 19:01:21 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/credits/balance - 13ms
+2025-08-23 19:01:22 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-23 19:01:22 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 15ms
+2025-08-23 19:01:22 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/credits/balance
+2025-08-23 19:01:22 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/credits/balance - 10ms
+2025-08-23 19:01:39 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-23 19:01:39 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 9ms
+2025-08-23 19:01:39 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/credits/balance
+2025-08-23 19:01:39 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/credits/balance - 8ms
+2025-08-23 19:01:41 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/owner/pending-users
+2025-08-23 19:01:41 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/owner/pending-users - 35ms
+2025-08-23 19:01:41 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/owner/pending-users
+2025-08-23 19:01:41 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/owner/pending-users - 9ms
+2025-08-23 19:05:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-23 19:05:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 50
+2025-08-23 19:05:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 25.0%
+2025-08-23 19:05:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 4
+2025-08-23 19:05:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-23 19:05:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 2ms
+2025-08-23 19:05:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
+2025-08-23 19:05:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/owner/pending-users: 2 requests, avg 22ms
+2025-08-23 19:05:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/ai/conversation/persistent/{id}a85e31b217d2e84df9b943: 2 requests, avg 67ms
+2025-08-23 19:05:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/credits/can-chat: 4 requests, avg 20ms
+2025-08-23 19:05:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/credits/balance: 13 requests, avg 17ms
+2025-08-23 19:05:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/ai/context/analyze/{id}a85e31b217d2e84df9_persistent: 4 requests, avg 33ms
+2025-08-23 19:05:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/ai/chat: 8 requests, avg 3ms
+2025-08-23 19:05:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 17 requests, avg 55ms
+2025-08-23 19:05:24 [scheduling-1] DEBUG c.a.g.service.AICreditService - Logged credit transaction: AUTO_REFILL for user: 68a85e31b217d2e84df9b943
+2025-08-23 19:05:24 [scheduling-1] DEBUG c.a.g.service.AICreditService - Auto-refilled 1 credit for user 68a85e31b217d2e84df9b943 (Balance: 45 -> 46)
+2025-08-23 19:05:24 [scheduling-1] INFO  c.a.g.service.AICreditService - Auto-refill completed: 1 users refilled, 0 users skipped (at 50+ credits)
+2025-08-23 19:10:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-23 19:10:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 50
+2025-08-23 19:10:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 25.0%
+2025-08-23 19:10:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 4
+2025-08-23 19:10:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-23 19:10:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 2ms
+2025-08-23 19:10:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
+2025-08-23 19:10:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/owner/pending-users: 2 requests, avg 22ms
+2025-08-23 19:10:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/ai/conversation/persistent/{id}a85e31b217d2e84df9b943: 2 requests, avg 67ms
+2025-08-23 19:10:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/credits/can-chat: 4 requests, avg 20ms
+2025-08-23 19:10:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/credits/balance: 13 requests, avg 17ms
+2025-08-23 19:10:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/ai/context/analyze/{id}a85e31b217d2e84df9_persistent: 4 requests, avg 33ms
+2025-08-23 19:10:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/ai/chat: 8 requests, avg 3ms
+2025-08-23 19:10:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 17 requests, avg 55ms
+2025-08-23 19:10:24 [scheduling-1] DEBUG c.a.g.service.AICreditService - Logged credit transaction: AUTO_REFILL for user: 68a85e31b217d2e84df9b943
+2025-08-23 19:10:24 [scheduling-1] DEBUG c.a.g.service.AICreditService - Auto-refilled 1 credit for user 68a85e31b217d2e84df9b943 (Balance: 46 -> 47)
+2025-08-23 19:10:24 [scheduling-1] INFO  c.a.g.service.AICreditService - Auto-refill completed: 1 users refilled, 0 users skipped (at 50+ credits)
+2025-08-23 19:14:43 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/owner/pending-users
+2025-08-23 19:14:43 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/owner/pending-users - 11ms
+2025-08-23 19:14:57 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/owner/pending-users
+2025-08-23 19:14:57 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/owner/pending-users - 9ms
+2025-08-23 19:15:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-23 19:15:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 52
+2025-08-23 19:15:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 25.0%
+2025-08-23 19:15:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 4
+2025-08-23 19:15:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-23 19:15:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 2ms
+2025-08-23 19:15:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
+2025-08-23 19:15:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/owner/pending-users: 4 requests, avg 16ms
+2025-08-23 19:15:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/ai/conversation/persistent/{id}a85e31b217d2e84df9b943: 2 requests, avg 67ms
+2025-08-23 19:15:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/credits/can-chat: 4 requests, avg 20ms
+2025-08-23 19:15:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/credits/balance: 13 requests, avg 17ms
+2025-08-23 19:15:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/ai/context/analyze/{id}a85e31b217d2e84df9_persistent: 4 requests, avg 33ms
+2025-08-23 19:15:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/ai/chat: 8 requests, avg 3ms
+2025-08-23 19:15:24 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 17 requests, avg 55ms
+2025-08-23 19:15:24 [scheduling-1] DEBUG c.a.g.service.AICreditService - Logged credit transaction: AUTO_REFILL for user: 68a85e31b217d2e84df9b943
+2025-08-23 19:15:24 [scheduling-1] DEBUG c.a.g.service.AICreditService - Auto-refilled 1 credit for user 68a85e31b217d2e84df9b943 (Balance: 47 -> 48)
+2025-08-23 19:15:24 [scheduling-1] INFO  c.a.g.service.AICreditService - Auto-refill completed: 1 users refilled, 0 users skipped (at 50+ credits)
+2025-08-23 19:15:27 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/owner/pending-users
+2025-08-23 19:15:27 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/owner/pending-users - 11ms
+2025-08-23 19:15:37 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/owner/pending-users
+2025-08-23 19:15:37 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/owner/pending-users - 9ms
+2025-08-23 19:15:51 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/ai/conversation/persistent/{id}a85e31b217d2e84df9b943
+2025-08-23 19:15:51 [http-nio-8080-exec-1] DEBUG c.a.g.c.ConversationController - Getting persistent conversation ID for user: 68a85e31b217d2e84df9b943
+2025-08-23 19:15:51 [http-nio-8080-exec-1] DEBUG c.a.g.s.ConversationUtilService - Generated persistent conversation ID: 68a85e31b217d2e84df9_persistent for user: 68a85e31b217d2e84df9b943
+2025-08-23 19:15:51 [http-nio-8080-exec-1] DEBUG c.a.g.c.ConversationController - Persistent conversation ID: 68a85e31b217d2e84df9_persistent for user: 68a85e31b217d2e84df9b943 (isNew: false)
+2025-08-23 19:15:51 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/ai/conversation/persistent/{id}a85e31b217d2e84df9b943 - 10ms
+2025-08-23 19:15:51 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/ai/conversation/persistent/{id}a85e31b217d2e84df9b943
+2025-08-23 19:15:51 [http-nio-8080-exec-2] DEBUG c.a.g.c.ConversationController - Getting persistent conversation ID for user: 68a85e31b217d2e84df9b943
+2025-08-23 19:15:51 [http-nio-8080-exec-2] DEBUG c.a.g.s.ConversationUtilService - Generated persistent conversation ID: 68a85e31b217d2e84df9_persistent for user: 68a85e31b217d2e84df9b943
+2025-08-23 19:15:51 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-23 19:15:51 [http-nio-8080-exec-2] DEBUG c.a.g.c.ConversationController - Persistent conversation ID: 68a85e31b217d2e84df9_persistent for user: 68a85e31b217d2e84df9b943 (isNew: false)
+2025-08-23 19:15:51 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/ai/conversation/persistent/{id}a85e31b217d2e84df9b943 - 3ms
+2025-08-23 19:15:51 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/ai/conversation/{id}a85e31b217d2e84df9_persistent/history
+2025-08-23 19:15:51 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-23 19:15:51 [http-nio-8080-exec-9] DEBUG c.a.g.c.ConversationController - Getting chat history for conversation: 68a85e31b217d2e84df9_persistent (user: 68a85e31b217d2e84df9b943)
+2025-08-23 19:15:51 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 25ms
+2025-08-23 19:15:51 [http-nio-8080-exec-9] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:15:51 [http-nio-8080-exec-9] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:15:51 [http-nio-8080-exec-9] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:15:51 [http-nio-8080-exec-9] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:15:51 [http-nio-8080-exec-9] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:15:51 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/credits/balance
+2025-08-23 19:15:51 [http-nio-8080-exec-9] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:15:51 [http-nio-8080-exec-10] WARN  c.a.g.e.GlobalExceptionHandler - Authentication error: Invalid refresh token
+2025-08-23 19:15:51 [http-nio-8080-exec-9] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:15:51 [http-nio-8080-exec-9] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:15:51 [http-nio-8080-exec-9] DEBUG c.a.g.c.ConversationController - Returning 8 messages for conversation: 68a85e31b217d2e84df9_persistent
+2025-08-23 19:15:51 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/ai/conversation/{id}a85e31b217d2e84df9_persistent/history - 36ms
+2025-08-23 19:15:51 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 38ms
+2025-08-23 19:15:51 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/ai/conversation/{id}a85e31b217d2e84df9_persistent/history
+2025-08-23 19:15:51 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/credits/balance - 6ms
+2025-08-23 19:15:51 [http-nio-8080-exec-7] DEBUG c.a.g.c.ConversationController - Getting chat history for conversation: 68a85e31b217d2e84df9_persistent (user: 68a85e31b217d2e84df9b943)
+2025-08-23 19:15:51 [http-nio-8080-exec-7] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:15:51 [http-nio-8080-exec-7] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:15:51 [http-nio-8080-exec-7] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:15:51 [http-nio-8080-exec-7] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:15:51 [http-nio-8080-exec-7] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:15:51 [http-nio-8080-exec-7] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:15:51 [http-nio-8080-exec-7] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:15:51 [http-nio-8080-exec-7] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:15:51 [http-nio-8080-exec-7] DEBUG c.a.g.c.ConversationController - Returning 8 messages for conversation: 68a85e31b217d2e84df9_persistent
+2025-08-23 19:15:51 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/ai/conversation/{id}a85e31b217d2e84df9_persistent/history - 7ms
+2025-08-23 19:16:06 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/login
+2025-08-23 19:16:07 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/login - 1193ms
+2025-08-23 19:16:13 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/ai/conversation/persistent/{id}a85e31b217d2e84df9b943
+2025-08-23 19:16:13 [http-nio-8080-exec-9] DEBUG c.a.g.c.ConversationController - Getting persistent conversation ID for user: 68a85e31b217d2e84df9b943
+2025-08-23 19:16:13 [http-nio-8080-exec-9] DEBUG c.a.g.s.ConversationUtilService - Generated persistent conversation ID: 68a85e31b217d2e84df9_persistent for user: 68a85e31b217d2e84df9b943
+2025-08-23 19:16:13 [http-nio-8080-exec-9] DEBUG c.a.g.c.ConversationController - Persistent conversation ID: 68a85e31b217d2e84df9_persistent for user: 68a85e31b217d2e84df9b943 (isNew: false)
+2025-08-23 19:16:13 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/ai/conversation/persistent/{id}a85e31b217d2e84df9b943 - 4ms
+2025-08-23 19:16:13 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/ai/conversation/persistent/{id}a85e31b217d2e84df9b943
+2025-08-23 19:16:13 [http-nio-8080-exec-6] DEBUG c.a.g.c.ConversationController - Getting persistent conversation ID for user: 68a85e31b217d2e84df9b943
+2025-08-23 19:16:13 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-23 19:16:13 [http-nio-8080-exec-6] DEBUG c.a.g.s.ConversationUtilService - Generated persistent conversation ID: 68a85e31b217d2e84df9_persistent for user: 68a85e31b217d2e84df9b943
+2025-08-23 19:16:13 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-23 19:16:13 [http-nio-8080-exec-6] DEBUG c.a.g.c.ConversationController - Persistent conversation ID: 68a85e31b217d2e84df9_persistent for user: 68a85e31b217d2e84df9b943 (isNew: false)
+2025-08-23 19:16:13 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/ai/conversation/persistent/{id}a85e31b217d2e84df9b943 - 4ms
+2025-08-23 19:16:14 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/ai/conversation/{id}a85e31b217d2e84df9_persistent/history
+2025-08-23 19:16:14 [http-nio-8080-exec-5] DEBUG c.a.g.c.ConversationController - Getting chat history for conversation: 68a85e31b217d2e84df9_persistent (user: 68a85e31b217d2e84df9b943)
+2025-08-23 19:16:14 [http-nio-8080-exec-5] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:16:14 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 12ms
+2025-08-23 19:16:14 [http-nio-8080-exec-5] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:16:14 [http-nio-8080-exec-5] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:16:14 [http-nio-8080-exec-5] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:16:14 [http-nio-8080-exec-5] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:16:14 [http-nio-8080-exec-5] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:16:14 [http-nio-8080-exec-5] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:16:14 [http-nio-8080-exec-5] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:16:14 [http-nio-8080-exec-5] DEBUG c.a.g.c.ConversationController - Returning 8 messages for conversation: 68a85e31b217d2e84df9_persistent
+2025-08-23 19:16:14 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/ai/conversation/{id}a85e31b217d2e84df9_persistent/history - 11ms
+2025-08-23 19:16:14 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/ai/conversation/{id}a85e31b217d2e84df9_persistent/history
+2025-08-23 19:16:14 [http-nio-8080-exec-8] DEBUG c.a.g.c.ConversationController - Getting chat history for conversation: 68a85e31b217d2e84df9_persistent (user: 68a85e31b217d2e84df9b943)
+2025-08-23 19:16:14 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 22ms
+2025-08-23 19:16:14 [http-nio-8080-exec-8] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:16:14 [http-nio-8080-exec-8] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:16:14 [http-nio-8080-exec-8] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:16:14 [http-nio-8080-exec-8] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:16:14 [http-nio-8080-exec-8] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:16:14 [http-nio-8080-exec-8] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:16:14 [http-nio-8080-exec-8] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:16:14 [http-nio-8080-exec-8] DEBUG c.a.g.c.ConversationController - getContent() method not available, trying alternatives
+2025-08-23 19:16:14 [http-nio-8080-exec-8] DEBUG c.a.g.c.ConversationController - Returning 8 messages for conversation: 68a85e31b217d2e84df9_persistent
+2025-08-23 19:16:14 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/ai/conversation/{id}a85e31b217d2e84df9_persistent/history - 10ms
+2025-08-23 19:16:14 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/credits/balance
+2025-08-23 19:16:14 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/credits/balance - 5ms
+2025-08-23 19:16:14 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/credits/balance
+2025-08-23 19:16:14 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/credits/balance - 6ms
+2025-08-23 19:17:06 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-08-23 19:17:06 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-08-23 19:17:06 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-08-23 19:17:06 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-08-23 19:17:06 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
