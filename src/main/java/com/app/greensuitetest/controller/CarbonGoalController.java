@@ -57,5 +57,11 @@ public class CarbonGoalController {
         CarbonGoal goal = goalService.getGoalById(goalId);
         return ResponseEntity.ok(goal);
     }
-
+    //Added By Htet Htet
+    @GetMapping("/monthly")
+    public ResponseEntity<CarbonGoalResponse> getMonthlyGoal(
+            @RequestParam String month,
+            @RequestParam String year) {
+        return ResponseEntity.ok(goalService.getMonthlyGoal(month, year));
+    }
 }
