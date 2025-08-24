@@ -437,6 +437,15 @@ public class CarbonCalculatorService {
                 "updatedRecords", inputs.size()
         );
     }
+    //Htet Htet
+    public List<CarbonTotal> getDataForYears(String companyId, List<String> years) {
+        return carbonTotalRepository.findByCompanyIdAndYearIn(companyId, years);
+    }
+
+
+    public List<CarbonActivity> getDataForMonth(String companyId, String year, String month) {
+        return activityRepository.findByCompanyIdAndYearAndMonth(companyId, year, month);
+    }
     //to show result for calculated footprint
     /*public Map<String, Object> getChartData(String month, String year, String region) {
         String companyId = securityUtil.getCurrentUserCompanyId();
