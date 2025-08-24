@@ -8883,3 +8883,650 @@ java.lang.Exception: Apparent connection leak detected
 2025-08-24 11:30:00 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/ai/conversation/{id}a85e31b217d2e84df9_persistent/history - 89ms
 2025-08-24 11:30:00 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/credits/balance - 15ms
 2025-08-24 11:30:31 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-08-24 12:48:34 [main] INFO  c.a.g.GreenSuiteTestApplication - Starting GreenSuiteTestApplication using Java 21.0.2 with PID 29848 (C:\intelli j projects\GreenSuite_BackEnd\target\classes started by wthut in C:\intelli j projects\GreenSuite_BackEnd)
+2025-08-24 12:48:34 [main] DEBUG c.a.g.GreenSuiteTestApplication - Running with Spring Boot v3.5.3, Spring v6.2.8
+2025-08-24 12:48:34 [main] INFO  c.a.g.GreenSuiteTestApplication - No active profile set, falling back to 1 default profile: "default"
+2025-08-24 12:48:34 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-08-24 12:48:34 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2025-08-24 12:48:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 136 ms. Found 6 MongoDB repository interfaces.
+2025-08-24 12:48:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-08-24 12:48:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-08-24 12:48:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JPA - Could not safely identify store assignment for repository candidate interface com.app.greensuitetest.repository.CarbonActivityRepository; If you want this repository to be a JPA repository, consider annotating your entities with one of these annotations: jakarta.persistence.Entity, jakarta.persistence.MappedSuperclass (preferred), or consider extending one of the following types with your repository: org.springframework.data.jpa.repository.JpaRepository
+2025-08-24 12:48:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JPA - Could not safely identify store assignment for repository candidate interface com.app.greensuitetest.repository.CarbonGoalRepository; If you want this repository to be a JPA repository, consider annotating your entities with one of these annotations: jakarta.persistence.Entity, jakarta.persistence.MappedSuperclass (preferred), or consider extending one of the following types with your repository: org.springframework.data.jpa.repository.JpaRepository
+2025-08-24 12:48:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JPA - Could not safely identify store assignment for repository candidate interface com.app.greensuitetest.repository.CarbonTotalRepository; If you want this repository to be a JPA repository, consider annotating your entities with one of these annotations: jakarta.persistence.Entity, jakarta.persistence.MappedSuperclass (preferred), or consider extending one of the following types with your repository: org.springframework.data.jpa.repository.JpaRepository
+2025-08-24 12:48:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JPA - Could not safely identify store assignment for repository candidate interface com.app.greensuitetest.repository.CompanyRepository; If you want this repository to be a JPA repository, consider annotating your entities with one of these annotations: jakarta.persistence.Entity, jakarta.persistence.MappedSuperclass (preferred), or consider extending one of the following types with your repository: org.springframework.data.jpa.repository.JpaRepository
+2025-08-24 12:48:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JPA - Could not safely identify store assignment for repository candidate interface com.app.greensuitetest.repository.CreditTransactionRepository; If you want this repository to be a JPA repository, consider annotating your entities with one of these annotations: jakarta.persistence.Entity, jakarta.persistence.MappedSuperclass (preferred), or consider extending one of the following types with your repository: org.springframework.data.jpa.repository.JpaRepository
+2025-08-24 12:48:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JPA - Could not safely identify store assignment for repository candidate interface com.app.greensuitetest.repository.UserRepository; If you want this repository to be a JPA repository, consider annotating your entities with one of these annotations: jakarta.persistence.Entity, jakarta.persistence.MappedSuperclass (preferred), or consider extending one of the following types with your repository: org.springframework.data.jpa.repository.JpaRepository
+2025-08-24 12:48:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 26 ms. Found 0 JPA repository interfaces.
+2025-08-24 12:48:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-08-24 12:48:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-08-24 12:48:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.app.greensuitetest.repository.CarbonActivityRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-08-24 12:48:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.app.greensuitetest.repository.CarbonGoalRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-08-24 12:48:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.app.greensuitetest.repository.CarbonTotalRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-08-24 12:48:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.app.greensuitetest.repository.CompanyRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-08-24 12:48:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.app.greensuitetest.repository.CreditTransactionRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-08-24 12:48:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.app.greensuitetest.repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-08-24 12:48:35 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 9 ms. Found 0 Redis repository interfaces.
+2025-08-24 12:48:36 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-08-24 12:48:36 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-08-24 12:48:36 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-08-24 12:48:36 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-08-24 12:48:36 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2346 ms
+2025-08-24 12:48:36 [main] INFO  org.mongodb.driver.client - MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.5.1"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/21.0.2+13-LTS-58"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, EnumCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@4bb9f7d4, com.mongodb.Jep395RecordCodecProvider@673a9db4, com.mongodb.KotlinCodecProvider@183ef89a]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2025-08-24 12:48:36 [cluster-ClusterId{value='68aaaebc8a89869d257e5283', description='null'}-localhost:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=21396400, minRoundTripTimeNanos=0}
+2025-08-24 12:48:37 [main] DEBUG c.a.g.s.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2025-08-24 12:48:37 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-08-24 12:48:37 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@3c2188f
+2025-08-24 12:48:37 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-08-24 12:48:37 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-08-24 12:48:37 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.18.Final
+2025-08-24 12:48:37 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-08-24 12:48:38 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-08-24 12:48:38 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 17.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-08-24 12:48:38 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-08-24 12:48:38 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-08-24 12:48:38 [main] INFO  c.a.g.config.DataInitializer - Initializing default data...
+2025-08-24 12:48:38 [main] INFO  c.a.g.config.DataInitializer - Default admin user already exists
+2025-08-24 12:48:39 [main] INFO  org.mongodb.driver.client - MongoClient with metadata {"application": {"name": "Cluster0"}, "driver": {"name": "mongo-java-driver|sync", "version": "5.5.1"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/21.0.2+13-LTS-58"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=majority, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=MongoCredential{mechanism=null, userName='root', source='admin', password=<hidden>, mechanismProperties=<hidden>}, transportSettings=null, commandListeners=[], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, EnumCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@4bb9f7d4, com.mongodb.Jep395RecordCodecProvider@673a9db4, com.mongodb.KotlinCodecProvider@183ef89a]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[127.0.0.1:27017], srvHost=cluster0.x4nrisn.mongodb.net, srvServiceName=mongodb, mode=MULTIPLE, requiredClusterType=REPLICA_SET, requiredReplicaSetName='atlas-8yvsud-shard-0', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=true, invalidHostNameAllowed=false, context=null}, applicationName='Cluster0', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2025-08-24 12:48:40 [cluster-ClusterId{value='68aaaebf8a89869d257e5284', description='Cluster0'}-srv-cluster0.x4nrisn.mongodb.net] INFO  org.mongodb.driver.cluster - Adding discovered server ac-94cpy3r-shard-00-00.x4nrisn.mongodb.net:27017 to client view of cluster
+2025-08-24 12:48:40 [cluster-ClusterId{value='68aaaebf8a89869d257e5284', description='Cluster0'}-srv-cluster0.x4nrisn.mongodb.net] INFO  org.mongodb.driver.cluster - Adding discovered server ac-94cpy3r-shard-00-01.x4nrisn.mongodb.net:27017 to client view of cluster
+2025-08-24 12:48:40 [cluster-ClusterId{value='68aaaebf8a89869d257e5284', description='Cluster0'}-srv-cluster0.x4nrisn.mongodb.net] INFO  org.mongodb.driver.cluster - Adding discovered server ac-94cpy3r-shard-00-02.x4nrisn.mongodb.net:27017 to client view of cluster
+2025-08-24 12:48:40 [main] INFO  org.mongodb.driver.cluster - Waiting for server to become available for operation with ID 10. Remaining time: 29998 ms. Selector: ReadPreferenceServerSelector{readPreference=primary}, topology description: {type=REPLICA_SET, servers=[{address=ac-94cpy3r-shard-00-02.x4nrisn.mongodb.net:27017, type=UNKNOWN, state=CONNECTING}, {address=ac-94cpy3r-shard-00-00.x4nrisn.mongodb.net:27017, type=UNKNOWN, state=CONNECTING}, {address=ac-94cpy3r-shard-00-01.x4nrisn.mongodb.net:27017, type=UNKNOWN, state=CONNECTING}].
+2025-08-24 12:48:40 [cluster-ClusterId{value='68aaaebf8a89869d257e5284', description='Cluster0'}-ac-94cpy3r-shard-00-00.x4nrisn.mongodb.net:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=ac-94cpy3r-shard-00-00.x4nrisn.mongodb.net:27017, type=REPLICA_SET_SECONDARY, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=330067100, minRoundTripTimeNanos=0, setName='atlas-8yvsud-shard-0', canonicalAddress=ac-94cpy3r-shard-00-00.x4nrisn.mongodb.net:27017, hosts=[ac-94cpy3r-shard-00-01.x4nrisn.mongodb.net:27017, ac-94cpy3r-shard-00-00.x4nrisn.mongodb.net:27017, ac-94cpy3r-shard-00-02.x4nrisn.mongodb.net:27017], passives=[], arbiters=[], primary='ac-94cpy3r-shard-00-01.x4nrisn.mongodb.net:27017', tagSet=TagSet{[Tag{name='availabilityZone', value='apse1-az2'}, Tag{name='diskState', value='READY'}, Tag{name='nodeType', value='ELECTABLE'}, Tag{name='provider', value='AWS'}, Tag{name='region', value='AP_SOUTHEAST_1'}, Tag{name='workloadType', value='OPERATIONAL'}]}, electionId=null, setVersion=457, topologyVersion=TopologyVersion{processId=68a21c71dea283d3dd7dfa02, counter=4}, lastWriteDate=Sun Aug 24 12:51:19 MMT 2025, lastUpdateTimeNanos=788872205024100}
+2025-08-24 12:48:40 [cluster-ClusterId{value='68aaaebf8a89869d257e5284', description='Cluster0'}-ac-94cpy3r-shard-00-01.x4nrisn.mongodb.net:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=ac-94cpy3r-shard-00-01.x4nrisn.mongodb.net:27017, type=REPLICA_SET_PRIMARY, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=329981800, minRoundTripTimeNanos=0, setName='atlas-8yvsud-shard-0', canonicalAddress=ac-94cpy3r-shard-00-01.x4nrisn.mongodb.net:27017, hosts=[ac-94cpy3r-shard-00-01.x4nrisn.mongodb.net:27017, ac-94cpy3r-shard-00-00.x4nrisn.mongodb.net:27017, ac-94cpy3r-shard-00-02.x4nrisn.mongodb.net:27017], passives=[], arbiters=[], primary='ac-94cpy3r-shard-00-01.x4nrisn.mongodb.net:27017', tagSet=TagSet{[Tag{name='availabilityZone', value='apse1-az1'}, Tag{name='diskState', value='READY'}, Tag{name='nodeType', value='ELECTABLE'}, Tag{name='provider', value='AWS'}, Tag{name='region', value='AP_SOUTHEAST_1'}, Tag{name='workloadType', value='OPERATIONAL'}]}, electionId=7fffffff0000000000000366, setVersion=457, topologyVersion=TopologyVersion{processId=68a21f3008c45d7943c0bc57, counter=6}, lastWriteDate=Sun Aug 24 12:51:19 MMT 2025, lastUpdateTimeNanos=788872204963200}
+2025-08-24 12:48:40 [cluster-ClusterId{value='68aaaebf8a89869d257e5284', description='Cluster0'}-ac-94cpy3r-shard-00-02.x4nrisn.mongodb.net:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=ac-94cpy3r-shard-00-02.x4nrisn.mongodb.net:27017, type=REPLICA_SET_SECONDARY, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=322393700, minRoundTripTimeNanos=0, setName='atlas-8yvsud-shard-0', canonicalAddress=ac-94cpy3r-shard-00-02.x4nrisn.mongodb.net:27017, hosts=[ac-94cpy3r-shard-00-01.x4nrisn.mongodb.net:27017, ac-94cpy3r-shard-00-00.x4nrisn.mongodb.net:27017, ac-94cpy3r-shard-00-02.x4nrisn.mongodb.net:27017], passives=[], arbiters=[], primary='ac-94cpy3r-shard-00-01.x4nrisn.mongodb.net:27017', tagSet=TagSet{[Tag{name='availabilityZone', value='apse1-az3'}, Tag{name='diskState', value='READY'}, Tag{name='nodeType', value='ELECTABLE'}, Tag{name='provider', value='AWS'}, Tag{name='region', value='AP_SOUTHEAST_1'}, Tag{name='workloadType', value='OPERATIONAL'}]}, electionId=null, setVersion=457, topologyVersion=TopologyVersion{processId=68a222b1c717ae1537e27d91, counter=3}, lastWriteDate=Sun Aug 24 12:51:19 MMT 2025, lastUpdateTimeNanos=788872204979500}
+2025-08-24 12:48:40 [cluster-ClusterId{value='68aaaebf8a89869d257e5284', description='Cluster0'}-ac-94cpy3r-shard-00-01.x4nrisn.mongodb.net:27017] INFO  org.mongodb.driver.cluster - Discovered replica set primary ac-94cpy3r-shard-00-01.x4nrisn.mongodb.net:27017 with max election id 7fffffff0000000000000366 and max set version 457
+2025-08-24 12:48:42 [main] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-08-24 12:48:43 [main] INFO  c.a.g.s.DocumentIngestionService - Starting enhanced document ingestion process...
+2025-08-24 12:48:43 [main] DEBUG c.a.g.s.DocumentIngestionService - Vector store contains documents: true
+2025-08-24 12:48:43 [main] INFO  c.a.g.s.DocumentIngestionService - Documents already exist in vector store. Skipping ingestion. Set app.document.ingestion.force-reingest=true to force re-ingestion.
+2025-08-24 12:48:43 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-08-24 12:48:43 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 3 endpoints beneath base path '/actuator'
+2025-08-24 12:48:44 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-08-24 12:48:44 [main] INFO  c.a.g.GreenSuiteTestApplication - Started GreenSuiteTestApplication in 10.799 seconds (process running for 11.232)
+2025-08-24 12:48:44 [main] INFO  c.a.g.c.DatabaseOptimizationConfig - Starting database optimization...
+2025-08-24 12:48:44 [main] INFO  c.a.g.c.DatabaseOptimizationConfig - Optimizing PostgreSQL database...
+2025-08-24 12:48:44 [main] INFO  c.a.g.c.DatabaseOptimizationConfig - Chat memory table not found, skipping index creation: StatementCallback; bad SQL grammar [SELECT COUNT(*) FROM chat_memory LIMIT 1]
+2025-08-24 12:48:44 [main] INFO  c.a.g.c.DatabaseOptimizationConfig - PostgreSQL performance parameters set
+2025-08-24 12:48:44 [main] INFO  c.a.g.c.DatabaseOptimizationConfig - PostgreSQL optimization completed
+2025-08-24 12:48:44 [main] INFO  c.a.g.c.DatabaseOptimizationConfig - Optimizing MongoDB Local database...
+2025-08-24 12:48:44 [main] INFO  c.a.g.c.DatabaseOptimizationConfig - Users email index already exists or failed: Command failed with error 85 (IndexOptionsConflict): 'Index already exists with a different name: email' on server localhost:27017. The full response is {"ok": 0.0, "errmsg": "Index already exists with a different name: email", "code": 85, "codeName": "IndexOptionsConflict"}
+2025-08-24 12:48:44 [main] INFO  c.a.g.c.DatabaseOptimizationConfig - Users username index already exists or failed: Command failed with error 85 (IndexOptionsConflict): 'Index already exists with a different name: user_name' on server localhost:27017. The full response is {"ok": 0.0, "errmsg": "Index already exists with a different name: user_name", "code": 85, "codeName": "IndexOptionsConflict"}
+2025-08-24 12:48:44 [main] INFO  c.a.g.c.DatabaseOptimizationConfig - Users company_id index created/verified
+2025-08-24 12:48:44 [main] INFO  c.a.g.c.DatabaseOptimizationConfig - Companies name index already exists or failed: Command failed with error 85 (IndexOptionsConflict): 'Index already exists with a different name: name' on server localhost:27017. The full response is {"ok": 0.0, "errmsg": "Index already exists with a different name: name", "code": 85, "codeName": "IndexOptionsConflict"}
+2025-08-24 12:48:44 [main] INFO  c.a.g.c.DatabaseOptimizationConfig - Carbon activities company_id index created/verified
+2025-08-24 12:48:44 [main] INFO  c.a.g.c.DatabaseOptimizationConfig - Carbon activities user_id index created/verified
+2025-08-24 12:48:44 [main] INFO  c.a.g.c.DatabaseOptimizationConfig - Carbon activities timestamp index created/verified
+2025-08-24 12:48:44 [main] INFO  c.a.g.c.DatabaseOptimizationConfig - Carbon activities composite index created/verified
+2025-08-24 12:48:44 [main] INFO  c.a.g.c.DatabaseOptimizationConfig - Users subscription tier index created/verified
+2025-08-24 12:48:44 [main] INFO  c.a.g.c.DatabaseOptimizationConfig - MongoDB Local optimization completed
+2025-08-24 12:48:44 [main] INFO  c.a.g.c.DatabaseOptimizationConfig - Database optimization completed successfully!
+2025-08-24 12:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-24 12:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 0
+2025-08-24 12:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 0.0%
+2025-08-24 12:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 0
+2025-08-24 12:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-24 12:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 471ms
+2025-08-24 12:48:45 [scheduling-1] DEBUG c.a.g.service.AICreditService - Logged credit transaction: AUTO_REFILL for user: 68a85e31b217d2e84df9b943
+2025-08-24 12:48:45 [scheduling-1] DEBUG c.a.g.service.AICreditService - Auto-refilled 1 credit for user 68a85e31b217d2e84df9b943 (Balance: 47 -> 48)
+2025-08-24 12:48:45 [scheduling-1] INFO  c.a.g.service.AICreditService - Auto-refill completed: 1 users refilled, 0 users skipped (at 50+ credits)
+2025-08-24 12:49:15 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-08-24 12:49:15 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-08-24 12:49:15 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2025-08-24 12:49:15 [http-nio-8080-exec-9] WARN  c.a.greensuitetest.security.JwtUtil - Expired JWT token
+2025-08-24 12:49:15 [http-nio-8080-exec-4] WARN  c.a.greensuitetest.security.JwtUtil - Expired JWT token
+2025-08-24 12:53:12 [http-nio-8080-exec-7] WARN  c.a.greensuitetest.security.JwtUtil - Expired JWT token
+2025-08-24 12:53:42 [HikariPool-1:housekeeper] WARN  c.zaxxer.hikari.pool.ProxyLeakTask - Connection leak detection triggered for org.postgresql.jdbc.PgConnection@3c2188f on thread main, stack trace follows
+java.lang.Exception: Apparent connection leak detected
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:127)
+	at org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepositoryDialect.from(JdbcChatMemoryRepositoryDialect.java:57)
+	at org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository$Builder.warnIfDialectMismatch(JdbcChatMemoryRepository.java:241)
+	at org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository$Builder.resolveDialect(JdbcChatMemoryRepository.java:230)
+	at org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository$Builder.build(JdbcChatMemoryRepository.java:195)
+	at com.app.greensuitetest.config.ChatMemoryConfig.chatMemoryRepository(ChatMemoryConfig.java:23)
+	at com.app.greensuitetest.config.ChatMemoryConfig$$SpringCGLIB$$0.CGLIB$chatMemoryRepository$0(<generated>)
+	at com.app.greensuitetest.config.ChatMemoryConfig$$SpringCGLIB$$FastClass$$1.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invokeSuper(MethodProxy.java:258)
+	at org.springframework.context.annotation.ConfigurationClassEnhancer$BeanMethodInterceptor.intercept(ConfigurationClassEnhancer.java:400)
+	at com.app.greensuitetest.config.ChatMemoryConfig$$SpringCGLIB$$0.chatMemoryRepository(<generated>)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.lambda$instantiate$0(SimpleInstantiationStrategy.java:171)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiateWithFactoryMethod(SimpleInstantiationStrategy.java:88)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:168)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:645)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1375)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1205)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1683)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1628)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:913)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:546)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1375)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1205)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1683)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1628)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:913)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:240)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1395)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1232)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1745)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1628)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:913)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:240)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1395)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1232)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1222)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1188)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1123)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at com.app.greensuitetest.GreenSuiteTestApplication.main(GreenSuiteTestApplication.java:13)
+2025-08-24 12:53:43 [HikariPool-1:housekeeper] WARN  c.zaxxer.hikari.pool.ProxyLeakTask - Connection leak detection triggered for org.postgresql.jdbc.PgConnection@1389eec8 on thread main, stack trace follows
+java.lang.Exception: Apparent connection leak detected
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:127)
+	at org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepositoryDialect.from(JdbcChatMemoryRepositoryDialect.java:57)
+	at org.springframework.ai.model.chat.memory.repository.jdbc.autoconfigure.JdbcChatMemoryRepositoryAutoConfiguration.jdbcChatMemoryRepository(JdbcChatMemoryRepositoryAutoConfiguration.java:48)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.lambda$instantiate$0(SimpleInstantiationStrategy.java:171)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiateWithFactoryMethod(SimpleInstantiationStrategy.java:88)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:168)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:645)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1375)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1205)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1222)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1188)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1123)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at com.app.greensuitetest.GreenSuiteTestApplication.main(GreenSuiteTestApplication.java:13)
+2025-08-24 12:53:44 [HikariPool-1:housekeeper] WARN  c.zaxxer.hikari.pool.ProxyLeakTask - Connection leak detection triggered for org.postgresql.jdbc.PgConnection@67c3bb97 on thread main, stack trace follows
+java.lang.Exception: Apparent connection leak detected
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:127)
+	at org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepositoryDialect.from(JdbcChatMemoryRepositoryDialect.java:57)
+	at org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository$Builder.warnIfDialectMismatch(JdbcChatMemoryRepository.java:241)
+	at org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository$Builder.resolveDialect(JdbcChatMemoryRepository.java:230)
+	at org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository$Builder.build(JdbcChatMemoryRepository.java:195)
+	at org.springframework.ai.model.chat.memory.repository.jdbc.autoconfigure.JdbcChatMemoryRepositoryAutoConfiguration.jdbcChatMemoryRepository(JdbcChatMemoryRepositoryAutoConfiguration.java:49)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.lambda$instantiate$0(SimpleInstantiationStrategy.java:171)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiateWithFactoryMethod(SimpleInstantiationStrategy.java:88)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:168)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:645)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1375)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1205)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1222)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1188)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1123)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at com.app.greensuitetest.GreenSuiteTestApplication.main(GreenSuiteTestApplication.java:13)
+2025-08-24 12:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-24 12:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 0
+2025-08-24 12:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 0.0%
+2025-08-24 12:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 0
+2025-08-24 12:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-24 12:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 3ms
+2025-08-24 12:53:44 [scheduling-1] DEBUG c.a.g.service.AICreditService - Logged credit transaction: AUTO_REFILL for user: 68a85e31b217d2e84df9b943
+2025-08-24 12:53:44 [scheduling-1] DEBUG c.a.g.service.AICreditService - Auto-refilled 1 credit for user 68a85e31b217d2e84df9b943 (Balance: 48 -> 49)
+2025-08-24 12:53:44 [scheduling-1] INFO  c.a.g.service.AICreditService - Auto-refill completed: 1 users refilled, 0 users skipped (at 50+ credits)
+2025-08-24 12:53:50 [http-nio-8080-exec-1] WARN  c.a.greensuitetest.security.JwtUtil - Expired JWT token
+2025-08-24 12:56:55 [http-nio-8080-exec-9] WARN  c.a.greensuitetest.security.JwtUtil - Expired JWT token
+2025-08-24 12:58:14 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/login
+2025-08-24 12:58:16 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/login - 1284ms
+2025-08-24 12:58:16 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years
+2025-08-24 12:58:16 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years - 34ms
+2025-08-24 12:58:16 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years
+2025-08-24 12:58:16 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years - 7ms
+2025-08-24 12:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-24 12:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 3
+2025-08-24 12:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 0.0%
+2025-08-24 12:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 0
+2025-08-24 12:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-24 12:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 2ms
+2025-08-24 12:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
+2025-08-24 12:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years: 2 requests, avg 21ms
+2025-08-24 12:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/login: 1 requests, avg 1284ms
+2025-08-24 12:58:44 [scheduling-1] DEBUG c.a.g.service.AICreditService - Logged credit transaction: AUTO_REFILL for user: 68a85e31b217d2e84df9b943
+2025-08-24 12:58:44 [scheduling-1] DEBUG c.a.g.service.AICreditService - Auto-refilled 1 credit for user 68a85e31b217d2e84df9b943 (Balance: 49 -> 50)
+2025-08-24 12:58:44 [scheduling-1] INFO  c.a.g.service.AICreditService - Auto-refill completed: 1 users refilled, 0 users skipped (at 50+ credits)
+2025-08-24 12:59:05 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-24 12:59:05 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-24 12:59:05 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 16ms
+2025-08-24 12:59:05 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 17ms
+2025-08-24 12:59:05 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/reports
+2025-08-24 12:59:05 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/reports - 25ms
+2025-08-24 12:59:05 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/reports
+2025-08-24 12:59:05 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-24 12:59:05 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/reports - 10ms
+2025-08-24 12:59:05 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 11ms
+2025-08-24 12:59:05 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-24 12:59:05 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals
+2025-08-24 12:59:05 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 10ms
+2025-08-24 12:59:05 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals - 15ms
+2025-08-24 12:59:05 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals
+2025-08-24 12:59:05 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals - 6ms
+2025-08-24 13:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-24 13:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 11
+2025-08-24 13:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 0.0%
+2025-08-24 13:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 0
+2025-08-24 13:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-24 13:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 1ms
+2025-08-24 13:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
+2025-08-24 13:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years: 2 requests, avg 21ms
+2025-08-24 13:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals: 2 requests, avg 11ms
+2025-08-24 13:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/login: 1 requests, avg 1284ms
+2025-08-24 13:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/reports: 2 requests, avg 18ms
+2025-08-24 13:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 4 requests, avg 14ms
+2025-08-24 13:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-24 13:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 11
+2025-08-24 13:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 0.0%
+2025-08-24 13:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 0
+2025-08-24 13:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-24 13:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 3ms
+2025-08-24 13:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
+2025-08-24 13:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years: 2 requests, avg 21ms
+2025-08-24 13:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals: 2 requests, avg 11ms
+2025-08-24 13:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/login: 1 requests, avg 1284ms
+2025-08-24 13:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/reports: 2 requests, avg 18ms
+2025-08-24 13:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 4 requests, avg 14ms
+2025-08-24 13:12:41 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years
+2025-08-24 13:12:41 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years - 8ms
+2025-08-24 13:12:41 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years
+2025-08-24 13:12:41 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years - 3ms
+2025-08-24 13:12:43 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/monthly
+2025-08-24 13:12:43 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown
+2025-08-24 13:12:43 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown - 7ms
+2025-08-24 13:12:43 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/monthly - 10ms
+2025-08-24 13:12:51 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/monthly
+2025-08-24 13:12:51 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown
+2025-08-24 13:12:51 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/monthly - 7ms
+2025-08-24 13:12:51 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown - 6ms
+2025-08-24 13:12:52 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/monthly
+2025-08-24 13:12:52 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown
+2025-08-24 13:12:52 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown - 7ms
+2025-08-24 13:12:52 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/monthly - 10ms
+2025-08-24 13:12:54 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/monthly
+2025-08-24 13:12:54 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown
+2025-08-24 13:12:54 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown - 5ms
+2025-08-24 13:12:54 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/monthly - 8ms
+2025-08-24 13:12:56 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown
+2025-08-24 13:12:56 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/monthly
+2025-08-24 13:12:56 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown - 5ms
+2025-08-24 13:12:56 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/monthly - 9ms
+2025-08-24 13:12:57 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/monthly
+2025-08-24 13:12:57 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown
+2025-08-24 13:12:57 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown - 7ms
+2025-08-24 13:12:57 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/monthly - 8ms
+2025-08-24 13:12:58 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/monthly
+2025-08-24 13:12:58 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown
+2025-08-24 13:12:58 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown - 7ms
+2025-08-24 13:12:58 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/monthly - 9ms
+2025-08-24 13:13:00 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/monthly
+2025-08-24 13:13:00 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown
+2025-08-24 13:13:00 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown - 5ms
+2025-08-24 13:13:00 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/monthly - 8ms
+2025-08-24 13:13:03 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-24 13:13:03 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-24 13:13:03 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 12ms
+2025-08-24 13:13:03 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 6ms
+2025-08-24 13:13:03 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/reports
+2025-08-24 13:13:03 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/reports - 8ms
+2025-08-24 13:13:03 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/reports
+2025-08-24 13:13:03 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-24 13:13:03 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/reports - 9ms
+2025-08-24 13:13:03 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 9ms
+2025-08-24 13:13:03 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-24 13:13:03 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals
+2025-08-24 13:13:03 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 8ms
+2025-08-24 13:13:03 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals - 8ms
+2025-08-24 13:13:03 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals
+2025-08-24 13:13:03 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals - 5ms
+2025-08-24 13:13:06 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years
+2025-08-24 13:13:06 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years - 15ms
+2025-08-24 13:13:06 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years
+2025-08-24 13:13:06 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years - 5ms
+2025-08-24 13:13:08 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/monthly
+2025-08-24 13:13:08 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown
+2025-08-24 13:13:08 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown - 6ms
+2025-08-24 13:13:08 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/monthly - 9ms
+2025-08-24 13:13:11 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/monthly
+2025-08-24 13:13:11 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown
+2025-08-24 13:13:11 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown - 14ms
+2025-08-24 13:13:11 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/monthly - 15ms
+2025-08-24 13:13:12 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/monthly
+2025-08-24 13:13:12 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown
+2025-08-24 13:13:12 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown - 8ms
+2025-08-24 13:13:12 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/monthly - 9ms
+2025-08-24 13:13:15 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/monthly
+2025-08-24 13:13:15 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown
+2025-08-24 13:13:15 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown - 6ms
+2025-08-24 13:13:15 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/monthly - 8ms
+2025-08-24 13:13:18 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown
+2025-08-24 13:13:18 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/monthly
+2025-08-24 13:13:18 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown - 6ms
+2025-08-24 13:13:18 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/monthly - 8ms
+2025-08-24 13:13:21 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/monthly
+2025-08-24 13:13:21 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown
+2025-08-24 13:13:21 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown - 8ms
+2025-08-24 13:13:21 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/monthly - 10ms
+2025-08-24 13:13:24 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/monthly
+2025-08-24 13:13:24 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown
+2025-08-24 13:13:24 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown - 7ms
+2025-08-24 13:13:24 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/monthly - 8ms
+2025-08-24 13:13:30 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/monthly
+2025-08-24 13:13:30 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown
+2025-08-24 13:13:30 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown - 7ms
+2025-08-24 13:13:30 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/monthly - 9ms
+2025-08-24 13:13:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-24 13:13:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 55
+2025-08-24 13:13:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 0.0%
+2025-08-24 13:13:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 0
+2025-08-24 13:13:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-24 13:13:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 3ms
+2025-08-24 13:13:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
+2025-08-24 13:13:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/login: 1 requests, avg 1284ms
+2025-08-24 13:13:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/reports: 4 requests, avg 13ms
+2025-08-24 13:13:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown: 16 requests, avg 7ms
+2025-08-24 13:13:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years: 6 requests, avg 12ms
+2025-08-24 13:13:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals: 4 requests, avg 9ms
+2025-08-24 13:13:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/monthly: 16 requests, avg 9ms
+2025-08-24 13:13:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 8 requests, avg 11ms
+2025-08-24 13:16:49 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years
+2025-08-24 13:16:49 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years - 6ms
+2025-08-24 13:16:49 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years
+2025-08-24 13:16:49 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years - 6ms
+2025-08-24 13:16:59 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/monthly
+2025-08-24 13:16:59 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown
+2025-08-24 13:16:59 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown - 4ms
+2025-08-24 13:16:59 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/monthly - 8ms
+2025-08-24 13:18:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-24 13:18:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 59
+2025-08-24 13:18:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 0.0%
+2025-08-24 13:18:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 0
+2025-08-24 13:18:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-24 13:18:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 4ms
+2025-08-24 13:18:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
+2025-08-24 13:18:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/login: 1 requests, avg 1284ms
+2025-08-24 13:18:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/reports: 4 requests, avg 13ms
+2025-08-24 13:18:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown: 17 requests, avg 7ms
+2025-08-24 13:18:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years: 8 requests, avg 11ms
+2025-08-24 13:18:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals: 4 requests, avg 9ms
+2025-08-24 13:18:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/monthly: 17 requests, avg 9ms
+2025-08-24 13:18:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 8 requests, avg 11ms
+2025-08-24 13:22:10 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/submittedMonths
+2025-08-24 13:22:10 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/submittedMonths - 18ms
+2025-08-24 13:22:10 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/submittedMonths
+2025-08-24 13:22:10 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/submittedMonths - 17ms
+2025-08-24 13:22:28 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-24 13:22:28 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-24 13:22:28 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 7ms
+2025-08-24 13:22:28 [http-nio-8080-exec-2] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 9ms
+2025-08-24 13:22:28 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/reports
+2025-08-24 13:22:28 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/reports - 11ms
+2025-08-24 13:22:28 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/reports
+2025-08-24 13:22:28 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-24 13:22:28 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/reports - 12ms
+2025-08-24 13:22:28 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 10ms
+2025-08-24 13:22:28 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-24 13:22:28 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals
+2025-08-24 13:22:28 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals - 8ms
+2025-08-24 13:22:28 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 10ms
+2025-08-24 13:22:28 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals
+2025-08-24 13:22:28 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals - 7ms
+2025-08-24 13:22:36 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-24 13:22:36 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/refresh
+2025-08-24 13:22:36 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 9ms
+2025-08-24 13:22:36 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/refresh - 8ms
+2025-08-24 13:22:36 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/{id}a931470d5897868495a0aa
+2025-08-24 13:22:36 [http-nio-8080-exec-4] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/{id}a931470d5897868495a0aa - 20ms
+2025-08-24 13:22:36 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/{id}a931470d5897868495a0aa
+2025-08-24 13:22:36 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/{id}a931470d5897868495a0aa - 6ms
+2025-08-24 13:22:57 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years
+2025-08-24 13:22:57 [http-nio-8080-exec-10] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years - 8ms
+2025-08-24 13:22:57 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years
+2025-08-24 13:22:57 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years - 7ms
+2025-08-24 13:23:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-24 13:23:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 75
+2025-08-24 13:23:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 0.0%
+2025-08-24 13:23:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 0
+2025-08-24 13:23:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-24 13:23:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 3ms
+2025-08-24 13:23:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
+2025-08-24 13:23:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/{id}a931470d5897868495a0aa: 2 requests, avg 13ms
+2025-08-24 13:23:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/submittedMonths: 2 requests, avg 18ms
+2025-08-24 13:23:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/login: 1 requests, avg 1284ms
+2025-08-24 13:23:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/reports: 6 requests, avg 13ms
+2025-08-24 13:23:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown: 17 requests, avg 7ms
+2025-08-24 13:23:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years: 10 requests, avg 10ms
+2025-08-24 13:23:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals: 6 requests, avg 8ms
+2025-08-24 13:23:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/monthly: 17 requests, avg 9ms
+2025-08-24 13:23:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 14 requests, avg 10ms
+2025-08-24 13:24:38 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals/monthly
+2025-08-24 13:24:38 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown
+2025-08-24 13:24:38 [http-nio-8080-exec-6] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown - 4ms
+2025-08-24 13:24:38 [http-nio-8080-exec-3] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals/monthly - 7ms
+2025-08-24 13:28:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-24 13:28:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 77
+2025-08-24 13:28:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 0.0%
+2025-08-24 13:28:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 0
+2025-08-24 13:28:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-24 13:28:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 3ms
+2025-08-24 13:28:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
+2025-08-24 13:28:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/{id}a931470d5897868495a0aa: 2 requests, avg 13ms
+2025-08-24 13:28:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/submittedMonths: 2 requests, avg 18ms
+2025-08-24 13:28:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/login: 1 requests, avg 1284ms
+2025-08-24 13:28:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/reports: 6 requests, avg 13ms
+2025-08-24 13:28:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown: 18 requests, avg 7ms
+2025-08-24 13:28:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years: 10 requests, avg 10ms
+2025-08-24 13:28:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals: 6 requests, avg 8ms
+2025-08-24 13:28:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/monthly: 18 requests, avg 9ms
+2025-08-24 13:28:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 14 requests, avg 10ms
+2025-08-24 13:33:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-24 13:33:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 77
+2025-08-24 13:33:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 0.0%
+2025-08-24 13:33:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 0
+2025-08-24 13:33:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-24 13:33:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 3ms
+2025-08-24 13:33:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
+2025-08-24 13:33:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/{id}a931470d5897868495a0aa: 2 requests, avg 13ms
+2025-08-24 13:33:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/submittedMonths: 2 requests, avg 18ms
+2025-08-24 13:33:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/login: 1 requests, avg 1284ms
+2025-08-24 13:33:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/reports: 6 requests, avg 13ms
+2025-08-24 13:33:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown: 18 requests, avg 7ms
+2025-08-24 13:33:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years: 10 requests, avg 10ms
+2025-08-24 13:33:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals: 6 requests, avg 8ms
+2025-08-24 13:33:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/monthly: 18 requests, avg 9ms
+2025-08-24 13:33:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 14 requests, avg 10ms
+2025-08-24 13:38:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-24 13:38:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 77
+2025-08-24 13:38:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 0.0%
+2025-08-24 13:38:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 0
+2025-08-24 13:38:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-24 13:38:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 3ms
+2025-08-24 13:38:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
+2025-08-24 13:38:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/{id}a931470d5897868495a0aa: 2 requests, avg 13ms
+2025-08-24 13:38:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/submittedMonths: 2 requests, avg 18ms
+2025-08-24 13:38:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/login: 1 requests, avg 1284ms
+2025-08-24 13:38:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/reports: 6 requests, avg 13ms
+2025-08-24 13:38:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown: 18 requests, avg 7ms
+2025-08-24 13:38:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years: 10 requests, avg 10ms
+2025-08-24 13:38:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals: 6 requests, avg 8ms
+2025-08-24 13:38:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/monthly: 18 requests, avg 9ms
+2025-08-24 13:38:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 14 requests, avg 10ms
+2025-08-24 13:43:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-24 13:43:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 77
+2025-08-24 13:43:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 0.0%
+2025-08-24 13:43:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 0
+2025-08-24 13:43:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-24 13:43:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 3ms
+2025-08-24 13:43:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
+2025-08-24 13:43:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/{id}a931470d5897868495a0aa: 2 requests, avg 13ms
+2025-08-24 13:43:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/submittedMonths: 2 requests, avg 18ms
+2025-08-24 13:43:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/login: 1 requests, avg 1284ms
+2025-08-24 13:43:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/reports: 6 requests, avg 13ms
+2025-08-24 13:43:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown: 18 requests, avg 7ms
+2025-08-24 13:43:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years: 10 requests, avg 10ms
+2025-08-24 13:43:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals: 6 requests, avg 8ms
+2025-08-24 13:43:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/monthly: 18 requests, avg 9ms
+2025-08-24 13:43:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 14 requests, avg 10ms
+2025-08-24 13:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-24 13:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 77
+2025-08-24 13:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 0.0%
+2025-08-24 13:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 0
+2025-08-24 13:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-24 13:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 3ms
+2025-08-24 13:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
+2025-08-24 13:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/{id}a931470d5897868495a0aa: 2 requests, avg 13ms
+2025-08-24 13:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/submittedMonths: 2 requests, avg 18ms
+2025-08-24 13:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/login: 1 requests, avg 1284ms
+2025-08-24 13:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/reports: 6 requests, avg 13ms
+2025-08-24 13:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown: 18 requests, avg 7ms
+2025-08-24 13:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years: 10 requests, avg 10ms
+2025-08-24 13:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals: 6 requests, avg 8ms
+2025-08-24 13:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/monthly: 18 requests, avg 9ms
+2025-08-24 13:48:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 14 requests, avg 10ms
+2025-08-24 13:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-24 13:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 77
+2025-08-24 13:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 0.0%
+2025-08-24 13:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 0
+2025-08-24 13:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-24 13:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 3ms
+2025-08-24 13:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
+2025-08-24 13:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/{id}a931470d5897868495a0aa: 2 requests, avg 13ms
+2025-08-24 13:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/submittedMonths: 2 requests, avg 18ms
+2025-08-24 13:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/login: 1 requests, avg 1284ms
+2025-08-24 13:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/reports: 6 requests, avg 13ms
+2025-08-24 13:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown: 18 requests, avg 7ms
+2025-08-24 13:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years: 10 requests, avg 10ms
+2025-08-24 13:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals: 6 requests, avg 8ms
+2025-08-24 13:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/monthly: 18 requests, avg 9ms
+2025-08-24 13:53:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 14 requests, avg 10ms
+2025-08-24 13:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-24 13:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 77
+2025-08-24 13:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 0.0%
+2025-08-24 13:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 0
+2025-08-24 13:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-24 13:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 2ms
+2025-08-24 13:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
+2025-08-24 13:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/{id}a931470d5897868495a0aa: 2 requests, avg 13ms
+2025-08-24 13:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/submittedMonths: 2 requests, avg 18ms
+2025-08-24 13:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/login: 1 requests, avg 1284ms
+2025-08-24 13:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/reports: 6 requests, avg 13ms
+2025-08-24 13:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown: 18 requests, avg 7ms
+2025-08-24 13:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years: 10 requests, avg 10ms
+2025-08-24 13:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals: 6 requests, avg 8ms
+2025-08-24 13:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/monthly: 18 requests, avg 9ms
+2025-08-24 13:58:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 14 requests, avg 10ms
+2025-08-24 14:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-24 14:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 77
+2025-08-24 14:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 0.0%
+2025-08-24 14:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 0
+2025-08-24 14:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-24 14:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 2ms
+2025-08-24 14:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
+2025-08-24 14:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/{id}a931470d5897868495a0aa: 2 requests, avg 13ms
+2025-08-24 14:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/submittedMonths: 2 requests, avg 18ms
+2025-08-24 14:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/login: 1 requests, avg 1284ms
+2025-08-24 14:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/reports: 6 requests, avg 13ms
+2025-08-24 14:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown: 18 requests, avg 7ms
+2025-08-24 14:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years: 10 requests, avg 10ms
+2025-08-24 14:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals: 6 requests, avg 8ms
+2025-08-24 14:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/monthly: 18 requests, avg 9ms
+2025-08-24 14:03:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 14 requests, avg 10ms
+2025-08-24 14:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
+2025-08-24 14:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 77
+2025-08-24 14:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 0.0%
+2025-08-24 14:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 0
+2025-08-24 14:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
+2025-08-24 14:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 2ms
+2025-08-24 14:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
+2025-08-24 14:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/{id}a931470d5897868495a0aa: 2 requests, avg 13ms
+2025-08-24 14:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/submittedMonths: 2 requests, avg 18ms
+2025-08-24 14:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/login: 1 requests, avg 1284ms
+2025-08-24 14:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/reports: 6 requests, avg 13ms
+2025-08-24 14:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/breakdown: 18 requests, avg 7ms
+2025-08-24 14:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years: 10 requests, avg 10ms
+2025-08-24 14:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals: 6 requests, avg 8ms
+2025-08-24 14:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/monthly: 18 requests, avg 9ms
+2025-08-24 14:08:44 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 14 requests, avg 10ms
+2025-08-24 14:11:06 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: POST /api/auth/login
+2025-08-24 14:11:06 [http-nio-8080-exec-9] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: POST /api/auth/login - 515ms
+2025-08-24 14:11:09 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years
+2025-08-24 14:11:09 [http-nio-8080-exec-1] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years - 7ms
+2025-08-24 14:11:09 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years
+2025-08-24 14:11:09 [http-nio-8080-exec-5] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years - 5ms
+2025-08-24 14:11:39 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-08-24 14:11:39 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-08-24 14:11:39 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-08-24 14:11:39 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-08-24 14:11:39 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

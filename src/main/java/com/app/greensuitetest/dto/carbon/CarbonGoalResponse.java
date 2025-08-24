@@ -40,6 +40,7 @@ public class CarbonGoalResponse {
 
     }
     //Added by Htet Htet
+    /*
     public CarbonGoalResponse(String message,
                               Map<String, CategoryResult> results,
                               boolean electricityGoalMet,
@@ -52,5 +53,5 @@ public class CarbonGoalResponse {
         this.fuelGoalMet = fuelGoalMet;
         this.waterGoalMet = waterGoalMet;
         this.wasteGoalMet = wasteGoalMet;
-    }
+    }*/
 }
