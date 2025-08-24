@@ -10,5 +10,6 @@ public interface CarbonGoalRepository extends MongoRepository<CarbonGoal, String
     Optional<CarbonGoal> findByCompanyIdAndYearAndMonth(String companyId, String month,String year);
     List<CarbonGoal> findByCompanyIdAndYear(String companyId, String year);
     List<CarbonGoal> findByCompanyId(String companyId);
-
+    //Added By Htet Htet
+    Optional<CarbonGoal> findByCompanyIdAndMonthAndYear(String companyId, String month, String year);
 }

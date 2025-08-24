@@ -395,4 +395,74 @@ public class CarbonGoalService {
 
         return goal;
     }
+    //Added by Htet Htet
+    public CarbonGoalResponse getMonthlyGoal(String month, String year) {
+        String companyId = securityUtil.getCurrentUserCompanyId();
+        Optional<CarbonGoal> goalOpt = carbonGoalRepository.findByCompanyIdAndMonthAndYear(
+                companyId, month, year);
+
+        if (goalOpt.isEmpty()) {
+            return new CarbonGoalResponse("No goal found for " + getMonthName(month) + " " + year, new HashMap<>());
+        }
+
+        CarbonGoal goal = goalOpt.get();
+        Map<String, CarbonGoalResponse.CategoryResult> results = new HashMap<>();
+
+        // Electricity
+        if (goal.getTargetElectricity() != null && goal.getTargetElectricity() > 0) {
+            results.put("electricity", new CarbonGoalResponse.CategoryResult(
+                    goal.getElectricityGoalMet(),
+                    goal.getElectricityReduction(),
+                    goal.getElectricityRemaining(),
+                    true
+            ));
+        }
+
+        // Fuel
+        if (goal.getTargetFuel() != null && goal.getTargetFuel() > 0) {
+            results.put("fuel", new CarbonGoalResponse.CategoryResult(
+                    goal.getFuelGoalMet(),
+                    goal.getFuelReduction(),
+                    goal.getFuelRemaining(),
+                    true
+            ));
+        }
+
+        // Water
+        if (goal.getTargetWater() != null && goal.getTargetWater() > 0) {
+            results.put("water", new CarbonGoalResponse.CategoryResult(
+                    goal.getWaterGoalMet(),
+                    goal.getWaterReduction(),
+                    goal.getWaterRemaining(),
+                    true
+            ));
+        }
+
+        // Waste
+        if (goal.getTargetWaste() != null && goal.getTargetWaste() > 0) {
+            results.put("waste", new CarbonGoalResponse.CategoryResult(
+                    goal.getWasteGoalMet(),
+                    goal.getWasteReduction(),
+                    goal.getWasteRemaining(),
+                    true
+            ));
+        }
+
+        return new CarbonGoalResponse(
+                "Goal summary for " + getMonthName(month) + " " + year,
+                results
+        );
+    }
+
+    // Helper method to get month name
+    private String getMonthName(String month) {
+        String[] monthNames = {"January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"};
+        try {
+            int monthNum = Integer.parseInt(month);
+            return monthNames[monthNum - 1];
+        } catch (Exception e) {
+            return "Month";
+        }
+    }
 }
