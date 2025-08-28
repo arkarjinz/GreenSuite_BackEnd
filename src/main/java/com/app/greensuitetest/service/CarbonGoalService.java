@@ -28,6 +28,7 @@ public class CarbonGoalService {
     public void saveGoal(CarbonGoalRequest request) {
         String companyId = securityUtil.getCurrentUserCompanyId(); // moved here
         String userId = securityUtil.getCurrentUserId(); // ← ADD THIS LINE
+
         //String month = request.getSelectedMonth();
         YearMonth ym = YearMonth.parse(request.getSelectedMonth());
 

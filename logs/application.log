@@ -1346,21 +1346,3 @@ java.lang.Exception: Apparent connection leak detected
 2025-08-27 20:58:50 [http-nio-8080-exec-7] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals - 6ms
 2025-08-27 20:58:50 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking started for endpoint: GET /api/carbon/goals
 2025-08-27 20:58:50 [http-nio-8080-exec-8] DEBUG c.a.g.config.PerformanceInterceptor - Performance tracking completed for endpoint: GET /api/carbon/goals - 6ms
-2025-08-27 21:00:04 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === PERFORMANCE METRICS ===
-2025-08-27 21:00:04 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Total Requests: 59
-2025-08-27 21:00:04 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Cache Hit Rate: 0.0%
-2025-08-27 21:00:04 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Operations: 0
-2025-08-27 21:00:04 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Status: healthy
-2025-08-27 21:00:04 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - Redis Response Time: 2ms
-2025-08-27 21:00:04 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - === ENDPOINT PERFORMANCE ===
-2025-08-27 21:00:04 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals/submittedMonths: 5 requests, avg 11ms
-2025-08-27 21:00:04 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/carbon/goals/check: 1 requests, avg 40ms
-2025-08-27 21:00:04 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/resource-data: 4 requests, avg 14ms
-2025-08-27 21:00:04 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/chart-data: 4 requests, avg 14ms
-2025-08-27 21:00:04 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/carbon/goals/save: 1 requests, avg 58ms
-2025-08-27 21:00:04 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/reports: 9 requests, avg 13ms
-2025-08-27 21:00:04 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/login: 1 requests, avg 1248ms
-2025-08-27 21:00:04 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - PUT /api/carbon/update: 2 requests, avg 130ms
-2025-08-27 21:00:04 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/goals: 8 requests, avg 9ms
-2025-08-27 21:00:04 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - GET /api/carbon/company/{id}a85e30b217d2e84df9b942/years: 6 requests, avg 8ms
-2025-08-27 21:00:04 [scheduling-1] INFO  c.a.g.s.PerformanceMonitoringService - POST /api/auth/refresh: 18 requests, avg 50ms
